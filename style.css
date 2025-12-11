@@ -301,7 +301,7 @@ nav {
 
 @keyframes scrollLoop {
   0% { transform: translateX(0); }
-  100% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
 
 
@@ -1132,6 +1132,7 @@ footer {
     margin-bottom: 2rem;
   }
 }
+
 
 
 
