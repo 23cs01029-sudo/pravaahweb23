@@ -389,7 +389,7 @@ nav {
   grid-template-columns: repeat(7,1fr);
   align-items: center;        /* Vertical center */
   justify-items: center;      /* Horizontal center */
-  padding-bottom: 13px;
+  padding-bottom: 20px;
   color: var(--muted);
   font-size: 1.05rem;
 }
@@ -1056,6 +1056,7 @@ footer {
     justify-content: center !important;
   }
 }
+
 
 
 
