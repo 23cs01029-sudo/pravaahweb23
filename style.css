@@ -185,7 +185,7 @@ nav {
 
 /* Titles use Oranienbaum */
 .section-title, .calendar-title, .aftermovie-section h2, .social-section h2 {
-  font-family: 'Oranienbaum', serif;
+  font-family: 'Rajdhani', serif;
   letter-spacing: 1.5px;
 }
 
@@ -904,3 +904,4 @@ footer {
 
   .footer-bottom p { font-size:0.75rem; }
 }
+
