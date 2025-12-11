@@ -226,15 +226,15 @@ nav {
   font-size: clamp(1.4rem, 3vw, 2rem);
   margin-bottom: 2rem;
   color: var(--primary);
-  text-shadow: 0 0 10px var(--primary-soft);
+  text-shadow: 0 0 8px var(--primary-soft);
 }
 
 /* Highlights carousel */
 .highlights-carousel {
   width: 100%;
-  overflow: hidden;
   display: flex;
   justify-content: center;
+  overflow: hidden;
   padding: 15px 0;
 }
 
@@ -254,7 +254,7 @@ nav {
   animation-play-state: paused;
 }
 
-/* Highlight slide */
+/* Slide */
 .slide {
   width: 320px;
   height: 200px;
@@ -262,15 +262,15 @@ nav {
   overflow: hidden;
   border: 2px solid var(--primary-soft);
   box-shadow: 0 0 10px rgba(36,224,236,0.12);
-  transition: transform .45s ease, box-shadow .45s ease, border-color .45s ease;
+  position: relative;
+  transition: .45s ease;
 }
 
 .slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 16px;
-  transition: transform .45s ease;
+  transition: .45s ease;
 }
 
 .slide:hover {
@@ -283,6 +283,7 @@ nav {
   transform: scale(1.10);
 }
 
+/* Hover text — ALWAYS visible */
 .slide::after {
   content: attr(data-title);
   position: absolute;
@@ -292,8 +293,9 @@ nav {
   background: rgba(0,0,0,0.55);
   color: var(--primary);
   opacity: 0;
-  transform: translateY(20px);
-  transition: all .35s ease;
+  z-index: 10;
+  transform: translateY(12px);
+  transition: .35s ease;
 }
 
 .slide:hover::after {
@@ -302,10 +304,9 @@ nav {
 }
 
 /* =====================================================
-   CALENDAR — SOFT NEO CYAN SCI-FI GLOW (Option B)
+   CALENDAR — SOFT NEO CYAN SCI-FI GLOW
    ===================================================== */
 
-/* Title */
 .calendar-title {
   text-align: center;
   font-size: clamp(1.6rem, 3vw, 2.5rem);
@@ -313,7 +314,6 @@ nav {
   letter-spacing: 2px;
   margin-top: 5rem;
   margin-bottom: 2rem;
-  text-shadow: 0 0 10px rgba(242,215,166,0.15);
 }
 
 .calendar-title::after {
@@ -333,11 +333,11 @@ nav {
   height: 75vh;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 0 30px rgba(0,0,0,0.3);
   backdrop-filter: blur(3px);
+  box-shadow: 0 0 30px rgba(0,0,0,0.3);
 }
 
-/* ---------- CALENDAR PANEL ---------- */
+/* Calendar Panel */
 .calendar-container {
   width: 60%;
   padding: 25px;
@@ -357,7 +357,7 @@ nav {
   border: none;
   color: var(--text);
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: .3s ease;
 }
 
 .header button:hover {
@@ -368,71 +368,85 @@ nav {
 #monthYear {
   font-size: 1.8rem;
   letter-spacing: 2px;
-  text-shadow: 0 0 8px rgba(36,224,236,0.2);
+  text-shadow: 0 0 6px var(--primary-soft);
 }
 
-/* Days of week */
+/* Days row */
 .days-of-week {
   display: grid;
-  grid-template-columns: repeat(7,1fr);
+  grid-template-columns: repeat(7, 1fr);
   margin-bottom: 12px;
   color: var(--muted);
+  font-size: 1.05rem;
 }
 
+/* Properly aligned grid */
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7,1fr);
-  gap: 12px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 14px;
 }
 
-/* ------------------------- */
-/* DAY CELL (Sci-Fi Version) */
-/* ------------------------- */
+/* ----------------------------------- */
+/* DAY CELL – SOFT SCI-FI CYAN GLOW   */
+/* ----------------------------------- */
+
 .day {
-  width: 85px;
-  height: 55px;
-  border-radius: 12px;
+  height: 60px;
+  border-radius: 14px;
   background: rgba(255,255,255,0.06);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text);
-  font-size: 0.95rem;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all .28s ease;
+  transition: .28s ease;
 }
 
-/* Hover — slight cyan glow */
+/* hover */
 .day:hover {
   background: rgba(36,224,236,0.14);
   box-shadow: 0 0 12px var(--primary-soft);
-  transform: scale(1.07);
+  transform: scale(1.08);
 }
 
-/* Today — noticeable sci-fi glow (not too bright) */
+/* TODAY — soft glow ring */
 .today {
-  background: rgba(36,224,236,0.22);
+  background: rgba(36,224,236,0.18);
   border: 2px solid var(--primary);
-  box-shadow: 0 0 18px var(--primary-soft);
+  box-shadow: 0 0 14px var(--primary-soft);
+  color: #fff;
+  font-weight: 600;
 }
 
-/* Selected — medium highlight */
+/* SELECTED — brighter fill */
 .selected {
-  background: rgba(36,224,236,0.28);
+  background: rgba(36,224,236,0.30);
   border: 2px solid var(--primary-border);
   box-shadow: 0 0 16px var(--primary-soft);
+  transform: scale(1.10);
 }
 
-/* Animations */
+/* TODAY + SELECTED → unique style */
+.selected.today {
+  background: rgba(36,224,236,0.45);
+  border-color: var(--primary);
+  box-shadow: 0 0 26px var(--primary-soft);
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Fade Animations */
 .calendar-grid.fade-out {
   opacity: 0;
   transform: scale(.97);
-  transition: opacity .4s ease, transform .4s ease;
+  transition: .4s ease;
 }
 .calendar-grid.fade-in {
   opacity: 1;
   transform: scale(1);
-  transition: opacity .4s ease, transform .4s ease;
+  transition: .4s ease;
 }
 
 /* =====================================================
@@ -442,17 +456,17 @@ nav {
 .feed-container {
   width: 40%;
   background: rgba(0,0,0,0.50);
-  padding: 15px 20px;
   display: flex;
   flex-direction: column;
+  padding: 15px 20px;
 }
 
 .feed-title {
   text-align: center;
   font-size: 1.4rem;
   color: var(--primary);
-  margin-bottom: 10px;
   text-shadow: 0 0 10px var(--primary-soft);
+  margin-bottom: 12px;
 }
 
 .feed-list {
@@ -470,11 +484,11 @@ nav {
   background: rgba(255,255,255,0.08);
   padding: 12px 16px;
   border-radius: 12px;
-  transition: 0.3s ease;
+  transition: .3s ease;
 }
 
 .feed-item:hover {
-  background: rgba(36,224,236,0.10);
+  background: rgba(36,224,236,0.12);
   box-shadow: 0 0 12px var(--primary-soft);
   transform: scale(1.03);
 }
@@ -508,6 +522,16 @@ nav {
   color: var(--muted);
   font-size: 0.8rem;
 }
+
+/* Scrollbar */
+.feed-list::-webkit-scrollbar {
+  width: 6px;
+}
+.feed-list::-webkit-scrollbar-thumb {
+  background: var(--primary-soft);
+  border-radius: 10px;
+}
+
 
 
 /* =====================================================
@@ -852,3 +876,4 @@ footer {
     justify-content:space-evenly;
   }
 }
+
