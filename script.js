@@ -47,26 +47,26 @@ document.addEventListener("DOMContentLoaded", () => {
   /* Feed data */
   const feedsByDate = {
     "2025-12-11": [
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-   
     ]
   };
 
   const defaultFeed = [
     { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
   ];
+
 
   /* ---------------------- FEED RENDER ---------------------- */
   function renderFeed(dateKey) {
@@ -157,7 +157,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }, transition ? 250 : 0);
   }
 
-  /* Month nav */
+
+  /* Month navigation */
   prevMonth?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar(currentDate, true);
