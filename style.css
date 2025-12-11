@@ -825,15 +825,18 @@ footer {
   }
 }
 
-/* FIX: Make Font Awesome icons visible again */
-.footer-social-icons i,
-.fa,
-.fa-brands,
-.fa-solid {
-  font-family: "Font Awesome 6 Brands" !important;
-  font-weight: 900 !important;
+
+
+/* Correct styling for footer icons */
+.footer-social-icons i {
+  font-size: 1.6rem;
+  color: #bfc7d5;
+  transition: 0.3s;
 }
 
+.footer-social-icons i:hover {
+  color: white;
+}
 
 
 
