@@ -233,7 +233,7 @@ nav {
 
 /* Section title */
 .section-title {
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
   margin-bottom: 2rem;
   color: var(--primary);
   text-shadow: 0 0 8px var(--primary-soft);
@@ -298,15 +298,16 @@ nav {
   content: attr(data-title);
   position: absolute;
   bottom: 0;
+  left: 0;
   width: 100%;
   padding: 10px 0;
-  background: rgba(0,0,0,0.55);
-  color: var(--primary);
-  text-align: center;
+  font-size: 1.1rem;
+  background: rgba(0, 0, 0, 0.6);
+  color: cyan;
   opacity: 0;
-  transform: translateY(12px);
-  z-index: 10;
-  transition: .35s ease;
+  transform: translateY(20px);
+  transition: all 0.4s ease;
+  border-radius: 0 0 18px 18px;
 }
 
 .slide:hover::after {
@@ -1056,6 +1057,7 @@ footer {
     justify-content: center !important;
   }
 }
+
 
 
 
