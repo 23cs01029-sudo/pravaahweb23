@@ -1013,24 +1013,32 @@ footer {
 @media (max-width: 650px) {
 
   footer {
-    text-align: left !important;
+    text-align: center !important;
   }
 
   .footer-container {
     grid-template-columns: 1fr !important;
-    justify-items: flex-start !important;
+    justify-items: center !important;   /* Centers all blocks */
   }
 
-  .footer-left,
+  /* Footer left block centered */
+  .footer-left {
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  /* Keep footer column titles + links left aligned */
   .footer-column {
-    align-items: flex-start !important;
     text-align: left !important;
+    width: 100%;
   }
 
+  /* Social icons centered */
   .footer-social-icons {
-    justify-content: flex-start !important;
+    justify-content: center !important;
   }
 }
+
 
 
 
