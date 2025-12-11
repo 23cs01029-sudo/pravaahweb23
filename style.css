@@ -40,7 +40,25 @@ i.fa-brands,
 }
 
 /* ---------- BACKGROUND (unchanged) ---------- */
- body { min-height: 100vh; background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86); background-size: 400% 400%; animation: gradientMove 15s ease infinite; color: var(--text); display: flex; flex-direction: column; align-items: center; padding-top: 80px; } @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+ /* ---------- BACKGROUND (Animated Gradient) ---------- */
+body {
+  min-height: 100vh;
+  background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 
 /* =====================================================
    NAVBAR — CLEANER, BRIGHTER, FUTURISTIC
@@ -1038,6 +1056,7 @@ footer {
     justify-content: center !important;
   }
 }
+
 
 
 
