@@ -283,7 +283,7 @@ nav {
   transform: scale(1.10);
 }
 
-/* Hover text — ALWAYS visible */
+/* Hover title fix — ALWAYS SHOWS correctly now */
 .slide::after {
   content: attr(data-title);
   position: absolute;
@@ -292,9 +292,10 @@ nav {
   padding: 10px 0;
   background: rgba(0,0,0,0.55);
   color: var(--primary);
+  text-align: center;
   opacity: 0;
-  z-index: 10;
   transform: translateY(12px);
+  z-index: 10;
   transition: .35s ease;
 }
 
@@ -304,7 +305,7 @@ nav {
 }
 
 /* =====================================================
-   CALENDAR — SOFT NEO CYAN SCI-FI GLOW
+   CALENDAR — Soft Neo Cyan Sci-Fi Glow
    ===================================================== */
 
 .calendar-title {
@@ -348,6 +349,7 @@ nav {
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 15px;
 }
 
@@ -371,26 +373,25 @@ nav {
   text-shadow: 0 0 6px var(--primary-soft);
 }
 
-/* Days row */
+/* Days Row — FIXED alignment */
 .days-of-week {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  margin-bottom: 12px;
+  grid-template-columns: repeat(7,1fr);
+  align-items: center;        /* Vertical center */
+  justify-items: center;      /* Horizontal center */
+  padding-bottom: 8px;
   color: var(--muted);
   font-size: 1.05rem;
 }
 
-/* Properly aligned grid */
+/* Calendar grid */
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7,1fr);
   gap: 14px;
 }
 
-/* ----------------------------------- */
-/* DAY CELL – SOFT SCI-FI CYAN GLOW   */
-/* ----------------------------------- */
-
+/* ---------- DAY CELL ---------- */
 .day {
   height: 60px;
   border-radius: 14px;
@@ -411,16 +412,16 @@ nav {
   transform: scale(1.08);
 }
 
-/* TODAY — soft glow ring */
+/* TODAY — distinct glow ring */
 .today {
   background: rgba(36,224,236,0.18);
   border: 2px solid var(--primary);
   box-shadow: 0 0 14px var(--primary-soft);
-  color: #fff;
   font-weight: 600;
+  color: #fff;
 }
 
-/* SELECTED — brighter fill */
+/* SELECTED — different glow */
 .selected {
   background: rgba(36,224,236,0.30);
   border: 2px solid var(--primary-border);
@@ -428,7 +429,7 @@ nav {
   transform: scale(1.10);
 }
 
-/* TODAY + SELECTED → unique style */
+/* TODAY + SELECTED — UNIQUE visual */
 .selected.today {
   background: rgba(36,224,236,0.45);
   border-color: var(--primary);
@@ -437,7 +438,7 @@ nav {
   color: #fff;
 }
 
-/* Fade Animations */
+/* Fade animations */
 .calendar-grid.fade-out {
   opacity: 0;
   transform: scale(.97);
@@ -450,23 +451,24 @@ nav {
 }
 
 /* =====================================================
-   FEED SECTION
+   FEED — EXACTLY LIKE YOUR PROVIDED DESIGN
    ===================================================== */
 
 .feed-container {
   width: 40%;
-  background: rgba(0,0,0,0.50);
+  background: rgba(0,0,0,0.6);
   display: flex;
   flex-direction: column;
   padding: 15px 20px;
+  overflow: hidden;
 }
 
 .feed-title {
   text-align: center;
+  color: cyan;
   font-size: 1.4rem;
-  color: var(--primary);
-  text-shadow: 0 0 10px var(--primary-soft);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px cyan;
 }
 
 .feed-list {
@@ -475,22 +477,25 @@ nav {
   gap: 12px;
   overflow-y: auto;
   padding-right: 5px;
+  flex: 1;
+  min-height: 0;
 }
 
 .feed-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 15px;
   background: rgba(255,255,255,0.08);
-  padding: 12px 16px;
   border-radius: 12px;
-  transition: .3s ease;
+  padding: 12px 16px;
+  transition: background .3s ease, transform .3s ease;
+  flex-shrink: 0;
+  min-height: 70px;
 }
 
 .feed-item:hover {
-  background: rgba(36,224,236,0.12);
-  box-shadow: 0 0 12px var(--primary-soft);
-  transform: scale(1.03);
+  background: rgba(0,255,255,0.15);
+  transform: scale(1.02);
 }
 
 .feed-item img {
@@ -498,39 +503,36 @@ nav {
   height: 55px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--primary-soft);
+  border: 2px solid #00ffff80;
 }
 
 .feed-details {
   flex: 1;
-  margin-left: 12px;
+  overflow: hidden;
 }
 
-.feed-details h4 {
-  margin: 0;
-  color: var(--text);
-  font-size: 1rem;
-}
-
+.feed-details h4,
 .feed-details p {
   margin: 0;
-  color: var(--muted);
-  font-size: 0.85rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .feed-time {
-  color: var(--muted);
   font-size: 0.8rem;
+  color: #aaa;
+  min-width: 40px;
+  text-align: right;
 }
 
 /* Scrollbar */
-.feed-list::-webkit-scrollbar {
-  width: 6px;
-}
+.feed-list::-webkit-scrollbar { width: 6px; }
 .feed-list::-webkit-scrollbar-thumb {
-  background: var(--primary-soft);
+  background: rgba(0,255,255,0.5);
   border-radius: 10px;
 }
+
 
 
 
@@ -876,4 +878,5 @@ footer {
     justify-content:space-evenly;
   }
 }
+
 
