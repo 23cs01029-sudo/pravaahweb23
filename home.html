@@ -4,13 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRAVAAH — Chronicles of Time</title>
+
+  <!-- ⭐ PRAVAAH Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;600&family=Goldman:wght@400;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <!-- ✅ Link your unified script -->
+  
+  <!-- Unified script -->
   <script type="module" src="script.js" defer></script>
 </head>
 
-<body>
+<body style="background:#0A0F1F; color:#F5F8FA; font-family:'Exo 2', sans-serif;">
+
   <!-- 🔒 FIREBASE AUTH CHECK -->
   <script type="module">
     import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -25,56 +31,55 @@
       appId: "1:287687647267:web:7aecd603ee202779b89196"
     };
 
-    // Prevent duplicate app initialization
     const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     const auth = getAuth(app);
 
     onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "index.html";
-      }
+      if (!user) window.location.href = "index.html";
     });
   </script>
 
   <!-- 🔹 NAVBAR -->
   <nav>
     <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
-    <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
-  </a>
-    <div class="logo">PRAVAAH</div>
+      <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
+    </a>
 
-    <!-- Hamburger Menu Button -->
-    <div class="menu-toggle" id="menuToggle">
+    <div class="logo" style="font-family:'Goldman'; color:#00F6FF; letter-spacing:2px;">
+      PRAVAAH
+    </div>
+
+    <div class="menu-toggle" id="menuToggle" style="color:#F5F8FA;">
       <i class="fas fa-bars"></i>
     </div>
 
-    <!-- Navigation Links -->
-    <ul id="menu">
+    <ul id="menu" style="font-family:'Rajdhani';">
       <li><a href="home.html" class="active">Home</a></li>
       <li><a href="events.html">Events</a></li>
       <li><a href="registrationPravaah.html">Register</a></li>
-      <li><a href="accommodation.html" >Accommodation</a></li>
+      <li><a href="accommodation.html">Accommodation</a></li>
       <li><a href="photogallery.html">Gallery</a></li>
       <li><a href="sponsors.html">Sponsors</a></li>
       <li><a href="contact_us.html">Contact Us</a></li>
-      <li><a href="profile.html" >Profile</a></li>
-
-      <!-- 🔹 Logout link for mobile -->
+      <li><a href="profile.html">Profile</a></li>
       <li class="mobile-only"><a href="index.html" id="logoutMobile">Logout</a></li>
     </ul>
 
-    <!-- 🔹 Logout button for desktop -->
-    <button id="logoutDesktop" class="logout-btn">Logout</button>
+    <button id="logoutDesktop" class="logout-btn" style="font-family:'Rajdhani'; font-weight:700;">
+      Logout
+    </button>
   </nav>
 
   <!-- 📅 CALENDAR + FEED -->
-  <h2 class="calendar-title">📅 PRAVAAH'26 CALENDAR</h2>
+  <h2 class="calendar-title" style="font-family:'Oranienbaum'; color:#F2D49B;">
+    📅 PRAVAAH'26 CALENDAR
+  </h2>
 
   <div class="container" id="feed">
     <div class="calendar-container">
       <div class="header">
         <button id="prevMonth">❮</button>
-        <h2 id="monthYear"></h2>
+        <h2 id="monthYear" style="font-family:'Oranienbaum';"></h2>
         <button id="nextMonth">❯</button>
       </div>
 
@@ -87,14 +92,15 @@
     </div>
 
     <div class="feed-container">
-      <h2 class="feed-title">Chronicle Feed 🧾</h2>
+      <h2 class="feed-title" style="font-family:'Oranienbaum'; color:#00F6FF;">Chronicle Feed 🧾</h2>
       <div class="feed-list" id="feedList"></div>
     </div>
   </div>
 
   <!-- 🖼 HIGHLIGHTS -->
   <section class="highlights" id="highlights">
-    <h2 class="section-title">✨ HIGHLIGHTS OF 2K25 ✨</h2>
+    <h2 class="section-title" style="font-family:'Oranienbaum'; color:#F2D49B;">✨ HIGHLIGHTS OF 2K25 ✨</h2>
+
     <div class="highlights-carousel">
       <div class="slider-track">
         <div class="slide" data-title="Opening Ceremony"><img src="DSC09133.JPG" alt=""></div>
@@ -108,18 +114,19 @@
 
   <!-- 🎬 AFTERMOVIE SECTION -->
   <section class="aftermovie-section" id="aftermovie">
-    <h2 class="section-title">🎥 VIDEOS — 2K25</h2>
+    <h2 class="section-title" style="font-family:'Oranienbaum'; color:#00F6FF;">
+      🎥 VIDEOS — 2K25
+    </h2>
 
     <div class="video-switch">
-      <button id="aftermovieBtn" class="active">Aftermovie</button>
-      <button id="themeBtn">Theme Video</button>
+      <button id="aftermovieBtn" class="active" style="font-family:'Rajdhani'; font-weight:700;">Aftermovie</button>
+      <button id="themeBtn" style="font-family:'Rajdhani'; font-weight:700;">Theme Video</button>
     </div>
 
     <div class="aftermovie">
       <div class="video-wrapper">
         <video id="mainVideo" controls autoplay muted loop playsinline>
           <source src="aftermovie.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
         </video>
       </div>
     </div>
@@ -127,7 +134,8 @@
 
   <!-- 🌐 SOCIAL STATS -->
   <section class="social-section" id="social">
-    <h2>Join Our Ever-Growing Global Community</h2>
+    <h2 style="font-family:'Oranienbaum'; color:#F2D49B;">Join Our Ever-Growing Global Community</h2>
+
     <div class="social-cards">
       <div class="social-card"><div class="inner-card"><h3>800K+</h3><p>YouTube ▶</p></div></div>
       <div class="social-card"><div class="inner-card"><h3>160K+</h3><p>Twitter 𝕏</p></div></div>
@@ -139,30 +147,33 @@
   <!-- ⚫ FOOTER -->
   <footer id="contact">
     <div class="footer-container">
+
       <div class="footer-left">
         <img src="pravah-logo.png" alt="Pravaah Logo" class="footer-logo">
-        <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+        <a href="registrationPravaah.html" class="register-btn" style="font-family:'Rajdhani'; font-weight:700;">Register Now</a>
       </div>
 
-      <div class="footer-links">
+      <div class="footer-links" style="font-family:'Exo 2';">
         <div class="footer-column">
-          <h3>Quick Links</h3>
+          <h3 style="font-family:'Oranienbaum'; color:#F2D49B;">Quick Links</h3>
           <ul>
             <li><a href="#">Events Portal</a></li>
             <li><a href="#">CA Portal</a></li>
             <li><a href="#">Join the Community</a></li>
           </ul>
         </div>
+
         <div class="footer-column">
-          <h3>Explore More</h3>
+          <h3 style="font-family:'Oranienbaum'; color:#F2D49B;">Explore More</h3>
           <ul>
             <li><a href="#">Star Attractions</a></li>
             <li><a href="#">Hall of Fame</a></li>
             <li><a href="#">Brochure</a></li>
           </ul>
         </div>
+
         <div class="footer-column">
-          <h3>Reach Out to Us</h3>
+          <h3 style="font-family:'Oranienbaum'; color:#F2D49B;">Reach Out to Us</h3>
           <ul>
             <li><a href="#">Contact Us</a></li>
           </ul>
@@ -177,10 +188,11 @@
     </div>
 
     <hr class="footer-line">
-    <div class="footer-bottom">
+
+    <div class="footer-bottom" style="font-family:'Exo 2';">
       <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM | All Rights Reserved</p>
     </div>
   </footer>
-  
+
 </body>
 </html>
