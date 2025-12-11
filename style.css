@@ -63,24 +63,7 @@ body {
 /* =====================================================
    NAVBAR — CLEANER, BRIGHTER, FUTURISTIC
    ===================================================== */
-.section-title-cyan {
-  font-family: 'Exo 2', sans-serif;
-  font-weight: 900;
-  font-size: clamp(2rem, 4vw, 3.2rem);
 
-  color: var(--primary);        /* Neon cyan */
-  letter-spacing: 3px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-
-  margin: 3rem 0 2.2rem;
-
-  text-shadow: 0 0 12px var(--primary-soft),
-               0 0 20px rgba(36,224,236,0.35);
-}
 nav {
   width: 100%;
   display: flex;
@@ -1117,6 +1100,7 @@ footer {
     justify-content: center !important;
   }
 }
+
 
 
 
