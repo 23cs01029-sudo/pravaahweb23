@@ -1,6 +1,5 @@
 /* ============================================================
-   PRAVAAH — UPDATED script.js
-   (No logic changed — cleaned, optimized, consistent version)
+   PRAVAAH — FINAL UPDATED script.js (Optimized & Clean)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -21,18 +20,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  /* ---------------------- LOGOUT HANDLER ---------------------- */
+  /* ---------------------- LOGOUT ---------------------- */
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
 
   const handleLogout = () => {
     signOut(auth)
-      .then(() => window.location.href = "login.html")
-      .catch((error) => alert("Logout Error: " + error.message));
+      .then(() => (window.location.href = "login.html"))
+      .catch(err => alert("Logout Error: " + err.message));
   };
 
-  if (logoutDesktop) logoutDesktop.addEventListener("click", handleLogout);
-  if (logoutMobile) logoutMobile.addEventListener("click", handleLogout);
+  logoutDesktop?.addEventListener("click", handleLogout);
+  logoutMobile?.addEventListener("click", handleLogout);
 
 
   /* ---------------------- CALENDAR + FEED ---------------------- */
@@ -45,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentDate = new Date();
 
-  /* Feed data (can be expanded later) */
+  /* Feed data */
   const feedsByDate = {
     "2025-11-07": [
       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
@@ -56,9 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
     { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
   ];
 
-
-  /* -------- FEED RENDER -------- */
+  /* ---------------------- FEED RENDER ---------------------- */
   function renderFeed(dateKey) {
+    if (!feedList) return;
     feedList.classList.add("fade-out");
 
     setTimeout(() => {
@@ -67,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       data.forEach(feed => {
         const item = document.createElement("div");
-        item.classList.add("feed-item");
+        item.className = "feed-item";
 
         item.innerHTML = `
           <img src="${feed.img}" alt="${feed.name}">
@@ -84,49 +83,50 @@ document.addEventListener("DOMContentLoaded", () => {
       feedList.classList.remove("fade-out");
       feedList.classList.add("fade-in");
 
-      setTimeout(() => feedList.classList.remove("fade-in"), 500);
-    }, 280);
+      setTimeout(() => feedList.classList.remove("fade-in"), 450);
+    }, 250);
   }
 
 
-  /* -------- CALENDAR RENDER -------- */
+  /* ---------------------- CALENDAR RENDER ---------------------- */
   function renderCalendar(date, transition = false) {
+    if (!calendar) return;
+
     const year = date.getFullYear();
     const month = date.getMonth();
 
     if (transition) calendar.classList.add("fade-out");
 
     setTimeout(() => {
-      monthYear.innerText = `${date.toLocaleString("default", { month: "long" })} ${year}`;
+      monthYear.textContent = `${date.toLocaleString("default", { month: "long" })} ${year}`;
 
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       calendar.innerHTML = "";
 
-      /* Blank blocks before 1st date */
+      /* empty blocks */
       for (let i = 0; i < firstDay; i++) {
         calendar.appendChild(document.createElement("div"));
       }
 
-      /* Actual days */
+      /* actual days */
       for (let i = 1; i <= daysInMonth; i++) {
         const day = document.createElement("div");
         day.classList.add("day");
-        day.innerText = i;
+        day.textContent = i;
 
         const today = new Date();
-        if (
+        const isToday =
           i === today.getDate() &&
           month === today.getMonth() &&
-          year === today.getFullYear()
-        ) {
-          day.classList.add("today");
-        }
+          year === today.getFullYear();
 
-        day.addEventListener("click", (e) => {
+        if (isToday) day.classList.add("today");
+
+        day.addEventListener("click", () => {
           document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
-          e.target.classList.add("selected");
+          day.classList.add("selected");
 
           const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           renderFeed(key);
@@ -138,22 +138,22 @@ document.addEventListener("DOMContentLoaded", () => {
       if (transition) {
         calendar.classList.remove("fade-out");
         calendar.classList.add("fade-in");
-        setTimeout(() => calendar.classList.remove("fade-in"), 500);
+        setTimeout(() => calendar.classList.remove("fade-in"), 450);
       }
-    }, transition ? 260 : 0);
+
+    }, transition ? 250 : 0);
   }
 
-
-  /* Month navigation */
-  prevMonth.onclick = () => {
+  /* Month nav */
+  prevMonth?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar(currentDate, true);
-  };
+  });
 
-  nextMonth.onclick = () => {
+  nextMonth?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar(currentDate, true);
-  };
+  });
 
   /* Initial render */
   renderCalendar(currentDate);
@@ -167,19 +167,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const aftermovieBtn = document.getElementById("aftermovieBtn");
   const themeBtn = document.getElementById("themeBtn");
 
-  if (mainVideo && aftermovieBtn && themeBtn) {
-    aftermovieBtn.addEventListener("click", () => {
-      mainVideo.src = "aftermovie.mp4";
-      aftermovieBtn.classList.add("active");
-      themeBtn.classList.remove("active");
-    });
+  aftermovieBtn?.addEventListener("click", () => {
+    mainVideo.src = "aftermovie.mp4";
+    aftermovieBtn.classList.add("active");
+    themeBtn.classList.remove("active");
+  });
 
-    themeBtn.addEventListener("click", () => {
-      mainVideo.src = "themevideo.mp4";
-      themeBtn.classList.add("active");
-      aftermovieBtn.classList.remove("active");
-    });
-  }
+  themeBtn?.addEventListener("click", () => {
+    mainVideo.src = "themevideo.mp4";
+    themeBtn.classList.add("active");
+    aftermovieBtn.classList.remove("active");
+  });
 
 
   /* ---------------------- MOBILE NAV MENU ---------------------- */
@@ -198,9 +196,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    /* Auto close after clicking inside menu (mobile) */
-    document.querySelectorAll("#menu a").forEach(link => {
+    menu.querySelectorAll("a").forEach(link => {
       link.addEventListener("click", () => menu.classList.remove("active"));
     });
   }
+
 });
