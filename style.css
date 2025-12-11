@@ -201,7 +201,7 @@ nav {
   width: 100%;
   overflow: hidden;
   text-align: center;
-  margin: 7rem -1rem;
+  margin: 3.5rem -1rem;
 }
 
 .section-title,
@@ -1038,6 +1038,7 @@ footer {
     justify-content: center !important;
   }
 }
+
 
 
 
