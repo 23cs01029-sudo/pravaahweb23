@@ -84,73 +84,86 @@ if (auth && auth.onAuthStateChanged) {
   });
 }
 
-function escapeHtml(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function escapeHtml(s) { 
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 function renderEventRow(name, opt = {}) {
   const day = opt.dayKey || "";
   const selectable = !!opt.selectable;
   const safe = name.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9_\-]/g, "");
   const id = `${opt.idPrefix || "ev"}_${safe}`;
-  if (selectable) {
-    return `
-    <div class="event-row" data-day="${day}">
-      <div class="event-left">
-        <input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}">
-        <label for="${id}" class="event-label">${escapeHtml(name)}</label>
-      </div>
-      <a href="${RULEBOOK_URL}" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-file-pdf pdf-icon"></i></a>
-    </div>`;
-  }
+
   return `
   <div class="event-row" data-day="${day}">
-    <div class="event-left"><span class="event-label">${escapeHtml(name)}</span></div>
-    <a href="${RULEBOOK_URL}" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-file-pdf pdf-icon"></i></a>
+    <div class="event-left">
+      ${selectable ? `<input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}">` : ""}
+      <label for="${id}" class="event-label">${escapeHtml(name)}</label>
+    </div>
+    <a href="${RULEBOOK_URL}" target="_blank"><i class="fa-regular fa-file-pdf pdf-icon"></i></a>
   </div>`;
 }
 
+/* ===========================
+    PASS CARD SELECTION
+=========================== */
 passCards.forEach(c => {
   c.addEventListener("click", () => {
     passCards.forEach(x => x.classList.remove("selected"));
     c.classList.add("selected");
+
     let t = c.dataset.type || c.textContent.trim();
     if (/day/i.test(t)) t = "Day Pass";
     else if (/visitor/i.test(t)) t = "Visitor Pass";
     else if (/fest/i.test(t)) t = "Fest Pass";
     else if (/star/i.test(t)) t = "Starnite Pass";
+
     currentPassType = t;
     currentDay = null;
     currentVisitorDays = [];
     includeStarNite = false;
     participantsCount = 0;
     if (numInput) numInput.value = 0;
+
     renderSelectionArea();
   });
 });
 
+/* ===========================
+    RENDER SELECTION UI
+=========================== */
 function renderSelectionArea() {
   if (!selectionArea) return;
-  selectionArea.classList.remove("hidden");
-  selectedPassTxt && (selectedPassTxt.textContent = `Selected: ${currentPassType || "—"}`);
-  if (participantForm) participantForm.innerHTML = "";
 
+  selectionArea.classList.remove("hidden");
+  selectedPassTxt.textContent = `Selected: ${currentPassType}`;
+  participantForm.innerHTML = "";
+
+  /* ---------------- DAY PASS ---------------- */
   if (currentPassType === "Day Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
         <h4>Choose Day</h4>
         <div class="day-selector-row">
-          <button type="button" class="day-card" data-day="day0">DAY 0</button>
-          <button type="button" class="day-card" data-day="day1">DAY 1</button>
-          <button type="button" class="day-card" data-day="day2">DAY 2</button>
-          <button type="button" class="day-card" data-day="day3">DAY 3</button>
+          <button class="day-card" data-day="day0">DAY 0</button>
+          <button class="day-card" data-day="day1">DAY 1</button>
+          <button class="day-card" data-day="day2">DAY 2</button>
+          <button class="day-card" data-day="day3">DAY 3</button>
         </div>
       </div>
       <div id="dayEventsContainer"></div>
       <div id="participantsContainerPlaceholder"></div>
     `;
+
     document.querySelectorAll(".day-card").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".day-card").forEach(x => x.classList.remove("active"));
         btn.classList.add("active");
+
         currentDay = btn.dataset.day;
         includeStarNite = false;
         renderDayEvents(currentDay);
@@ -159,30 +172,44 @@ function renderSelectionArea() {
     });
   }
 
+  /* ---------------- VISITOR PASS (UPDATED) ---------------- */
   if (currentPassType === "Visitor Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
-        <h4>Choose Days to Visit</h4>
-        <div id="visitorDaysColumn" class="visitor-days-col">
-          <label class="visitor-day-card"><input type="checkbox" class="visitorDayCheckbox" value="day0"><span>DAY 0</span></label>
-          <label class="visitor-day-card"><input type="checkbox" class="visitorDayCheckbox" value="day1"><span>DAY 1</span></label>
-          <label class="visitor-day-card"><input type="checkbox" class="visitorDayCheckbox" value="day2"><span>DAY 2</span></label>
-          <label class="visitor-day-card"><input type="checkbox" class="visitorDayCheckbox" value="day3"><span>DAY 3</span></label>
+        <h4>Choose Days</h4>
+        <div class="visitor-days-col">
+          <div class="visitor-day-card" data-day="day0">DAY 0</div>
+          <div class="visitor-day-card" data-day="day1">DAY 1</div>
+          <div class="visitor-day-card" data-day="day2">DAY 2</div>
+          <div class="visitor-day-card" data-day="day3">DAY 3</div>
         </div>
       </div>
       <div id="visitorEventsContainer"></div>
       <div id="visitorStarContainer"></div>
       <div id="participantsContainerPlaceholder"></div>
     `;
-    document.querySelectorAll(".visitorDayCheckbox").forEach(cb => cb.addEventListener("change", () => {
-      currentVisitorDays = [...document.querySelectorAll(".visitorDayCheckbox:checked")].map(x => x.value);
-      includeStarNite = false;
-      renderVisitorEvents(currentVisitorDays);
-      renderVisitorStarToggleIfNeeded();
-      calculateTotal();
-    }));
+
+    document.querySelectorAll(".visitor-day-card").forEach(btn => {
+      btn.addEventListener("click", () => {
+        let d = btn.dataset.day;
+
+        if (currentVisitorDays.includes(d)) {
+          currentVisitorDays = currentVisitorDays.filter(x => x !== d);
+          btn.classList.remove("active");
+        } else {
+          currentVisitorDays.push(d);
+          btn.classList.add("active");
+        }
+
+        includeStarNite = false;
+        renderVisitorEvents(currentVisitorDays);
+        renderVisitorStarToggleIfNeeded();
+        calculateTotal();
+      });
+    });
   }
 
+  /* ---------------- FEST PASS ---------------- */
   if (currentPassType === "Fest Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box"><h4>Fest Pass — All Days</h4></div>
@@ -193,6 +220,7 @@ function renderSelectionArea() {
     renderFestEvents();
   }
 
+  /* ---------------- STARNITE PASS ---------------- */
   if (currentPassType === "Starnite Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
@@ -206,85 +234,125 @@ function renderSelectionArea() {
   calculateTotal();
 }
 
+/* ===========================
+   DAY PASS EVENTS
+=========================== */
 function renderDayEvents(dayKey) {
   const container = document.getElementById("dayEventsContainer");
   if (!container) return;
-  if (!dayKey) { container.innerHTML = ""; return; }
+
   const evs = EVENTS[dayKey] || [];
+
   container.innerHTML = `
     <div class="participant-card center-box">
       <h4>${dayKey.toUpperCase()} Events</h4>
       <div class="events-list">
-        ${evs.map(ev => renderEventRow(ev, { dayKey, selectable: true, idPrefix: `day_${dayKey}` })).join("")}
+        ${evs.map(ev => renderEventRow(ev, { dayKey, selectable: true })).join("")}
       </div>
-      ${dayKey === "day3" ? `<div class="starnite-toggle-row"><label><input type="checkbox" id="day3StarToggle"><span>Include Star Nite</span></label></div>` : ""}
+      ${dayKey === "day3" ? `
+        <div class="starnite-toggle-row">
+          <label><input type="checkbox" id="day3StarToggle"><span>Include Star Nite</span></label>
+        </div>` : ""}
     </div>
   `;
+
   const tg = document.getElementById("day3StarToggle");
-  if (tg) tg.addEventListener("change", (e) => { includeStarNite = !!e.target.checked; calculateTotal(); });
+  if (tg) tg.addEventListener("change", () => {
+    includeStarNite = tg.checked;
+    calculateTotal();
+  });
 }
 
+/* ===========================
+   VISITOR PASS EVENTS
+=========================== */
 function renderVisitorEvents(days) {
   const container = document.getElementById("visitorEventsContainer");
   if (!container) return;
-  if (!days || !days.length) { container.innerHTML = ""; return; }
-  container.innerHTML = days.map(d => {
-    const evs = EVENTS[d] || [];
-    return `
-      <div class="participant-card center-box">
-        <h4>${d.toUpperCase()} Events</h4>
-        <div class="events-list">
-          ${evs.map(ev => renderEventRow(ev, { dayKey: d, selectable: false })).join("")}
-        </div>
+
+  if (!days.length) {
+    container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML = days.map(d => `
+    <div class="participant-card center-box">
+      <h4>${d.toUpperCase()} Events</h4>
+      <div class="events-list">
+        ${(EVENTS[d] || []).map(ev => renderEventRow(ev, { dayKey: d, selectable: false })).join("")}
       </div>
-    `;
-  }).join("");
+    </div>
+  `).join("");
 }
 
+/* Star toggle for visitor */
 function renderVisitorStarToggleIfNeeded() {
   const container = document.getElementById("visitorStarContainer");
   if (!container) return;
+
   if (currentVisitorDays.includes("day3")) {
-    container.innerHTML = `<div class="starnite-toggle-row"><label><input type="checkbox" id="visitor_day3_star"><span>Include Star Nite (Day 3)</span></label></div>`;
-    const tg = document.getElementById("visitor_day3_star");
-    if (tg) tg.addEventListener("change", (e) => { includeStarNite = !!e.target.checked; calculateTotal(); });
+    container.innerHTML = `
+      <div class="starnite-toggle-row">
+        <label><input type="checkbox" id="visitorStar"><span>Include Star Nite (Day 3)</span></label>
+      </div>
+    `;
+
+    document.getElementById("visitorStar").addEventListener("change", e => {
+      includeStarNite = e.target.checked;
+      calculateTotal();
+    });
+
   } else {
     container.innerHTML = "";
     includeStarNite = false;
   }
 }
 
+/* ===========================
+   FEST EVENTS
+=========================== */
 function renderFestEvents() {
   const container = document.getElementById("festEventsContainer");
-  if (!container) return;
-  container.innerHTML = ["day0", "day1", "day2", "day3"].map(d => {
-    const evs = EVENTS[d] || [];
-    return `
-      <div class="participant-card center-box">
-        <h4>${d.toUpperCase()}</h4>
-        <div class="events-list">
-          ${evs.map(ev => renderEventRow(ev, { dayKey: d, selectable: true, idPrefix: `fest_${d}` })).join("")}
-        </div>
-        ${d === "day3" ? `<div class="starnite-toggle-row"><label><input type="checkbox" id="fest_day3_star"><span>Include Star Nite (Day 3)</span></label></div>` : ""}
+
+  container.innerHTML = ["day0","day1","day2","day3"].map(d => `
+    <div class="participant-card center-box">
+      <h4>${d.toUpperCase()}</h4>
+      <div class="events-list">
+        ${(EVENTS[d] || []).map(ev => renderEventRow(ev, { dayKey: d, selectable: true })).join("")}
       </div>
-    `;
-  }).join("");
-  setTimeout(() => {
-    const tg = document.getElementById("fest_day3_star");
-    if (tg) tg.addEventListener("change", (e) => { includeStarNite = !!e.target.checked; calculateTotal(); });
-  }, 50);
+      ${d === "day3" ? `
+        <div class="starnite-toggle-row">
+          <label><input type="checkbox" id="festStar"><span>Include Star Nite</span></label>
+        </div>` : ""}
+    </div>
+  `).join("");
+
+  const tg = document.getElementById("festStar");
+  if (tg) tg.addEventListener("change", () => {
+    includeStarNite = tg.checked;
+    calculateTotal();
+  });
 }
 
+/* ===========================
+   PARTICIPANTS FORM
+=========================== */
 function buildParticipantForms(count) {
   const placeholder = document.getElementById("participantsContainerPlaceholder");
-  if (!placeholder) return;
   participantsCount = count;
   placeholder.innerHTML = "";
-  if (count <= 0) { calculateTotal(); return; }
+
+  if (count <= 0) {
+    calculateTotal();
+    return;
+  }
+
   const cache = getCachedProfile();
+
   for (let i = 1; i <= count; i++) {
     const div = document.createElement("div");
     div.className = "participant-card center-box";
+
     div.innerHTML = `
       <h4>Participant ${i}</h4>
       <input class="pname" placeholder="Full name" value="${i === 1 ? escapeHtml(cache.name || "") : ""}">
@@ -292,36 +360,30 @@ function buildParticipantForms(count) {
       <input class="pphone" placeholder="Phone" value="${i === 1 ? escapeHtml(cache.phone || "") : ""}">
       <input class="pcollege" placeholder="College" value="${i === 1 ? escapeHtml(cache.college || "") : ""}">
     `;
+
     placeholder.appendChild(div);
-    const nameInput = div.querySelector(".pname");
-    const emailInput = div.querySelector(".pemail");
-    const phoneInput = div.querySelector(".pphone");
-    const collegeInput = div.querySelector(".pcollege");
-    nameInput && nameInput.addEventListener("input", () => {
-      const typed = (nameInput.value || "").trim().toLowerCase();
-      if (cache.name && typed && typed === cache.name.trim().toLowerCase()) {
-        if (cache.email) emailInput.value = cache.email;
-        if (cache.phone) phoneInput.value = cache.phone;
-        if (cache.college) collegeInput.value = cache.college;
-        [emailInput, phoneInput, collegeInput].forEach(el => { el.style.boxShadow = "0 0 8px cyan"; setTimeout(() => (el.style.boxShadow = ""), 700); });
-      }
-    });
   }
+
   calculateTotal();
 }
 
+/* PARTICIPANT COUNTER */
 if (incBtn) {
   incBtn.addEventListener("click", () => {
     let v = parseInt(numInput.value) || 0;
-    if (v < 10) { numInput.value = ++v; buildParticipantForms(v); }
+    if (v < 10) numInput.value = ++v;
+    buildParticipantForms(v);
   });
 }
+
 if (decBtn) {
   decBtn.addEventListener("click", () => {
     let v = parseInt(numInput.value) || 0;
-    if (v > 0) { numInput.value = --v; buildParticipantForms(v); }
+    if (v > 0) numInput.value = --v;
+    buildParticipantForms(v);
   });
 }
+
 if (numInput) {
   numInput.addEventListener("input", () => {
     let v = parseInt(numInput.value) || 0;
@@ -332,119 +394,120 @@ if (numInput) {
   });
 }
 
+/* ===========================
+   CALCULATE TOTAL
+=========================== */
 function calculateTotal() {
   let t = 0;
-  if (!currentPassType) { updateTotal(0); return; }
+
   if (currentPassType === "Day Pass") {
-    if (!currentDay) { updateTotal(0); return; }
-    t = currentDay !== "day3" ? PRICES.dayPass[currentDay] || 0 : (includeStarNite ? PRICES.dayPass.day3_star : PRICES.dayPass.day3_normal);
-  } else if (currentPassType === "Visitor Pass") {
-    (currentVisitorDays || []).forEach(d => {
-      t += d !== "day3" ? PRICES.visitor[d] || 0 : (includeStarNite ? PRICES.visitor.day3_star : PRICES.visitor.day3_normal);
+    if (!currentDay) return updateTotal(0);
+    t = currentDay !== "day3"
+      ? PRICES.dayPass[currentDay]
+      : includeStarNite ? PRICES.dayPass.day3_star : PRICES.dayPass.day3_normal;
+  }
+
+  if (currentPassType === "Visitor Pass") {
+    currentVisitorDays.forEach(d => {
+      t += d !== "day3"
+        ? PRICES.visitor[d]
+        : includeStarNite ? PRICES.visitor.day3_star : PRICES.visitor.day3_normal;
     });
-  } else if (currentPassType === "Fest Pass") {
+  }
+
+  if (currentPassType === "Fest Pass") {
     t = includeStarNite ? PRICES.fest.star : PRICES.fest.normal;
-  } else if (currentPassType === "Starnite Pass") {
+  }
+
+  if (currentPassType === "Starnite Pass") {
     t = PRICES.starnite;
   }
+
   updateTotal(t);
 }
 
 function updateTotal(t) {
   currentTotal = t;
-  if (totalAmountEl) totalAmountEl.textContent = `Total: ₹${t}`;
-  if (payBtn) payBtn.style.display = (t > 0 && participantsCount > 0) ? "inline-block" : "none";
+  totalAmountEl.textContent = `Total: ₹${t}`;
+  payBtn.style.display = (t > 0 && participantsCount > 0) ? "inline-block" : "none";
 }
 
+/* ===========================
+   EVENT COLLECTION
+=========================== */
 function collectSelectedEvents() {
   const out = { day0: [], day1: [], day2: [], day3: [] };
+
   document.querySelectorAll(".event-checkbox:checked").forEach(c => {
-    const d = c.dataset.day || "";
-    if (!out[d]) out[d] = [];
-    out[d].push(c.value);
+    out[c.dataset.day].push(c.value);
   });
+
   return out;
 }
 
+/* ===========================
+   PAYMENT HANDLER
+=========================== */
 if (payBtn) {
-  payBtn.addEventListener("click", async (e) => {
+  payBtn.addEventListener("click", async e => {
     e.preventDefault();
     if (paying) return;
     paying = true;
+
     const names = [...document.querySelectorAll(".pname")].map(x => x.value.trim());
     const emails = [...document.querySelectorAll(".pemail")].map(x => x.value.trim());
     const phones = [...document.querySelectorAll(".pphone")].map(x => x.value.trim());
     const colleges = [...document.querySelectorAll(".pcollege")].map(x => x.value.trim());
+
     if (names.length === 0) { alert("Add at least one participant"); paying = false; return; }
+
     for (let i = 0; i < names.length; i++) {
-      if (!names[i] || !emails[i] || !phones[i] || !colleges[i]) { alert("Please fill all participant fields"); paying = false; return; }
-      if (!emailRe.test(emails[i])) { alert("Invalid email: " + emails[i]); paying = false; return; }
-      if (!phoneRe.test(phones[i])) { alert("Invalid phone: " + phones[i]); paying = false; return; }
+      if (!names[i] || !emails[i] || !phones[i] || !colleges[i]) {
+        alert("Please fill all participant fields");
+        paying = false;
+        return;
+      }
+      if (!emailRe.test(emails[i])) { alert("Invalid email"); paying = false; return; }
+      if (!phoneRe.test(phones[i])) { alert("Invalid phone"); paying = false; return; }
     }
-    const participants = names.map((n, i) => ({ name: n, email: emails[i], phone: phones[i], college: colleges[i] }));
-    const selectedEvents = collectSelectedEvents();
-    const payloadMeta = {
+
+    const participants = names.map((n, i) => ({
+      name: n,
+      email: emails[i],
+      phone: phones[i],
+      college: colleges[i]
+    }));
+
+    const payload = {
+      registeredEmail: emails[0],
       passType: currentPassType,
       totalAmount: currentTotal,
-      participantsCount: participants.length,
-      selectedDay: currentPassType === "Day Pass" ? currentDay : null,
-      visitorDays: currentPassType === "Visitor Pass" ? currentVisitorDays : null,
-      includeStarNite: !!includeStarNite,
-      selectedEvents
+      participants,
+      selectedDay: currentDay,
+      visitorDays: currentVisitorDays,
+      includeStarNite,
+      selectedEvents: collectSelectedEvents()
     };
-    const userEmail = auth?.currentUser?.email || (participants[0] && participants[0].email) || "";
-    const options = {
+
+    const rzp = new Razorpay({
       key: "rzp_test_Re1mOkmIGroT2c",
-      amount: Number(currentTotal) * 100,
+      amount: currentTotal * 100,
       currency: "INR",
       name: "PRAVAAH 2026",
       description: `${currentPassType} — Registration`,
-      image: "pravah-logo.png",
-      prefill: { name: participants[0].name || "", email: participants[0].email || userEmail, contact: participants[0].phone || "" },
-      handler: async function (response) {
-        const payload = {
-          registeredEmail: userEmail,
-          paymentId: response.razorpay_payment_id,
-          passType: payloadMeta.passType,
-          totalAmount: payloadMeta.totalAmount,
-          participants: participants,
-          selectedDay: payloadMeta.selectedDay,
-          visitorDays: payloadMeta.visitorDays,
-          includeStarNite: payloadMeta.includeStarNite,
-          selectedEvents: payloadMeta.selectedEvents
-        };
-        let sent = false;
-        try { if (navigator.sendBeacon) sent = navigator.sendBeacon(scriptURL, new Blob([JSON.stringify(payload)], { type: "application/json" })); } catch {}
-        if (!sent) {
-          try { await fetch(scriptURL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), keepalive: true }); } catch {}
-        }
-        const match = participants.find(p => p.email === userEmail) || participants[0];
-        if (match) saveProfileCache({ name: match.name || "", email: match.email || "", phone: match.phone || "", college: match.college || "" });
-        const placeholder = document.getElementById("participantsContainerPlaceholder");
-        if (placeholder) placeholder.innerHTML = "";
-        if (numInput) numInput.value = 0;
-        participantsCount = 0;
-        paying = false;
-        currentTotal = 0;
-        if (totalAmountEl) totalAmountEl.textContent = "Total: ₹0";
-        if (payBtn) payBtn.style.display = "none";
-        passCards.forEach(c => c.classList.remove("selected"));
-        if (selectionArea) selectionArea.classList.add("hidden");
-        currentPassType = null;
-        currentDay = null;
-        currentVisitorDays = [];
-        includeStarNite = false;
+      handler: async response => {
+        payload.paymentId = response.razorpay_payment_id;
+
+        navigator.sendBeacon(scriptURL, new Blob([JSON.stringify(payload)], { type: "application/json" }));
+
         window.location.href = "payment_success.html";
-      },
-      modal: { ondismiss: function () { paying = false; } }
-    };
-    try {
-      const rzp = new Razorpay(options);
-      rzp.open();
-    } catch (err) {
-      console.error("Razorpay launch error", err);
+      }
+    });
+
+    try { rzp.open(); }
+    catch (err) {
+      alert("Payment failed to start");
       paying = false;
-      alert("Payment failed to start. Try again.");
     }
   });
 }
