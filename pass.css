@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
-/* ---------- GENERAL ---------- */
 body {
   font-family: 'Orbitron', sans-serif;
   background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
@@ -22,7 +21,7 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* ---------- PASSES SECTION ---------- */
+/* -------- PASSES SECTION -------- */
 .passes-section {
   width: 100%;
   display: flex;
@@ -41,7 +40,6 @@ body {
   max-width: 1100px;
 }
 
-/* ---------- HEADER ---------- */
 .passes-box h1 {
   color: cyan;
   text-shadow: 0 0 8px rgba(0,255,255,0.5);
@@ -56,7 +54,7 @@ body {
   line-height: 1.6;
 }
 
-/* ---------- PASS CARDS ---------- */
+/* -------- PASS CARDS -------- */
 .passes-grid {
   display: flex;
   gap: 30px;
@@ -102,7 +100,7 @@ body {
   opacity: 1;
 }
 
-/* ---------- SELECTION AREA ---------- */
+/* -------- SELECTION AREA -------- */
 #selectionArea {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(0,255,255,0.4);
@@ -124,15 +122,18 @@ body {
   text-align: center;
 }
 
-/* ---------- HORIZONTAL DAY SELECTOR ---------- */
-.day-selector-row {
+/* -------- HORIZONTAL DAY SELECTOR -------- */
+.day-selector-row,
+.visitor-days-row {
   display: flex;
   justify-content: center;
   gap: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
 }
 
-.day-card {
+.day-card,
+.visitor-day-card {
   background: rgba(0,0,0,0.55);
   border: 1px solid rgba(0,255,255,0.5);
   padding: 14px 22px;
@@ -141,22 +142,32 @@ body {
   cursor: pointer;
   transition: .3s;
   font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   box-shadow: 0 0 14px rgba(0,255,255,0.2);
 }
 
-.day-card:hover {
+.visitor-day-card input {
+  transform: scale(1.3);
+  accent-color: cyan;
+}
+
+.day-card:hover,
+.visitor-day-card:hover {
   box-shadow: 0 0 18px rgba(0,255,255,0.5);
   transform: translateY(-3px);
 }
 
-.day-card.active {
+.day-card.active,
+.visitor-day-card input:checked + span {
   background: rgba(0,255,255,0.15);
   border: 2px solid cyan;
   box-shadow: 0 0 25px cyan;
   transform: scale(1.05);
 }
 
-/* ---------- EVENT ROW (WIDER & LIKE YOUR DESIGN) ---------- */
+/* -------- EVENT ROW -------- */
 .event-row {
   display: flex;
   justify-content: space-between;
@@ -198,57 +209,46 @@ body {
   text-shadow: 0 0 15px cyan;
 }
 
-/* ---------- PARTICIPANT COUNTER (MATCHES YOUR PHOTO EXACTLY) ---------- */
-.participant-counter {
+/* -------- STARNITE BEAUTIFUL TOGGLE -------- */
+.starnite-toggle-row {
+  margin-top: 15px;
   display: flex;
   justify-content: center;
-  margin-top: 10px;
 }
 
-.counter-box {
+.starnite-toggle-row label {
   display: flex;
   align-items: center;
-  gap: 25px;
-  background: rgba(0,0,0,0.55);
-  border: 2px solid cyan;
-  border-radius: 20px;
-  padding: 12px 25px;
-  box-shadow: 0 0 25px rgba(0,255,255,0.4);
-}
-
-.counter-btn {
-  background: cyan;
-  color: black;
-  border: none;
-  padding: 10px 16px;
+  gap: 10px;
+  background: rgba(0,255,255,0.1);
+  padding: 12px 18px;
   border-radius: 12px;
+  border: 1.5px solid cyan;
+  box-shadow: 0 0 18px rgba(0,255,255,0.3);
   cursor: pointer;
-  font-size: 1.6rem;
-  font-weight: bold;
   transition: .3s;
 }
 
-.counter-btn:hover {
-  transform: scale(1.1);
-  background: #00ffff;
-  box-shadow: 0 0 18px cyan;
+.starnite-toggle-row input {
+  transform: scale(1.4);
+  accent-color: cyan;
 }
 
-.counter-display {
-  font-size: 1.8rem;
-  color: cyan;
-  text-shadow: 0 0 15px cyan;
+.starnite-toggle-row label:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 30px cyan;
 }
 
-/* ---------- PARTICIPANT FORM ---------- */
+/* -------- PARTICIPANT FORM -------- */
 .participant-card {
   background: rgba(0,0,0,0.35);
   border: 1px solid rgba(0,255,255,0.5);
   border-radius: 12px;
   padding: 20px;
-  margin: 12px 0;
+  margin: 12px auto;
   width: 90%;
-  max-width: 500px;
+  max-width: 480px;
+  text-align: center;
   box-shadow: 0 0 12px rgba(0,255,255,0.2);
 }
 
@@ -269,7 +269,60 @@ body {
   box-shadow: 0 0 15px cyan;
 }
 
-/* ---------- TOTAL SECTION ---------- */
+/* -------- NEW CUSTOM COUNTER -------- */
+.custom-number-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1.5px solid rgba(0,255,255,0.5);
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,255,255,0.15);
+  padding: 8px 12px;
+  margin-bottom: 15px;
+}
+
+.custom-number-box input {
+  width: 80px;
+  height: 40px;
+  text-align: center;
+  border: none;
+  outline: none;
+  color: cyan;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: transparent;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.custom-number-box input::-webkit-inner-spin-button,
+.custom-number-box input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.num-btn {
+  background: cyan;
+  border: none;
+  color: black;
+  font-size: 1.4rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .3s;
+  box-shadow: 0 0 8px rgba(0,255,255,0.3);
+}
+
+.num-btn:hover {
+  background: #00ffff;
+  box-shadow: 0 0 15px rgba(0,255,255,0.5);
+  transform: scale(1.05);
+}
+
+/* -------- TOTAL + PAYMENT -------- */
 .total-section {
   margin-top: 1.5rem;
   color: cyan;
@@ -297,7 +350,7 @@ body {
   box-shadow: 0 0 25px cyan;
 }
 
-/* ---------- RESPONSIVE ---------- */
+/* -------- RESPONSIVE -------- */
 @media (max-width: 900px) {
   .passes-box { padding: 25px; }
   .pass-card { width: 90%; }
