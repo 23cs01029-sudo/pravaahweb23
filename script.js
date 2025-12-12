@@ -108,27 +108,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
       calendar.innerHTML = "";
 
-      /* empty blocks */
       for (let i = 0; i < firstDay; i++) {
         calendar.appendChild(document.createElement("div"));
       }
 
-      /* actual days */
       for (let i = 1; i <= daysInMonth; i++) {
         const day = document.createElement("div");
         day.classList.add("day");
         day.textContent = i;
 
-        /* today highlight */
         const today = new Date();
-        const isToday =
+        if (
           i === today.getDate() &&
           month === today.getMonth() &&
-          year === today.getFullYear();
+          year === today.getFullYear()
+        ) {
+          day.classList.add("today");
+        }
 
-        if (isToday) day.classList.add("today");
-
-        /* click event */
         day.addEventListener("click", () => {
           document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
           day.classList.add("selected");
@@ -149,8 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, transition ? 250 : 0);
   }
 
-
-  /* Month navigation */
   prevMonth?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar(currentDate, true);
@@ -161,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar(currentDate, true);
   });
 
-  /* Initial render */
   renderCalendar(currentDate);
   renderFeed(
     `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`
@@ -212,24 +206,27 @@ document.addEventListener("DOMContentLoaded", () => {
      🔵 LIGHTBOX SYSTEM — FULL-SCREEN VIEWER
   =========================================================== */
 
-  /* Create dynamic lightbox */
-  const lightbox = document.createElement("div");
-  lightbox.className = "lightbox hidden";
+  let galleryImages = Array.from(document.querySelectorAll(".slide img")).map((img, index) => ({
+    src: img.src,
+    title: img.parentElement.getAttribute("data-title"),
+    desc: "This is one of the premium highlights of PRAVAAH 2K25.",
+    index
+  }));
 
-  lightbox.innerHTML = `
+  /* Create only ONE lightbox */
+  const lightboxHTML = `
     <div class="lightbox-top">
-      <span class="close-lightbox">&times;</span>
-
+      <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
       <a id="downloadIcon" class="download-icon" download>
         <i class="fa-solid fa-download"></i>
       </a>
     </div>
 
-    <span class="lb-arrow left">&#10094;</span>
+    <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
 
-    <img id="lightboxImg" src="">
+    <img id="lightboxImg" />
 
-    <span class="lb-arrow right">&#10095;</span>
+    <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
 
     <div class="lightbox-info">
         <h3 id="lightboxTitle"></h3>
@@ -237,9 +234,9 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   `;
 
-  document.body.appendChild(lightbox);
+  const lightbox = document.getElementById("lightbox");
+  lightbox.innerHTML = lightboxHTML;
 
-  /* References */
   const lbImg = document.getElementById("lightboxImg");
   const lbTitle = document.getElementById("lightboxTitle");
   const lbDesc = document.getElementById("lightboxDesc");
@@ -249,59 +246,55 @@ document.addEventListener("DOMContentLoaded", () => {
   const leftArrow = lightbox.querySelector(".lb-arrow.left");
   const rightArrow = lightbox.querySelector(".lb-arrow.right");
 
-  let galleryImages = [];
   let currentIndex = 0;
 
-  /* Collect images */
-  galleryImages = Array.from(document.querySelectorAll(".slide img")).map((img, index) => ({
-    src: img.src,
-    title: img.parentElement.getAttribute("data-title"),
-    desc: "This is one of the premium highlights of PRAVAAH 2K25.",
-    index
-  }));
+  /* Smooth slide transition */
+  function showSlide(index) {
+    lbImg.style.opacity = 0;
 
-  /* Open Lightbox */
+    setTimeout(() => {
+      const item = galleryImages[index];
+      lbImg.src = item.src;
+      lbTitle.textContent = item.title;
+      lbDesc.textContent = item.desc;
+
+      downloadIcon.href = item.src;
+      downloadIcon.setAttribute("download", item.title.replace(/\s+/g, "_"));
+
+      lbImg.style.opacity = 1;
+    }, 200);
+  }
+
   function openLightbox(index) {
     currentIndex = index;
-    const item = galleryImages[index];
-
-    lbImg.src = item.src;
-    lbTitle.textContent = item.title;
-    lbDesc.textContent = item.desc;
-
-    downloadIcon.href = item.src;
-    downloadIcon.setAttribute("download", item.title.replace(/\s+/g, "_"));
-
+    showSlide(index);
     lightbox.classList.remove("hidden");
   }
 
-  /* Close */
-  closeBtn.addEventListener("click", () => {
-    lightbox.classList.add("hidden");
+  closeBtn.addEventListener("click", () => lightbox.classList.add("hidden"));
+
+  /* Only zoom-icon should trigger the lightbox */
+  document.querySelectorAll(".zoom-icon").forEach((icon, i) => {
+    icon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openLightbox(i);
+    });
   });
 
-  /* Slide click event */
-  document.querySelectorAll(".slide img").forEach((img, i) => {
-    img.addEventListener("click", () => openLightbox(i));
-  });
-
-  /* Left */
+  /* Left / Right arrow controls */
   leftArrow.addEventListener("click", () => {
     currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
-    openLightbox(currentIndex);
+    showSlide(currentIndex);
   });
 
-  /* Right */
   rightArrow.addEventListener("click", () => {
     currentIndex = (currentIndex + 1) % galleryImages.length;
-    openLightbox(currentIndex);
+    showSlide(currentIndex);
   });
 
-  /* Background click close */
+  /* Close when clicking outside */
   lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) {
-      lightbox.classList.add("hidden");
-    }
+    if (e.target === lightbox) lightbox.classList.add("hidden");
   });
 
   /* Swipe Support */
@@ -314,8 +307,8 @@ document.addEventListener("DOMContentLoaded", () => {
   lightbox.addEventListener("touchend", (e) => {
     let endX = e.changedTouches[0].clientX;
 
-    if (startX - endX > 50) rightArrow.click();
-    if (endX - startX > 50) leftArrow.click();
+    if (startX - endX > 60) rightArrow.click();
+    if (endX - startX > 60) leftArrow.click();
   });
 
 });
