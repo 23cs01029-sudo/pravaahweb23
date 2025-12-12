@@ -1133,91 +1133,80 @@ footer {
   }
 }
 
-/* ============================================================
-   PRAVAAH LIGHTBOX — FINAL FIXED VERSION (PC + MOBILE)
-   ============================================================ */
 
-#lightbox {
+/* ===========================================================
+   🔵 PRAVAAH LIGHTBOX SYSTEM (Full Screen Gallery Viewer)
+   =========================================================== */
+
+.lightbox {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: rgba(0,0,0,0.88);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 18px;
-  padding: 0;
-  z-index: 99999;
-  position: relative; /* required for top icons */
+  padding: 40px 20px;
+  z-index: 9999;
 }
 
-#lightbox.hidden { display: none !important; }
+.hidden { display: none !important; }
 
-/* IMAGE */
-#lightboxImg {
+/* MAIN IMAGE */
+.lightbox img {
   width: 70%;
   max-height: 70vh;
   object-fit: contain;
   border-radius: 14px;
   border: 2px solid #00F6FF88;
   box-shadow: 0 0 25px #00F6FF99;
-  transition: opacity .25s ease-in-out;
+  animation: zoomIn 0.4s ease;
 }
 
-/* TOP BAR (X + Download) */
-.lightbox-top {
+@keyframes zoomIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* CLOSE BUTTON */
+.close-lightbox {
   position: absolute;
   top: 20px;
-  right: 20px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 18px;
-  z-index: 100000;
-}
-
-.close-lightbox {
-  font-size: 42px;
+  right: 28px;
+  font-size: 40px;
+  font-weight: bold;
   color: #00F6FF;
   cursor: pointer;
-  transition: 0.25s ease;
+  text-shadow: 0 0 12px #00F6FF;
+  transition: 0.2s;
 }
+
 .close-lightbox:hover {
   color: white;
-  text-shadow: 0 0 12px #00F6FF;
+  text-shadow: 0 0 18px #00F6FF;
 }
 
-.download-icon {
-  font-size: 32px;
-  color: #00F6FF;
-  cursor: pointer;
-  text-decoration: none;
-  transition: 0.25s;
-}
-.download-icon:hover {
-  color: white;
-  text-shadow: 0 0 12px #00F6FF;
-}
-
-/* ARROWS */
+/* ARROW BUTTONS */
 .lb-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  padding: 14px;
   cursor: pointer;
+  padding: 12px;
   border-radius: 50%;
   background: rgba(0, 246, 255, 0.18);
   border: 2px solid rgba(0, 246, 255, 0.4);
-  backdrop-filter: blur(4px);
   box-shadow: 0 0 14px rgba(0, 246, 255, 0.3);
+  backdrop-filter: blur(4px);
   transition: 0.25s ease;
 }
+
 .lb-arrow i {
-  font-size: 28px;
+  font-size: 26px;
   color: #00F6FF;
+  transition: 0.25s ease;
 }
 
 .lb-arrow.left { left: 40px; }
@@ -1225,19 +1214,28 @@ footer {
 
 .lb-arrow:hover {
   transform: translateY(-50%) scale(1.1);
-  background: rgba(255,255,255,0.22);
-}
-.lb-arrow:hover i {
-  color: white;
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* BELOW IMAGE INFO BOX */
+.lb-arrow:hover i {
+  color: white;
+  text-shadow: 0 0 14px #00F6FF;
+}
+
+/* Mobile positioning */
+@media (max-width: 650px) {
+  .lb-arrow.left { left: 10px; }
+  .lb-arrow.right { right: 10px; }
+}
+
+
+/* INFO BOX BELOW IMAGE */
 .lightbox-info {
+  background: rgba(0,0,0,0.55);
   width: 70%;
   max-width: 900px;
+  padding: 18px 22px;
   text-align: center;
-  background: rgba(0,0,0,0.55);
-  padding: 16px 20px;
   border-radius: 12px;
   border: 1px solid #00F6FF55;
   backdrop-filter: blur(6px);
@@ -1245,53 +1243,169 @@ footer {
 
 .lightbox-info h3 {
   color: #00F6FF;
-  font-size: 1.45rem;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
 }
 
 .lightbox-info p {
   color: #E9F8FF;
   font-size: 1rem;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
-/* ---------------------------
-    MOBILE RESPONSIVE FIXES
---------------------------- */
+/* DOWNLOAD BUTTON */
+.download-btn {
+  background: #00F6FF;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: black;
+  text-decoration: none;
+  font-size: 1.05rem;
+  margin-top: 6px;
+  box-shadow: 0 0 12px #00F6FF80;
+  transition: 0.25s ease;
+}
+
+.download-btn:hover {
+  transform: scale(1.08);
+  background: white;
+}
+
+/* MOBILE FIX */
 @media (max-width: 650px) {
-
-  #lightboxImg {
-    width: 92%;
-    max-height: 45vh;
-  }
-
-  .lb-arrow {
-    padding: 9px;
-    border-width: 1.4px;
-  }
-
-  .lb-arrow i { font-size: 22px; }
+  .lightbox img { width: 90%; }
 
   .lb-arrow.left { left: 10px; }
   .lb-arrow.right { right: 10px; }
 
-  .lightbox-top {
-    top: 12px;
-    right: 12px;
-    gap: 12px;
-  }
-
-  .close-lightbox { font-size: 32px; }
-  .download-icon { font-size: 28px; }
-
   .lightbox-info {
-    width: 92%;
-    padding: 12px 14px;
+    width: 90%;
+    padding: 12px 15px;
   }
 
   .lightbox-info h3 { font-size: 1.2rem; }
-  .lightbox-info p  { font-size: 0.9rem; }
+  .lightbox-info p { font-size: 0.9rem; }
 }
+
+
+/* ============================================================
+   MAGNIFY ICON ON HIGHLIGHTS CARD
+   ============================================================ */
+
+.zoom-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(0, 246, 255, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1.5px solid #00F6FF88;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: 0.25s ease;
+}
+
+.slide:hover .zoom-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.zoom-icon i {
+  color: #00F6FF;
+  font-size: 1.2rem;
+}
+.zoom-icon {
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   LIGHTBOX TOP BAR (Close + Download Side-by-Side)
+   ============================================================ */
+
+.lightbox-top {
+  position: absolute;
+  top: 22px;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Close Icon */
+.close-lightbox {
+  font-size: 42px;
+  cursor: pointer;
+  color: #00F6FF;
+  transition: 0.25s;
+}
+
+.close-lightbox:hover {
+  color: white;
+  text-shadow: 0 0 12px #00F6FF;
+}
+#lightboxImg {
+    transition: opacity .25s ease-in-out;
+}
+
+/* Download Icon beside close button */
+.download-icon {
+  font-size: 32px;
+  color: #00F6FF;
+  cursor: pointer;
+  transition: 0.25s;
+  text-decoration: none;
+}
+
+.download-icon:hover {
+  color: white;
+  text-shadow: 0 0 12px #00F6FF;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
