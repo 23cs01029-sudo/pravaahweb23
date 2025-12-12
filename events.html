@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRAVAAH — Events</title>
 
-  <!-- Main PRAVAAH Theme CSS -->
+  <!-- MAIN THEME CSS -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="events.css" />
 
@@ -33,9 +33,7 @@
     const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     const auth = getAuth(app);
 
-    onAuthStateChanged(auth, (user) => {
-      if (!user) window.location.href = "index.html";
-    });
+    onAuthStateChanged(auth, user => { if (!user) window.location.href = "index.html"; });
 
     document.addEventListener("DOMContentLoaded", () => {
       const logoutDesktop = document.getElementById("logoutDesktop");
@@ -51,7 +49,7 @@
     });
   </script>
 
-  <!-- ⭐ NAVBAR (Exactly from Home Page) -->
+  <!-- ⭐ NAVBAR (Same as Home) -->
   <nav>
     <a href="https://www.iitbbs.ac.in/" class="iitbbs-logo" target="_blank">
       <img src="iitbbs-logo.png">
@@ -76,16 +74,12 @@
     <button class="logout-btn" id="logoutDesktop">Logout</button>
   </nav>
 
-  <!-- PAGE HEADING -->
-  <div class="pg-heading" style="
-      font-family:'Oranienbaum';
-      text-align:center;
-      margin-top:40px;
-      margin-bottom:20px;
-      font-size:3rem;
-      color:#24E0EC;
-      text-shadow:0 0 12px rgba(36,224,236,0.5);
-  ">EVENTS</div>
+  <!-- ⭐ PAGE HEADING -->
+  <div class="pg-heading"
+    style="font-family:'Oranienbaum'; text-align:center; margin-top:40px; margin-bottom:20px;
+    font-size:3rem; color:#24E0EC; text-shadow:0 0 12px rgba(36,224,236,0.5);">
+    EVENTS
+  </div>
 
   <!-- CATEGORY SWITCH -->
   <div class="category-switch">
@@ -94,7 +88,7 @@
     <button id="workBtn">Workshops</button>
   </div>
 
-  <!-- SECTIONS (UNCHANGED CARDS) -->
+  <!-- 🧠 TECH EVENTS -->
   <div class="event-section tech-events active">
     <div class="event-grid">
 
@@ -105,7 +99,7 @@
           <p>A platform for entrepreneurs to showcase ideas and connect with investors.</p>
           <div class="btn-group">
             <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <a href="#" class="btn know-more">Know More</a>
+            <a href="#" class="btn know-more" target="_blank">Know More</a>
           </div>
         </div>
         <div class="event-title">Startup Expo</div>
@@ -140,11 +134,99 @@
     </div>
   </div>
 
-  <!-- SAME FOR CULT + WORKSHOPS (unchanged) -->
-  <div class="event-section cult-events"> ... </div>
-  <div class="event-section work-events"> ... </div>
+  <!-- 🎭 CULTURAL EVENTS -->
+  <div class="event-section cult-events">
+    <div class="event-grid">
 
-  <!-- ⭐ FOOTER (Copied Exactly from Home) -->
+      <div class="event-card">
+        <img src="DSC09133.JPG" class="event-img" />
+        <div class="overlay">
+          <h3>Group Dance</h3>
+          <p>Teams light up the stage with energy & synchronization.</p>
+          <div class="btn-group">
+            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+            <button class="btn know-more">Know More</button>
+          </div>
+        </div>
+        <div class="event-title">Group Dance</div>
+      </div>
+
+      <div class="event-card">
+        <img src="DSC09133.JPG" class="event-img" />
+        <div class="overlay">
+          <h3>Solo Dance</h3>
+          <p>A solo battle of rhythm, creativity, and passion.</p>
+          <div class="btn-group">
+            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+            <button class="btn know-more">Know More</button>
+          </div>
+        </div>
+        <div class="event-title">Solo Dance</div>
+      </div>
+
+      <div class="event-card">
+        <img src="DSC09133.JPG" class="event-img" />
+        <div class="overlay">
+          <h3>Fashion Show</h3>
+          <p>Walk the ramp with elegance, style, and creativity.</p>
+          <div class="btn-group">
+            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+            <button class="btn know-more">Know More</button>
+          </div>
+        </div>
+        <div class="event-title">Fashion Show</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 🛠 WORKSHOPS -->
+  <div class="event-section work-events">
+    <div class="event-grid">
+
+      <div class="event-card">
+        <img src="DSC09133.JPG" class="event-img" />
+        <div class="overlay">
+          <h3>AI & ML Workshop</h3>
+          <p>Hands-on learning for beginners aiming to explore Artificial Intelligence.</p>
+          <div class="btn-group">
+            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+            <button class="btn know-more">Know More</button>
+          </div>
+        </div>
+        <div class="event-title">AI Workshop</div>
+      </div>
+
+      <div class="event-card">
+        <img src="DSC09133.JPG" class="event-img" />
+        <div class="overlay">
+          <h3>Robotics Workshop</h3>
+          <p>Learn the basics of robotics through fun practical modules.</p>
+          <div class="btn-group">
+            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+            <button class="btn know-more">Know More</button>
+          </div>
+        </div>
+        <div class="event-title">Robotics Workshop</div>
+      </div>
+
+      <div class="event-card">
+        <img src="DSC09133.JPG" class="event-img" />
+        <div class="overlay">
+          <h3>Drone Workshop</h3>
+          <p>Build & fly your first drone with expert guidance!</p>
+          <div class="btn-group">
+            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+            <button class="btn know-more">Know More</button>
+          </div>
+        </div>
+        <div class="event-title">Drone Workshop</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ⭐ FOOTER (Same as Home) -->
   <footer>
     <div class="footer-container">
 
@@ -193,6 +275,7 @@
     </div>
   </footer>
 
+  <!-- JS -->
   <script src="events.js"></script>
 </body>
 </html>
