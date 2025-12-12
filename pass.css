@@ -45,8 +45,6 @@ body {
   color: cyan;
   text-shadow: 0 0 5px rgba(0,255,255,0.4);
   font-size: 2.3rem;
-  margin-top: 25px;
-  margin-bottom: 25px;
 }
 
 /* -------- PASS CARDS -------- */
@@ -113,23 +111,22 @@ body {
   color: cyan;
   font-size: 1.7rem;
   text-shadow: 0 0 7px rgba(0,255,255,0.5);
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin-bottom: 1rem;
   text-align: center;
 }
 
-/* -------- DAY SELECT BUTTONS -------- */
+/* -------- ALL DAY SELECT BUTTONS (Day Pass + Visitor Pass) -------- */
 .day-selector-row,
 .visitor-days-row,
 .visitor-days-col {
   display: flex;
   justify-content: center;
   gap: 15px;
-  margin-top: 20px;
-  margin-bottom: 25px;
+  margin-bottom: 18px;
   flex-wrap: wrap;
 }
 
+/* Make visitor-day-card identical to day-card */
 .day-card,
 .visitor-day-card {
   background: rgba(0,0,0,0.45);
@@ -141,6 +138,10 @@ body {
   transition: .25s;
   font-size: 1rem;
   box-shadow: 0 0 8px rgba(0,255,255,0.15);
+}
+
+.visitor-day-card input {
+  display: none;
 }
 
 .day-card:hover,
@@ -157,19 +158,20 @@ body {
   transform: scale(1.04);
 }
 
-/* -------- EVENT CHECKBOX (MATCHES STARNITE TOGGLE) -------- */
+/* -------- CLEAN MINIMAL CHECKBOXES (EVENTS) -------- */
+/* -------- EVENT CHECKBOX (EXACT SAME SIZE AS STARNITE TOGGLE) -------- */
 .event-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .event-left input[type="checkbox"] {
   appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 18px;       /* SAME SIZE FIXED */
+  height: 18px;      /* SAME SIZE FIXED */
   border: 2px solid cyan;
-  border-radius: 6px;
+  border-radius: 4px;  /* keep same as original */
   background: rgba(0,255,255,0.08);
   cursor: pointer;
   position: relative;
@@ -178,24 +180,26 @@ body {
 
 .event-left input[type="checkbox"]:hover {
   box-shadow: 0 0 10px cyan;
+  transform: scale(1.05);
 }
 
 .event-left input[type="checkbox"]:checked {
   background: cyan;
   border-color: cyan;
-  box-shadow: 0 0 14px cyan;
+  box-shadow: 0 0 12px cyan;
 }
 
 .event-left input[type="checkbox"]:checked::after {
   content: "";
-  width: 10px;
-  height: 10px;
+  width: 8px;       /* same proportion as Starnite fill */
+  height: 8px;
   background: black;
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: 4px;
+  left: 4px;
   border-radius: 2px;
 }
+
 
 /* -------- EVENT ROW -------- */
 .event-row {
@@ -203,10 +207,10 @@ body {
   justify-content: space-between;
   align-items: center;
   background: rgba(0,0,0,0.32);
-  padding: 16px 20px;
+  padding: 14px 18px;
   border-radius: 12px;
   border: 1px solid rgba(0,255,255,0.32);
-  margin: 12px 0;
+  margin: 10px 0;
   width: 100%;
   transition: .25s;
   box-shadow: 0 0 8px rgba(0,255,255,0.12);
@@ -218,7 +222,7 @@ body {
 }
 
 .event-label {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: white;
 }
 
@@ -233,7 +237,7 @@ body {
   text-shadow: 0 0 8px cyan;
 }
 
-/* -------- STARNITE TOGGLE (UNCHANGED) -------- */
+/* -------- STARNITE TOGGLE -------- */
 .starnite-toggle-row {
   margin-top: 15px;
   display: flex;
@@ -308,7 +312,7 @@ body {
 }
 
 .custom-number-box input {
-  width: 60px;
+  width: 60px; /* Reduced width */
   height: 35px;
   text-align: center;
   border: none;
