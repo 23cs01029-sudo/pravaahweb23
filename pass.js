@@ -42,6 +42,9 @@ const incBtn = document.getElementById("incPart");
 const totalAmountEl = document.getElementById("totalAmount");
 const payBtn = document.getElementById("payBtn");
 
+// ensure payBtn won't submit any parent form accidentally
+if (payBtn) payBtn.setAttribute("type", "button");
+
 let currentPassType = null;
 let currentDay = null;
 let currentVisitorDays = [];
@@ -100,7 +103,6 @@ function renderEventRow(name, opt = {}) {
   const safe = String(name).replace(/\s+/g, "").replace(/[^a-zA-Z0-9\-]/g, "");
   const id = `${opt.idPrefix || "ev"}_${safe}`;
 
-  // Build HTML as a string (avoid inserting raw DOM nodes here)
   return `
   <div class="event-row" data-day="${day}">
     <div class="event-left">
@@ -138,6 +140,7 @@ passCards.forEach(c => {
 
 /* ===========================
     RENDER SELECTION UI
+    (buttons inside forms must be type="button" to avoid accidental submit)
 =========================== */
 function renderSelectionArea() {
   if (!selectionArea) return;
@@ -146,16 +149,21 @@ function renderSelectionArea() {
   if (selectedPassTxt) selectedPassTxt.textContent = `Selected: ${currentPassType || "—"}`;
   if (participantForm) participantForm.innerHTML = "";
 
+  // prevent actual form submission if participantForm is a <form>
+  if (participantForm && participantForm.tagName === "FORM") {
+    participantForm.addEventListener("submit", ev => ev.preventDefault());
+  }
+
   /* ---------------- DAY PASS ---------------- */
   if (currentPassType === "Day Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
         <h4>Choose Day</h4>
         <div class="day-selector-row">
-          <button class="day-card" data-day="day0">DAY 0</button>
-          <button class="day-card" data-day="day1">DAY 1</button>
-          <button class="day-card" data-day="day2">DAY 2</button>
-          <button class="day-card" data-day="day3">DAY 3</button>
+          <button type="button" class="day-card" data-day="day0">DAY 0</button>
+          <button type="button" class="day-card" data-day="day1">DAY 1</button>
+          <button type="button" class="day-card" data-day="day2">DAY 2</button>
+          <button type="button" class="day-card" data-day="day3">DAY 3</button>
         </div>
       </div>
       <div id="dayEventsContainer"></div>
@@ -163,7 +171,10 @@ function renderSelectionArea() {
     `;
 
     document.querySelectorAll(".day-card").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (ev) => {
+        // ensure no submit / default behavior
+        if (ev && typeof ev.preventDefault === "function") ev.preventDefault();
+
         document.querySelectorAll(".day-card").forEach(x => x.classList.remove("active"));
         btn.classList.add("active");
 
