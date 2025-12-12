@@ -1275,7 +1275,7 @@ footer {
    MAGNIFY ICON ON HIGHLIGHTS CARD
    ============================================================ */
 
-.magnify-icon {
+.zoom-icon {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -1293,15 +1293,16 @@ footer {
   transition: 0.25s ease;
 }
 
-.slide:hover .magnify-icon {
+.slide:hover .zoom-icon {
   opacity: 1;
   transform: scale(1);
 }
 
-.magnify-icon i {
+.zoom-icon i {
   color: #00F6FF;
   font-size: 1.2rem;
 }
+
 
 /* ============================================================
    LIGHTBOX TOP BAR (Close + Download Side-by-Side)
@@ -1333,15 +1334,17 @@ footer {
 .download-icon {
   font-size: 32px;
   color: #00F6FF;
-  text-decoration: none;
   cursor: pointer;
   transition: 0.25s;
+  text-decoration: none;
 }
 
 .download-icon:hover {
   color: white;
   text-shadow: 0 0 12px #00F6FF;
 }
+
+
 
 
 
