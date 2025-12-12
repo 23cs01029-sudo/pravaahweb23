@@ -354,3 +354,17 @@ body {
   .participant-card { width: 95%; }
   .event-row { padding: 12px; }
 }
+/* UNIFY STARNITE TOGGLE WIDTH EVERYWHERE */
+.starnite-toggle-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.starnite-toggle-row label {
+  min-width: 240px;          /* 🔥 Force same width */
+  justify-content: center;   /* Center content */
+  text-align: center;
+}
+
