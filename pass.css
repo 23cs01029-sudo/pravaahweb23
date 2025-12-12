@@ -45,6 +45,8 @@ body {
   color: cyan;
   text-shadow: 0 0 5px rgba(0,255,255,0.4);
   font-size: 2.3rem;
+  margin-top: 25px;
+  margin-bottom: 25px;
 }
 
 /* -------- PASS CARDS -------- */
@@ -79,6 +81,20 @@ body {
   transform: scale(1.03);
 }
 
+.select-indicator {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 1.4rem;
+  color: cyan;
+  opacity: 0;
+  transition: .25s;
+}
+
+.pass-card.selected .select-indicator {
+  opacity: 1;
+}
+
 /* -------- SELECTION AREA -------- */
 #selectionArea {
   background: rgba(255,255,255,0.04);
@@ -97,18 +113,20 @@ body {
   color: cyan;
   font-size: 1.7rem;
   text-shadow: 0 0 7px rgba(0,255,255,0.5);
-  margin-bottom: 1rem;
+  margin-top: 25px;
+  margin-bottom: 25px;
   text-align: center;
 }
 
-/* -------- DAY BUTTONS -------- */
+/* -------- DAY SELECT BUTTONS -------- */
 .day-selector-row,
 .visitor-days-row,
 .visitor-days-col {
   display: flex;
   justify-content: center;
   gap: 15px;
-  margin-bottom: 18px;
+  margin-top: 20px;
+  margin-bottom: 25px;
   flex-wrap: wrap;
 }
 
@@ -139,6 +157,46 @@ body {
   transform: scale(1.04);
 }
 
+/* -------- EVENT CHECKBOX (MATCHES STARNITE TOGGLE) -------- */
+.event-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.event-left input[type="checkbox"] {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid cyan;
+  border-radius: 6px;
+  background: rgba(0,255,255,0.08);
+  cursor: pointer;
+  position: relative;
+  transition: 0.25s;
+}
+
+.event-left input[type="checkbox"]:hover {
+  box-shadow: 0 0 10px cyan;
+}
+
+.event-left input[type="checkbox"]:checked {
+  background: cyan;
+  border-color: cyan;
+  box-shadow: 0 0 14px cyan;
+}
+
+.event-left input[type="checkbox"]:checked::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: black;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  border-radius: 2px;
+}
+
 /* -------- EVENT ROW -------- */
 .event-row {
   display: flex;
@@ -151,6 +209,7 @@ body {
   margin: 12px 0;
   width: 100%;
   transition: .25s;
+  box-shadow: 0 0 8px rgba(0,255,255,0.12);
 }
 
 .event-row:hover {
@@ -158,52 +217,11 @@ body {
   box-shadow: 0 0 12px rgba(0,255,255,0.25);
 }
 
-/* -------- EVENT CHECKBOX (MATCHES STARNITE TOGGLE) -------- */
-.event-toggle {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.event-toggle input[type="checkbox"] {
-  appearance: none;
-  width: 22px;
-  height: 22px;
-  border: 2px solid cyan;
-  border-radius: 6px;
-  background: rgba(0,255,255,0.08);
-  position: relative;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.event-toggle input[type="checkbox"]:hover {
-  box-shadow: 0 0 10px cyan;
-}
-
-.event-toggle input[type="checkbox"]:checked {
-  background: cyan;
-  border-color: cyan;
-  box-shadow: 0 0 12px cyan;
-}
-
-.event-toggle input[type="checkbox"]:checked::after {
-  content: "";
-  width: 10px;
-  height: 10px;
-  background: black;
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  border-radius: 2px;
-}
-
-/* Label text */
 .event-label {
   font-size: 1.1rem;
+  color: white;
 }
 
-/* PDF icon */
 .pdf-icon {
   color: cyan;
   font-size: 1.2rem;
@@ -215,8 +233,7 @@ body {
   text-shadow: 0 0 8px cyan;
 }
 
-/* -------- STARNITE TOGGLE -------- */
-/* (kept unchanged as you requested) */
+/* -------- STARNITE TOGGLE (UNCHANGED) -------- */
 .starnite-toggle-row {
   margin-top: 15px;
   display: flex;
@@ -239,6 +256,11 @@ body {
 .starnite-toggle-row input {
   transform: scale(1.25);
   accent-color: cyan;
+}
+
+.starnite-toggle-row label:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 14px rgba(0,255,255,0.35);
 }
 
 /* -------- PARTICIPANT FORM -------- */
@@ -269,6 +291,77 @@ body {
 .participant-card input:focus {
   outline: none;
   box-shadow: 0 0 10px cyan;
+}
+
+/* -------- COUNTER -------- */
+.custom-number-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1.3px solid rgba(0,255,255,0.35);
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.12);
+  padding: 8px 12px;
+  margin-bottom: 15px;
+}
+
+.custom-number-box input {
+  width: 60px;
+  height: 35px;
+  text-align: center;
+  border: none;
+  outline: none;
+  color: cyan;
+  font-size: 1rem;
+  background: transparent;
+  font-weight: 600;
+}
+
+.num-btn {
+  background: cyan;
+  border: none;
+  color: black;
+  font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: .25s;
+}
+
+.num-btn:hover {
+  transform: scale(1.05);
+  background: #00ffff;
+}
+
+/* -------- TOTAL + PAYMENT -------- */
+.total-section {
+  margin-top: 1.5rem;
+  color: cyan;
+  text-shadow: 0 0 6px rgba(0,255,255,0.4);
+  font-size: 1.35rem;
+  text-align: center;
+}
+
+.main-btn {
+  background: cyan;
+  border: none;
+  padding: 12px 30px;
+  color: black;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: .25s;
+  margin-top: 10px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.25);
+}
+
+.main-btn:hover {
+  transform: scale(1.06);
+  background: #00ffff;
 }
 
 /* -------- RESPONSIVE -------- */
