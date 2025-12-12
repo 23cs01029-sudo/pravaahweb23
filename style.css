@@ -1365,6 +1365,17 @@ footer {
   }
 }
 
+/* FIX — Remove underline + text hover styles from social icons */
+.footer-social-icons a {
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
+.footer-social-icons a:hover {
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
 
 
 
