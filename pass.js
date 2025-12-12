@@ -1,11 +1,14 @@
-// pass.js — PRAVAAH 2026 Pass system (single-file updated)
+// pass.js — PRAVAAH 2026 Pass system (updated per your requests)
 // ===========================================================
-// Features:
-//  - Day/Fest: event box with checkbox + PDF icon (rulebook link)
-//  - Visitor: event list (no checkboxes) with PDF icon
-//  - Participants required for all passes
-//  - StarNite logic + pricing rules
-//  - Razorpay + Apps Script POST
+// Changes in this update:
+//  - After successful payment: participant form is cleared (fields emptied), numParticipants reset to 0,
+//    but profile cache is kept (so auto-fill works when typed name matches cached profile).
+//  - StarNite choice shown as a toggle at the BOTTOM of Day-3 events list (for Day & Fest flows).
+//  - Starnite standalone pass price set to ₹300 (PRICES.starnite).
+//  - Wider event-row HTML remains (CSS should handle actual width — update pass.css separately).
+//  - Visitor pass shows event names only (no checkboxes).
+//  - Day0 included but does not show event cards unless specified in EVENTS (behavior kept).
+//  - Participant form required for all passes.
 // ===========================================================
 
 /* ---------------- BACKEND URL ---------------- */
@@ -13,7 +16,7 @@ const scriptURL = "https://script.google.com/macros/s/AKfycby4F5rBxS_-KLmP05Yqm-
 
 /* ---------------- EVENTS (placeholders) ---------------- */
 const EVENTS = {
-  day0: ["Event 1", "Event 2", "Event 3"],
+  day0: ["Event 1", "Event 2", "Event 3"],       // Day0 included but you can leave empty if you don't want cards shown
   day1: ["Event 1", "Event 2", "Event 3"],
   day2: ["Event 1", "Event 2", "Event 3"],
   day3: ["Event 1", "Event 2", "Event 3", "Star Nite"]
@@ -23,7 +26,8 @@ const EVENTS = {
 const PRICES = {
   dayPass: { day0: 300, day1: 800, day2: 800, day3_normal: 800, day3_star: 1100 },
   visitor: { day0: 400, day1: 500, day2: 500, day3_normal: 500, day3_star: 800 },
-  fest: { normal: 2000, star: 2500 }
+  fest: { normal: 2000, star: 2500 },
+  starnite: 300 // updated: Starnite standalone pass price is ₹300
 };
 
 /* ---------------- FIREBASE AUTH (reuse global if present) ---------------- */
@@ -127,29 +131,28 @@ function renderEventRow(eventName, opts = {}) {
   if (selectable) {
     // box layout with checkbox left, pdf right
     return `
-      <div class="event-row" data-day="${dayKey}" style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid rgba(255,255,255,0.03);border-radius:8px;margin:6px 0;background:rgba(255,255,255,0.02);">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <input type="checkbox" id="${checkboxId}" class="event-checkbox" data-day="${dayKey}" value="${escapeHtml(eventName)}" style="width:18px;height:18px;">
-          <label for="${checkboxId}" style="cursor:pointer;margin:0">${escapeHtml(eventName)}</label>
+      <div class="event-row" data-day="${dayKey}">
+        <div class="event-left">
+          <input type="checkbox" id="${checkboxId}" class="event-checkbox" data-day="${dayKey}" value="${escapeHtml(eventName)}">
+          <label for="${checkboxId}" class="event-label">${escapeHtml(eventName)}</label>
         </div>
-        <div>
+        <div class="event-right">
           <a id="${pdfId}" href="${RULEBOOK_URL}" target="_blank" rel="noopener noreferrer" title="Open rulebook">
-            <i class="fa-regular fa-file-pdf" style="font-size:18px;color:var(--primary, #24E0EC)"></i>
+            <i class="fa-regular fa-file-pdf pdf-icon"></i>
           </a>
         </div>
       </div>
     `;
   } else {
-    // non-selectable: event name + pdf icon
+    // non-selectable: event name + pdf icon (no checkbox)
     return `
-      <div class="event-row" data-day="${dayKey}" style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid rgba(255,255,255,0.03);border-radius:8px;margin:6px 0;background:rgba(255,255,255,0.02);">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span style="width:18px;display:inline-block"></span>
-          <span style="cursor:default">${escapeHtml(eventName)}</span>
+      <div class="event-row" data-day="${dayKey}">
+        <div class="event-left">
+          <span class="event-label">${escapeHtml(eventName)}</span>
         </div>
-        <div>
+        <div class="event-right">
           <a href="${RULEBOOK_URL}" target="_blank" rel="noopener noreferrer" title="Open rulebook">
-            <i class="fa-regular fa-file-pdf" style="font-size:18px;color:var(--primary, #24E0EC)"></i>
+            <i class="fa-regular fa-file-pdf pdf-icon"></i>
           </a>
         </div>
       </div>
@@ -198,45 +201,49 @@ function renderSelectionArea() {
   participantForm && (participantForm.innerHTML = "");
 
   // Show pass-specific controls and event lists
-  // We'll render participants placeholder inside the participantForm templates (id: participantsContainerPlaceholder)
   if (currentPassType === "Day Pass") {
     participantForm.innerHTML = `
       <div class="participant-card">
         <h4>Choose Day</h4>
-        <select id="daySelect" class="pselect">
-          <option value="">-- Select Day --</option>
-          <option value="day0">Day 0</option>
-          <option value="day1">Day 1</option>
-          <option value="day2">Day 2</option>
-          <option value="day3">Day 3 (Star Nite)</option>
-        </select>
+        <div id="daySelectorRow" class="day-selector-row">
+          <!-- horizontal day cards -->
+          <button class="day-card" data-day="day0">Day 0</button>
+          <button class="day-card" data-day="day1">Day 1</button>
+          <button class="day-card" data-day="day2">Day 2</button>
+          <button class="day-card" data-day="day3">Day 3</button>
+        </div>
       </div>
       <div id="dayEventsContainer"></div>
       <div class="participant-card" id="participantsContainerPlaceholder"></div>
     `;
-    // attach listener
-    const daySelect = document.getElementById("daySelect");
-    daySelect && daySelect.addEventListener("change", (e) => {
-      currentDay = e.target.value || null;
-      includeStarNite = false;
-      renderDayEvents(currentDay);
-      calculateTotal();
+    // attach day-card click handlers (horizontal)
+    document.querySelectorAll("#daySelectorRow .day-card").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        document.querySelectorAll("#daySelectorRow .day-card").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        currentDay = btn.dataset.day;
+        includeStarNite = false;
+        renderDayEvents(currentDay);
+        calculateTotal();
+      });
     });
   }
   else if (currentPassType === "Visitor Pass") {
-    // For visitor pass we want NO event checkboxes — only display event names (date-wise) with pdf icon.
+    // Visitor: date-wise checkboxes (user asked visitor pass should just display the event names according to date wise)
     participantForm.innerHTML = `
       <div class="participant-card">
         <h4>Choose Days to Visit</h4>
-        <label><input type="checkbox" class="visitorDayCheckbox" value="day0"> Day 0</label><br>
-        <label><input type="checkbox" class="visitorDayCheckbox" value="day1"> Day 1</label><br>
-        <label><input type="checkbox" class="visitorDayCheckbox" value="day2"> Day 2</label><br>
-        <label><input type="checkbox" class="visitorDayCheckbox" value="day3"> Day 3 (Star Nite)</label><br>
+        <div id="visitorDaysRow" class="visitor-days-row">
+          <label><input type="checkbox" class="visitorDayCheckbox" value="day0"> Day 0</label>
+          <label><input type="checkbox" class="visitorDayCheckbox" value="day1"> Day 1</label>
+          <label><input type="checkbox" class="visitorDayCheckbox" value="day2"> Day 2</label>
+          <label><input type="checkbox" class="visitorDayCheckbox" value="day3"> Day 3</label>
+        </div>
       </div>
       <div id="visitorEventsContainer"></div>
       <div class="participant-card" id="participantsContainerPlaceholder"></div>
     `;
-    // attach toggles
+    // attach handlers
     document.querySelectorAll(".visitorDayCheckbox").forEach(cb => cb.addEventListener("change", () => {
       currentVisitorDays = [...document.querySelectorAll(".visitorDayCheckbox:checked")].map(x => x.value);
       includeStarNite = false;
@@ -245,23 +252,25 @@ function renderSelectionArea() {
     }));
   }
   else if (currentPassType === "Fest Pass") {
-    // Fest: all days with checkboxes + star nite toggle
     participantForm.innerHTML = `
       <div class="participant-card">
         <h4>Fest Pass — All Days</h4>
-        <label><input type="checkbox" id="festStarNite"> Include Star Nite (adds ₹500)</label>
+        <div id="festDaysRow" class="day-selector-row">
+          <button class="day-card" data-day="day0">Day 0</button>
+          <button class="day-card" data-day="day1">Day 1</button>
+          <button class="day-card" data-day="day2">Day 2</button>
+          <button class="day-card" data-day="day3">Day 3</button>
+        </div>
       </div>
       <div id="festEventsContainer"></div>
       <div class="participant-card" id="participantsContainerPlaceholder"></div>
     `;
-    document.getElementById("festStarNite")?.addEventListener("change", (e) => {
-      includeStarNite = !!e.target.checked;
-      calculateTotal();
-    });
+    // render fest events (all days shown horizontally in their own cards)
     renderFestEvents();
+
+    // star toggle for day3 must appear at bottom of day3 events (handled inside renderFestEvents)
   }
   else if (currentPassType === "Starnite Pass") {
-    // Simple: treat as special pass: single day (day3) but priced like starnite standalone
     participantForm.innerHTML = `
       <div class="participant-card">
         <h4>Starnite Pass</h4>
@@ -270,14 +279,23 @@ function renderSelectionArea() {
       <div id="starniteEventsContainer"></div>
       <div class="participant-card" id="participantsContainerPlaceholder"></div>
     `;
-    // render day3 events (non-selectable or selectable as you prefer; here show starnite as selectable)
     const container = document.getElementById("starniteEventsContainer");
     if (container) {
       container.innerHTML = `
-        <div class="participant-card"><h4>Day 3 Events</h4>
-          ${EVENTS.day3.map(ev => renderEventRow(ev, { dayKey: "day3", selectable: ev !== "Star Nite" })).join("")}
+        <div class="participant-card">
+          <h4>Day 3 Events</h4>
+          ${EVENTS.day3.map(ev => renderEventRow(ev, { dayKey: "day3", selectable: true, idPrefix: "starnite" })).join("")}
+          <!-- bottom star toggle (for consistency, but Starnite pass itself is standalone price) -->
+          <div class="starnite-toggle" style="margin-top:10px">
+            <label><input type="checkbox" id="starnite_confirm"> Confirm Starnite Access</label>
+          </div>
         </div>
       `;
+      // toggle doesn't change price here because starnite pass is fixed price; it's only a confirmation UI.
+      document.getElementById("starnite_confirm")?.addEventListener("change", (e) => {
+        // no-op price-wise; but we map includeStarNite to true if checked
+        includeStarNite = !!e.target.checked;
+      });
     }
   }
 
@@ -296,33 +314,29 @@ function renderDayEvents(dayKey) {
   if (!dayKey) { container.innerHTML = ""; return; }
 
   const evs = EVENTS[dayKey] || [];
-  // For Day Pass: show selectable checkboxes for events (except we treat Star Nite specially)
+  // For Day Pass: show selectable checkboxes for events (except Star Nite toggle placed at bottom)
   container.innerHTML = `
     <div class="participant-card">
       <h4>Events for ${dayKey.toUpperCase()}</h4>
-      ${evs.map(ev => {
-        if (ev === "Star Nite") {
-          // show star nite with checkbox that toggles includeStarNite
-          return `
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
-              <div style="display:flex;align-items:center;gap:10px">
-                <input type="checkbox" id="day3StarCheck" style="width:18px;height:18px;">
-                <label for="day3StarCheck">Star Nite</label>
-              </div>
-              <a href="${RULEBOOK_URL}" target="_blank" rel="noopener noreferrer" title="Open rulebook"><i class="fa-regular fa-file-pdf" style="font-size:18px;color:var(--primary,#24E0EC)"></i></a>
-            </div>
-          `;
-        } else {
-          return renderEventRow(ev, { dayKey, selectable: true, idPrefix: `day_${dayKey}` });
-        }
-      }).join("")}
+      <div class="events-list">
+        ${evs.filter(ev => ev !== "Star Nite").map(ev => renderEventRow(ev, { dayKey, selectable: true, idPrefix: `day_${dayKey}` })).join("")}
+      </div>
+      <!-- bottom StarNite toggle for day3 -->
+      ${dayKey === "day3" ? `
+        <div class="starnite-bottom" style="margin-top:10px;display:flex;align-items:center;gap:10px;justify-content:flex-start">
+          <label style="display:flex;align-items:center;gap:8px">
+            <input type="checkbox" id="day3StarToggle">
+            <span>Include Star Nite (Day 3)</span>
+          </label>
+        </div>
+      ` : ""}
     </div>
   `;
 
-  // attach star listener
-  const starEl = document.getElementById("day3StarCheck");
-  if (starEl) {
-    starEl.addEventListener("change", (ev) => {
+  // attach star listener (bottom toggle)
+  const starToggle = document.getElementById("day3StarToggle");
+  if (starToggle) {
+    starToggle.addEventListener("change", (ev) => {
       includeStarNite = !!ev.target.checked;
       calculateTotal();
     });
@@ -340,34 +354,44 @@ function renderVisitorEvents(days) {
     return `
       <div class="participant-card">
         <h4>${d.toUpperCase()} Events</h4>
-        ${evs.map(ev => {
-          // For visitor: NO checkboxes; show event name + pdf icon only
-          return renderEventRow(ev, { dayKey: d, selectable: false });
-        }).join("")}
+        <div class="events-list">
+          ${evs.map(ev => renderEventRow(ev, { dayKey: d, selectable: false })).join("")}
+        </div>
       </div>
     `;
   }).join("");
-
-  // For day3 visitor star checkbox: we provided a day checkbox earlier; if day3 was checked, includeStarNite remains false unless you want to treat it differently.
-  // (Pricing uses includeStarNite when a separate star choice exists — visitor can include star by checking the visiting day and selecting star via the checkbox next to day label originally.)
-  // We already set includeStarNite on change of the visitorDayCheckbox if needed in event listener above.
 }
 
 /* ---------------- render Fest events (checkboxes for all days) ---------------- */
 function renderFestEvents() {
   const container = document.getElementById("festEventsContainer");
   if (!container) return;
+
   container.innerHTML = ["day0","day1","day2","day3"].map(d => {
     const evs = EVENTS[d] || [];
     return `
       <div class="participant-card">
         <h5 style="margin-bottom:10px">${d.toUpperCase()} Events</h5>
-        ${evs.map(ev => renderEventRow(ev, { dayKey: d, selectable: true, idPrefix: `fest_${d}` })).join("")}
+        <div class="events-list">
+          ${evs.filter(ev => ev !== "Star Nite").map(ev => renderEventRow(ev, { dayKey: d, selectable: true, idPrefix: `fest_${d}` })).join("")}
+        </div>
+        ${d === "day3" ? `
+          <div class="starnite-bottom" style="margin-top:10px;display:flex;align-items:center;gap:10px;justify-content:flex-start">
+            <label style="display:flex;align-items:center;gap:8px">
+              <input type="checkbox" id="fest_day3_starnite">
+              <span>Include Star Nite (Day 3)</span>
+            </label>
+          </div>
+        ` : ""}
       </div>
     `;
   }).join("");
 
-  // attach a delegated listener (checkbox handling is via DOM when collecting selected events)
+  // attach listener for day3 star checkbox (delegated)
+  setTimeout(() => {
+    const el = document.getElementById("fest_day3_starnite");
+    if (el) el.addEventListener("change", (e) => { includeStarNite = !!e.target.checked; calculateTotal(); });
+  }, 50);
 }
 
 /* ---------------- build participant forms (required for all passes) ---------------- */
@@ -472,8 +496,8 @@ function calculateTotal() {
     total = includeStarNite ? PRICES.fest.star : PRICES.fest.normal;
   }
   else if (currentPassType === "Starnite Pass") {
-    // treat as day3 star pricing (standalone)
-    total = PRICES.dayPass.day3_star || PRICES.visitor.day3_star || 1100;
+    // standalone starnite price
+    total = PRICES.starnite || 300;
   }
 
   currentTotal = total;
@@ -493,7 +517,7 @@ function collectSelectedEvents() {
     }
   });
 
-  // dayEventCheck / festEvent / visitorEventCheck are also checkboxes in earlier flows;
+  // also include any checkboxes with older classes to be safe
   document.querySelectorAll(".dayEventCheck, .festEvent, .visitorEventCheck").forEach(cb => {
     if (cb.checked) {
       const day = cb.dataset.day || "";
@@ -571,9 +595,30 @@ if (payBtn) {
           } catch (err) { console.warn("post failed", err); }
         }
 
+        // save the first participant as cached profile (so auto-fill works next time when typing same name)
         const match = participants.find(p => p.email === userEmail) || participants[0];
         if (match) saveProfileCache({ name: match.name || "", email: match.email || "", phone: match.phone || "", college: match.college || "" });
 
+        // AFTER success: clear the participant forms and reset counts (but keep cache)
+        // clear UI: remove participant cards, set numParticipants to 0, hide pay button
+        const placeholder = document.getElementById("participantsContainerPlaceholder");
+        if (placeholder) placeholder.innerHTML = "";
+        if (numInput) numInput.value = 0;
+        participantsCount = 0;
+        paying = false;
+        currentTotal = 0;
+        if (totalAmountEl) totalAmountEl.textContent = "Total: ₹0";
+        if (payBtn) payBtn.style.display = "none";
+
+        // Optionally reset selection area and pass cards (I will keep selection visible but unselect cards)
+        passCards.forEach(c => c.classList.remove("selected"));
+        if (selectionArea) selectionArea.classList.add("hidden");
+        currentPassType = null;
+        currentDay = null;
+        currentVisitorDays = [];
+        includeStarNite = false;
+
+        // redirect to success page
         window.location.href = "payment_success.html";
       },
       modal: { ondismiss: function() { paying = false; } }
@@ -594,7 +639,6 @@ if (payBtn) {
 
 /* ---------------- global change listener for some dynamic controls ---------------- */
 document.addEventListener("change", (e) => {
-  // daySelect handled separately in renderSelectionArea
   // visitor day checkboxes:
   if (e.target && e.target.classList && e.target.classList.contains("visitorDayCheckbox")) {
     currentVisitorDays = [...document.querySelectorAll(".visitorDayCheckbox:checked")].map(x => x.value);
@@ -602,9 +646,9 @@ document.addEventListener("change", (e) => {
     calculateTotal();
     return;
   }
-  // fest star nite (we attached earlier but leave here too)
-  if (e.target && e.target.id === "festStarNite") { includeStarNite = !!e.target.checked; calculateTotal(); return; }
-  if (e.target && e.target.id === "day3StarCheck") { includeStarNite = !!e.target.checked; calculateTotal(); return; }
+  // fest day3 star checkbox
+  if (e.target && e.target.id === "fest_day3_starnite") { includeStarNite = !!e.target.checked; calculateTotal(); return; }
+  if (e.target && e.target.id === "day3StarToggle") { includeStarNite = !!e.target.checked; calculateTotal(); return; }
   // number typed directly
   if (e.target && e.target.id === "numParticipants") {
     const v = parseInt(e.target.value) || 0;
