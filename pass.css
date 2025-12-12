@@ -1,6 +1,11 @@
+/* -----------------------------------------------------------
+   PRAVAAH 2026 — NEW PASS SYSTEM (UPDATED FULL pass.css)
+   Theme: Neon Cyan  • Orbitron • Glowing Cards • Dark Aurora BG
+------------------------------------------------------------ */
+
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
-/* ---------- GENERAL ---------- */
+/* ---------- BODY + GLOBAL ---------- */
 body {
   font-family: 'Orbitron', sans-serif;
   background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
@@ -32,82 +37,82 @@ body {
 }
 
 .passes-container {
+  width: 100%;
   display: flex;
   justify-content: center;
-  width: 100%;
 }
 
 .passes-box {
   background: rgba(0, 0, 0, 0.75);
-  border: 1.5px solid rgba(0, 255, 255, 0.5);
+  border: 1.5px solid rgba(0, 255, 255, 0.45);
   border-radius: 20px;
-  box-shadow: 0 0 18px rgba(0, 255, 255, 0.25);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.25);
   padding: 40px;
   width: 90%;
   max-width: 1100px;
   text-align: center;
 }
 
-/* ---------- HEADER ---------- */
+/* ---------- HEADING ---------- */
 .passes-box h1 {
   color: cyan;
-  text-shadow: 0 0 8px rgba(0,255,255,0.5);
+  text-shadow: 0 0 12px cyan;
   margin-bottom: 10px;
-  font-size: 2.3rem;
+  font-size: 2.4rem;
   letter-spacing: 1.5px;
+  font-weight: 700;
 }
 
 .instructions {
-  color: #ccc;
-  font-size: 1rem;
+  color: #ddd;
   margin-bottom: 35px;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 /* ---------- PASS CARDS ---------- */
 .passes-grid {
   display: flex;
   justify-content: center;
-  gap: 30px;
   flex-wrap: wrap;
+  gap: 28px;
   margin-bottom: 40px;
 }
 
 .pass-card {
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0,0,0,0.55);
   border: 1px solid rgba(0,255,255,0.6);
   border-radius: 15px;
   padding: 25px 20px;
   width: 300px;
-  box-shadow: 0 0 10px rgba(0,255,255,0.15);
-  transition: all 0.3s ease;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0,255,255,0.15);
   position: relative;
 }
 
 .pass-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(0,255,255,0.3);
+  transform: translateY(-6px);
+  box-shadow: 0 0 22px rgba(0,255,255,0.4);
 }
 
 .pass-card h2 {
   color: cyan;
-  font-size: 1.5rem;
-  margin-bottom: 5px;
-  text-shadow: 0 0 6px rgba(0,255,255,0.3);
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+  text-shadow: 0 0 8px cyan;
 }
 
 .pass-card .price {
-  font-size: 1.3rem;
-  font-weight: 700;
   color: #00ffff;
+  font-size: 1.25rem;
+  font-weight: 700;
   margin-bottom: 10px;
 }
 
 .pass-card .desc {
   color: #ccc;
   font-size: 0.95rem;
-  margin: 10px 0 20px;
   line-height: 1.5;
 }
 
@@ -116,19 +121,19 @@ body {
   position: absolute;
   top: 12px;
   right: 15px;
-  color: cyan;
   font-size: 1.5rem;
   opacity: 0;
-  transform: scale(0.8);
+  color: cyan;
+  transform: scale(0.75);
   transition: all 0.3s ease;
 }
 
-/* ---------- SELECTED CARD HIGHLIGHT ---------- */
+/* ---------- ACTIVE SELECTED CARD ---------- */
 .pass-card.selected {
   border: 2px solid cyan;
+  transform: scale(1.06);
   box-shadow: 0 0 25px rgba(0,255,255,0.7);
-  transform: scale(1.05);
-  animation: pulseGlow 2.5s ease-in-out infinite alternate;
+  animation: glowPulse 2.2s ease-in-out infinite alternate;
 }
 
 .pass-card.selected .select-indicator {
@@ -136,100 +141,104 @@ body {
   transform: scale(1);
 }
 
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 15px rgba(0,255,255,0.4); }
-  100% { box-shadow: 0 0 35px rgba(0,255,255,0.9); }
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 18px rgba(0,255,255,0.5); }
+  100% { box-shadow: 0 0 35px rgba(0,255,255,1); }
 }
 
 /* ---------- SELECTION AREA ---------- */
 #selectionArea {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255,255,255,0.06);
   border: 1px solid rgba(0,255,255,0.4);
-  border-radius: 12px;
+  border-radius: 15px;
   padding: 30px;
   margin-top: 30px;
-  box-shadow: 0 0 15px rgba(0,255,255,0.15);
+  box-shadow: 0 0 20px rgba(0,255,255,0.18);
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 #selectedPass {
   color: cyan;
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-shadow: 0 0 6px cyan;
+}
+
+/* ---------- CONTROL BOXES (DAY / VISITOR / FEST) ---------- */
+#controls label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: cyan;
   text-shadow: 0 0 6px rgba(0,255,255,0.4);
 }
 
-/* ---------- CUSTOM NUMBER INPUT ---------- */
-.participant-section {
-  margin-bottom: 2rem;
-}
-
-.participant-section label {
-  display: block;
-  font-weight: 600;
-  color: #cfdfff;
-  margin-bottom: 12px;
-  text-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
-}
-
-.custom-number-box {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1.5px solid rgba(0,255,255,0.5);
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,255,255,0.15);
-  padding: 8px 12px;
-  margin-bottom: 15px;
-}
-
-.custom-number-box input {
-  width: 80px;
-  height: 40px;
-  text-align: center;
-  border: none;
-  outline: none;
-  color: cyan;
-  font-size: 1.1rem;
-  font-weight: 600;
-  background: transparent;
-  font-family: 'Orbitron', sans-serif;
-}
-
-/* Remove default arrows */
-.custom-number-box input::-webkit-inner-spin-button,
-.custom-number-box input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* + / - Buttons */
-.num-btn {
-  background: cyan;
-  border: none;
-  color: black;
-  font-size: 1.4rem;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  font-weight: 700;
+#controls select,
+#controls input[type="checkbox"] {
+  transform: scale(1.15);
+  accent-color: cyan;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 8px rgba(0,255,255,0.3);
 }
 
-.num-btn:hover {
-  background: #00ffff;
-  box-shadow: 0 0 15px rgba(0,255,255,0.5);
-  transform: scale(1.05);
+#controls select {
+  padding: 7px 12px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(0,255,255,0.4);
+  color: cyan;
 }
 
-/* ---------- PARTICIPANT CARD ---------- */
+/* ---------- EVENT LISTS ---------- */
+#eventsContainer {
+  margin-top: 18px;
+  padding: 18px;
+  background: rgba(0,0,0,0.45);
+  border-radius: 12px;
+  border: 1px solid rgba(0,255,255,0.25);
+  box-shadow: 0 0 12px rgba(0,255,255,0.15);
+}
+
+.day-group {
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.day-group h4 {
+  color: cyan;
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  text-shadow: 0 0 6px cyan;
+}
+
+.event-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.event-item {
+  background: rgba(255,255,255,0.07);
+  padding: 7px 12px;
+  border-radius: 8px;
+  color: white;
+  border: 1px solid rgba(0,255,255,0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.3s ease;
+}
+
+.event-item:hover {
+  background: rgba(0,255,255,0.15);
+  box-shadow: 0 0 12px rgba(0,255,255,0.4);
+}
+
+.event-item input { cursor: pointer; }
+
+/* ---------- PARTICIPANT SECTION ---------- */
 .participants-form {
   display: flex;
   flex-direction: column;
@@ -237,111 +246,87 @@ body {
 }
 
 .participant-card {
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(0,255,255,0.5);
-  border-radius: 10px;
-  padding: 20px;
-  margin: 12px 0;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(0,255,255,0.4);
+  border-radius: 12px;
+  padding: 18px;
   width: 80%;
   max-width: 500px;
-  box-shadow: 0 0 10px rgba(0,255,255,0.1);
-  transition: all 0.3s ease;
+  margin-top: 12px;
+  transition: 0.3s ease;
+  box-shadow: 0 0 12px rgba(0,255,255,0.15);
 }
 
 .participant-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 18px rgba(0,255,255,0.25);
+  box-shadow: 0 0 20px rgba(0,255,255,0.30);
 }
 
 .participant-card h4 {
   color: cyan;
-  text-shadow: 0 0 7px rgba(0,255,255,0.5);
   margin-bottom: 10px;
+  text-shadow: 0 0 7px cyan;
 }
 
 .participant-card input {
   width: 90%;
   padding: 10px;
-  margin: 5px 0;
+  margin: 6px 0;
+  background: rgba(255,255,255,0.08);
   border: none;
   border-radius: 8px;
-  background: rgba(255,255,255,0.08);
   color: white;
-  text-align: center;
-  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  transition: 0.3s ease;
 }
 
 .participant-card input:focus {
-  outline: none;
-  box-shadow: 0 0 10px rgba(0,255,255,0.5);
-  border: 1px solid rgba(0,255,255,0.5);
+  box-shadow: 0 0 12px cyan;
+  border: 1px solid cyan;
 }
 
-/* ---------- TOTAL SECTION ---------- */
+/* ---------- TOTAL + PAY BUTTON ---------- */
 .total-section {
-  margin-top: 1.5rem;
+  margin-top: 20px;
   color: cyan;
-  text-shadow: 0 0 7px rgba(0,255,255,0.4);
-}
-
-#totalAmount {
-  margin-bottom: 12px;
-  font-size: 1.3rem;
+  text-shadow: 0 0 8px cyan;
+  font-size: 1.2rem;
 }
 
 .main-btn {
+  margin-top: 10px;
+  padding: 12px 28px;
   background: cyan;
-  border: none;
-  padding: 12px 30px;
   color: black;
+  border: none;
+  border-radius: 12px;
   font-weight: 700;
-  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.3s ease;
 }
 
 .main-btn:hover {
-  background: #00ffff;
-  box-shadow: 0 0 20px rgba(0,255,255,0.6);
   transform: scale(1.05);
-  animation: btnGlow 1.5s infinite alternate;
-}
-
-@keyframes btnGlow {
-  0% { box-shadow: 0 0 10px rgba(0,255,255,0.4); }
-  100% { box-shadow: 0 0 25px rgba(0,255,255,0.8); }
+  background: #00ffff;
+  box-shadow: 0 0 20px cyan;
 }
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 900px) {
-  .passes-box {
-    padding: 25px;
-  }
+  .passes-box { padding: 25px; }
 
-  .passes-grid {
-    flex-direction: column;
-    align-items: center;
-  }
+  .passes-grid { flex-direction: column; }
 
-  .pass-card {
-    width: 90%;
-  }
+  .pass-card { width: 90%; }
 
-  #selectionArea {
-    padding: 20px;
-  }
+  #selectionArea { padding: 25px; }
 
-  .participant-card {
-    width: 95%;
-  }
+  .participant-card { width: 95%; }
 
-  .main-btn {
-    width: 100%;
-  }
+  .main-btn { width: 100%; }
 }
 
-@media (max-width: 400px) {
-  .pass-card .price {
-    font-size: 1.1rem;
-  }
+@media (max-width: 450px) {
+  .pass-card h2 { font-size: 1.3rem; }
+  .pass-card .price { font-size: 1rem; }
 }
