@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
-/* -------- GLOBAL -------- */
+/* ---------------- GLOBAL ---------------- */
 body {
   font-family: 'Orbitron', sans-serif;
   background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
@@ -22,7 +22,7 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* -------- PASSES SECTION -------- */
+/* ---------------- PASSES BOX ---------------- */
 .passes-section {
   width: 100%;
   display: flex;
@@ -32,10 +32,10 @@ body {
 }
 
 .passes-box {
-  background: rgba(0, 0, 0, 0.72);
-  border: 1.5px solid rgba(0, 255, 255, 0.35);
+  background: rgba(0,0,0,0.72);
+  border: 1.5px solid rgba(0,255,255,0.35);
   border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
+  box-shadow: 0 0 6px rgba(0,255,255,0.18);
   padding: 40px;
   width: 90%;
   max-width: 1100px;
@@ -47,7 +47,7 @@ body {
   font-size: 2.3rem;
 }
 
-/* -------- PASS CARDS -------- */
+/* ---------------- PASS CARDS ---------------- */
 .passes-grid {
   display: flex;
   gap: 30px;
@@ -64,18 +64,17 @@ body {
   width: 300px;
   cursor: pointer;
   transition: .25s;
-  position: relative;
   box-shadow: 0 0 6px rgba(0,255,255,0.15);
 }
 
 .pass-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 0 12px rgba(0,255,255,0.25);
+  box-shadow: 0 0 10px rgba(0,255,255,0.25);
 }
 
 .pass-card.selected {
   border: 2px solid cyan;
-  box-shadow: 0 0 12px rgba(0,255,255,0.6);
+  box-shadow: 0 0 12px rgba(0,255,255,0.5);
   transform: scale(1.03);
 }
 
@@ -88,12 +87,9 @@ body {
   opacity: 0;
   transition: .25s;
 }
+.pass-card.selected .select-indicator { opacity: 1; }
 
-.pass-card.selected .select-indicator {
-  opacity: 1;
-}
-
-/* -------- SELECTION AREA -------- */
+/* ---------------- SELECTION AREA ---------------- */
 #selectionArea {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(0,255,255,0.28);
@@ -102,7 +98,7 @@ body {
   margin-top: 30px;
   width: 100%;
   max-width: 900px;
-  box-shadow: 0 0 8px rgba(0,255,255,0.15);
+  box-shadow: 0 0 8px rgba(0,255,255,0.12);
 }
 
 .hidden { display: none; }
@@ -110,23 +106,21 @@ body {
 #selectedPass {
   color: cyan;
   font-size: 1.7rem;
-  text-shadow: 0 0 7px rgba(0,255,255,0.5);
+  text-shadow: 0 0 7px rgba(0,255,255,0.45);
   margin-bottom: 1rem;
   text-align: center;
 }
 
-/* -------- ALL DAY SELECT BUTTONS (Day Pass + Visitor Pass) -------- */
+/* ---------------- DAY SELECT BUTTONS ---------------- */
 .day-selector-row,
-.visitor-days-row,
-.visitor-days-col {
+.visitor-days-row {
   display: flex;
   justify-content: center;
   gap: 15px;
-  margin-bottom: 18px;
   flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
-/* Make visitor-day-card identical to day-card */
 .day-card,
 .visitor-day-card {
   background: rgba(0,0,0,0.45);
@@ -137,16 +131,13 @@ body {
   cursor: pointer;
   transition: .25s;
   font-size: 1rem;
-  box-shadow: 0 0 8px rgba(0,255,255,0.15);
-}
-
-.visitor-day-card input {
-  display: none;
+  box-shadow: 0 0 6px rgba(0,255,255,0.12);
+  user-select: none;
 }
 
 .day-card:hover,
 .visitor-day-card:hover {
-  box-shadow: 0 0 10px rgba(0,255,255,0.35);
+  box-shadow: 0 0 10px rgba(0,255,255,0.2);
   transform: translateY(-2px);
 }
 
@@ -154,151 +145,102 @@ body {
 .visitor-day-card.active {
   background: rgba(0,255,255,0.12);
   border: 2px solid cyan;
-  box-shadow: 0 0 12px rgba(0,255,255,0.45);
+  box-shadow: 0 0 12px rgba(0,255,255,0.3);
   transform: scale(1.04);
 }
 
-/* -------- EVENT STYLES (SELECTABLE + VISITOR) -------- */
+/* Hide original checkbox for visitor pass */
+.visitor-day-card input { display: none; }
 
-/* base event-row */
-.event-row {
+/* ---------------- EVENT TOGGLE (LIKE STARNITE) ---------------- */
+.event-toggle {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
+  gap: 12px;
   background: rgba(0,0,0,0.32);
-  padding: 10px 14px;
+  padding: 14px 18px;
   border-radius: 12px;
-  border: 1px solid rgba(0,255,255,0.25);
+  border: 1px solid rgba(0,255,255,0.28);
   margin: 10px 0;
-  transition: .2s;
-  box-shadow: 0 0 6px rgba(0,255,255,0.10);
-}
-
-/* Hover */
-.event-row:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 12px rgba(0,255,255,0.20);
-}
-
-/* VISITOR MODE: looks like your screenshot — no checkbox, full pill only for label area */
-.event-left.visitor-mode {
   width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 12px 18px;
-  gap: 12px;
-  background: transparent; /* keep parent bg */
-  border-radius: 10px;
-  border: 1px solid rgba(0,255,255,0.06);
-  box-shadow: 0 0 0 rgba(0,0,0,0);
+  box-shadow: 0 0 6px rgba(0,255,255,0.12);
+  transition: .25s;
+}
+.event-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(0,255,255,0.25);
 }
 
-/* For the inner pill look of the visitor label (outer row keeps the darker background) */
-.event-left.visitor-mode .event-label {
-  display: inline-block;
-  width: 100%;
-  padding: 10px 18px;
-  background: rgba(0,0,0,0.45);
-  border-radius: 12px;
-  border: 1.5px solid rgba(0,255,255,0.12);
-  box-shadow: 0 0 8px rgba(0,255,255,0.08);
-  color: white;
-  font-size: 1.05rem;
-}
+.event-toggle input[type="checkbox"].visitor-toggle-input { display: none; }
 
-/* SELECTABLE MODE (Day + Fest) — pill with checkbox inside (Starnite-style) */
-.event-left.selectable-mode {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(0,255,255,0.08);
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: 1.3px solid cyan;
-  box-shadow: 0 0 10px rgba(0,255,255,0.22);
+.event-toggle .switch {
+  position: relative;
+  width: 60px;
+  height: 26px;
+  background: rgba(0,0,0,0.55);
+  border-radius: 20px;
+  border: 1px solid rgba(0,255,255,0.22);
+  box-shadow: inset 0 0 6px rgba(0,255,255,0.12);
   cursor: pointer;
-  transition: .2s;
+  transition: .22s;
 }
 
-.event-left.selectable-mode:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 14px rgba(0,255,255,0.30);
+.event-toggle .switch .knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  transition: .22s;
+  box-shadow: 0 0 4px rgba(255,255,255,0.4);
 }
 
-/* Checkbox inside selectable pill */
-.event-left.selectable-mode input[type="checkbox"] {
-  transform: scale(1.2);
-  accent-color: cyan;
-  cursor: pointer;
-  width: 18px;
-  height: 18px;
+/* Checked state */
+.event-toggle input[type="checkbox"].visitor-toggle-input:checked + .switch {
+  background: rgba(0,255,255,0.12);
+  border-color: cyan;
+}
+.event-toggle input[type="checkbox"].visitor-toggle-input:checked + .switch .knob {
+  left: 35px;
+  box-shadow: 0 0 10px cyan;
 }
 
-/* event label common style */
-.event-label {
+/* Event label */
+.event-toggle .event-label {
   font-size: 1.05rem;
   color: white;
 }
 
-/* PDF icon */
+/* ---------------- PDF ICON ---------------- */
 .pdf-icon {
   color: cyan;
   font-size: 1.2rem;
-  transition: .2s;
-  margin-left: 14px;
-}
-
-.pdf-icon:hover {
-  color: white;
-  text-shadow: 0 0 8px cyan;
-}
-
-/* -------- STARNITE TOGGLE -------- */
-.starnite-toggle-row {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-}
-
-.starnite-toggle-row label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(0,255,255,0.08);
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: 1.2px solid cyan;
-  box-shadow: 0 0 10px rgba(0,255,255,0.25);
-  cursor: pointer;
   transition: .25s;
 }
-
-.starnite-toggle-row input {
-  transform: scale(1.25);
-  accent-color: cyan;
+.pdf-icon:hover {
+  color: white;
+  text-shadow: 0 0 6px cyan;
 }
 
-.starnite-toggle-row label:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 14px rgba(0,255,255,0.35);
-}
-
-/* -------- PARTICIPANT FORM -------- */
+/* ---------------- PARTICIPANT CARD ---------------- */
 .participant-card {
   background: rgba(0,0,0,0.30);
-  border: 1px solid rgba(0,255,255,0.35);
+  border: 1px solid rgba(0,255,255,0.28);
   border-radius: 12px;
   padding: 20px;
   margin: 12px auto;
   width: 90%;
   max-width: 480px;
-  box-shadow: 0 0 8px rgba(0,255,255,0.15);
   text-align: center;
+  box-shadow: 0 0 6px rgba(0,255,255,0.15);
 }
 
 .participant-card input {
   width: 90%;
-  padding: 12px;
+  padding: 11px;
   margin: 6px 0;
   background: rgba(255,255,255,0.07);
   border: none;
@@ -307,61 +249,56 @@ body {
   text-align: center;
   font-size: 1rem;
 }
-
 .participant-card input:focus {
   outline: none;
-  box-shadow: 0 0 10px cyan;
+  box-shadow: 0 0 10px rgba(0,255,255,0.35);
 }
 
-/* -------- COUNTER -------- */
+/* ---------------- COUNTER ---------------- */
 .custom-number-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1.3px solid rgba(0,255,255,0.35);
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0,255,255,0.12);
-  padding: 8px 12px;
-  margin-bottom: 15px;
+  gap: 10px;
+  background: rgba(0,0,0,0.45);
+  border: 1.2px solid rgba(0,255,255,0.28);
+  border-radius: 10px;
+  padding: 6px 10px;
+  box-shadow: 0 0 6px rgba(0,255,255,0.12);
 }
 
 .custom-number-box input {
-  width: 60px; /* Reduced width */
-  height: 35px;
-  text-align: center;
+  width: 50px;
+  height: 32px;
   border: none;
   outline: none;
+  text-align: center;
+  background: transparent;
   color: cyan;
   font-size: 1rem;
-  background: transparent;
-  font-weight: 600;
 }
 
 .num-btn {
-  background: cyan;
+  width: 32px;
+  height: 32px;
   border: none;
+  background: cyan;
   color: black;
-  font-size: 1.2rem;
-  width: 36px;
-  height: 36px;
   border-radius: 10px;
+  font-size: 1.2rem;
   cursor: pointer;
-  transition: .25s;
+  transition: .22s;
 }
-
 .num-btn:hover {
   transform: scale(1.05);
-  background: #00ffff;
 }
 
-/* -------- TOTAL + PAYMENT -------- */
+/* ---------------- TOTAL + PAYMENT ---------------- */
 .total-section {
   margin-top: 1.5rem;
   color: cyan;
-  text-shadow: 0 0 6px rgba(0,255,255,0.4);
   font-size: 1.35rem;
+  text-shadow: 0 0 6px rgba(0,255,255,0.35);
   text-align: center;
 }
 
@@ -369,26 +306,20 @@ body {
   background: cyan;
   border: none;
   padding: 12px 30px;
+  border-radius: 12px;
   color: black;
   font-weight: 700;
-  border-radius: 12px;
   cursor: pointer;
-  font-size: 1.1rem;
   transition: .25s;
-  margin-top: 10px;
-  box-shadow: 0 0 8px rgba(0,255,255,0.25);
 }
-
 .main-btn:hover {
   transform: scale(1.06);
   background: #00ffff;
 }
 
-/* -------- RESPONSIVE -------- */
+/* ---------------- RESPONSIVE ---------------- */
 @media (max-width: 900px) {
   .passes-box { padding: 25px; }
   .pass-card { width: 90%; }
   .participant-card { width: 95%; }
-  .event-row { padding: 8px 10px; }
-  .event-left.visitor-mode .event-label { padding: 8px 12px; font-size: 1rem; }
 }
