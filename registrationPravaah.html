@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <!-- THEME CSS -->
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="pass.css">
+  <link rel="stylesheet" href="style.css">   <!-- common navbar + footer -->
+  <link rel="stylesheet" href="pass.css">    <!-- page-specific -->
 
   <!-- RAZORPAY -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -89,7 +89,6 @@
 
         <!-- PASS CARDS -->
         <div class="passes-grid" id="passGrid">
-          
           <div class="pass-card" data-type="Day Pass">
             <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
             <h2>Day Pass</h2>
@@ -108,7 +107,7 @@
             <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
             <h2>Visitor Pass</h2>
             <p class="price">Per-day pricing</p>
-            <p class="desc">Choose days to visit. Select events for viewing.</p>
+            <p class="desc">Choose days to visit. Events display only.</p>
           </div>
 
           <div class="pass-card" data-type="Starnite Pass">
@@ -117,119 +116,134 @@
             <p class="price">₹1100</p>
             <p class="desc">Standalone concert-night access.</p>
           </div>
-
         </div>
 
         <!-- CONFIG AREA -->
         <div id="selectionArea" class="hidden">
           <h3 id="selectedPass">Selected: —</h3>
 
-          <!-- CONTROL BOXES -->
+          <!-- CONTROL BOXES (JS will show/hide these as needed) -->
           <div id="controls" style="display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin:12px 0;">
-            
-            <!-- DAY PASS -->
+            <!-- Day selector -->
             <div id="daySelector" style="display:none;">
               <label>Select Day</label>
               <select id="daySelect">
-                <option value="0">Day 0</option>
-                <option value="1">Day 1</option>
-                <option value="2">Day 2</option>
-                <option value="3">Day 3</option>
+                <option value="">-- Select Day --</option>
+                <option value="day0">Day 0</option>
+                <option value="day1">Day 1</option>
+                <option value="day2">Day 2</option>
+                <option value="day3">Day 3</option>
               </select>
               <div style="font-size:.9rem;color:var(--muted);margin-top:6px">
-                Day0 ₹300 · Day1/2 ₹800 · Day3 ₹800/₹1100
+                Day0 ₹300 · Day1/2 ₹800 · Day3 ₹800 or ₹1100 (with Starnite)
               </div>
             </div>
 
-            <!-- FEST -->
+            <!-- Fest starnite -->
             <div id="festStarnite" style="display:none;">
-              <label>Include Starnite</label>
+              <label>Include Starnite (Day 3)</label>
               <input type="checkbox" id="festStarniteCheckbox">
             </div>
 
-            <!-- VISITOR -->
+            <!-- Visitor days -->
             <div id="visitorDays" style="display:none;">
-              <label>Select Days</label>
+              <label>Select Days (Visitor)</label>
               <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                <label><input type="checkbox" class="visitor-day" value="0"> Day 0</label>
-                <label><input type="checkbox" class="visitor-day" value="1"> Day 1</label>
-                <label><input type="checkbox" class="visitor-day" value="2"> Day 2</label>
-                <label><input type="checkbox" class="visitor-day" value="3"> Day 3</label>
+                <label><input type="checkbox" class="visitor-day" value="day0"> Day 0</label>
+                <label><input type="checkbox" class="visitor-day" value="day1"> Day 1</label>
+                <label><input type="checkbox" class="visitor-day" value="day2"> Day 2</label>
+                <label><input type="checkbox" class="visitor-day" value="day3"> Day 3</label>
               </div>
               <div style="font-size:.9rem;color:var(--muted);margin-top:6px">
-                Visitor: D0 ₹400 · D1/2 ₹500 · D3 ₹500/₹800
+                Visitor: Day0 ₹400 · Day1/2 ₹500 · Day3 ₹500 or ₹800 (with Starnite)
               </div>
             </div>
 
-            <!-- DAY3 STARNITE (DAY / VISITOR) -->
+            <!-- Day3 starnite option -->
             <div id="day3StarniteOption" style="display:none;">
               <label>Include Day 3 Starnite</label>
               <input type="checkbox" id="day3Starnite">
             </div>
-
           </div>
 
-          <!-- EVENTS -->
+          <!-- EVENTS container (JS will render event boxes here) -->
           <div id="eventsContainer" style="margin:8px 0;"></div>
 
-          <!-- PARTICIPANTS -->
-          <div id="participantsArea" style="display:none; margin-top:12px;">
+          <!-- PARTICIPANTS (required for all passes) -->
+          <div id="participantsArea" style="margin-top:12px;">
             <label>Number of Participants</label>
             <div class="custom-number-box" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
-              <button class="num-btn" id="decPart">−</button>
-              <input type="number" id="numParticipants" min="0" max="10" value="0">
-              <button class="num-btn" id="incPart">+</button>
+              <button class="num-btn" id="decPart" type="button">−</button>
+              <input type="number" id="numParticipants" min="1" max="10" value="1">
+              <button class="num-btn" id="incPart" type="button">+</button>
             </div>
 
+            <!-- participant forms will be injected here by pass.js -->
             <form id="participantForm" class="participants-form" style="margin-top:12px;"></form>
           </div>
 
-          <!-- TOTAL -->
+          <!-- TOTAL & PAY -->
           <div class="total-section" style="margin-top:14px;">
             <h3 id="totalAmount">Total: ₹0</h3>
             <p id="payment-timer" style="display:none;color:var(--primary);font-weight:700;"></p>
             <button id="payBtn" class="main-btn" style="display:none;margin-top:8px;">Proceed to Pay</button>
           </div>
-
         </div>
       </div>
     </section>
   </main>
 
-  <!-- FOOTER -->
+  <!-- FOOTER (keeps same structure as home.html) -->
   <footer>
-    <div class="footer-container">
-      <div class="footer-left">
-        <img src="pravah-logo.png" class="footer-logo">
-        <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-      </div>
-      <div class="footer-links">
-        <div class="footer-column">
-          <h3>Quick Links</h3>
-          <ul><li><a href="#">Events Portal</a></li><li><a href="#">CA Portal</a></li><li><a href="#">Join the Community</a></li></ul>
-        </div>
-        <div class="footer-column">
-          <h3>Explore More</h3>
-          <ul><li><a href="#">Star Attractions</a></li><li><a href="#">Hall of Fame</a></li><li><a href="#">Brochure</a></li></ul>
-        </div>
-        <div class="footer-column">
-          <h3>Reach Out</h3>
-          <ul><li><a href="contact_us.html">Contact Us</a></li></ul>
-        </div>
-      </div>
+  <div class="footer-container">
+
+    <div class="footer-left">
+      <img src="pravah-logo.png" class="footer-logo">
+      <a href="registrationPravaah.html" class="register-btn">Register Now</a>
     </div>
 
-    <div class="footer-social">
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-linkedin-in"></i></a>
-      <a href="#"><i class="fab fa-youtube"></i></a>
+    <div class="footer-column">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#">Events Portal</a></li>
+        <li><a href="#">CA Portal</a></li>
+        <li><a href="#">Join the Community</a></li>
+      </ul>
     </div>
 
-    <hr class="footer-line">
-    <div class="footer-bottom"><p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 WEB TEAM</p></div>
-  </footer>
+    <div class="footer-column">
+      <h3>Explore More</h3>
+      <ul>
+        <li><a href="#">Star Attractions</a></li>
+        <li><a href="#">Hall of Fame</a></li>
+        <li><a href="#">Brochure</a></li>
+      </ul>
+    </div>
 
-  <!-- MENU -->
+    <div class="footer-column">
+      <h3>Reach Out to Us</h3>
+      <ul>
+        <li><a href="contact_us.html">Contact Us</a></li>
+      </ul>
+
+      <div class="footer-social-icons">
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-line"></div>
+
+  <div class="footer-bottom">
+    <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM | All Rights Reserved</p>
+  </div>
+</footer>
+
+
+  <!-- MENU TOGGLE -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const menuToggle = document.getElementById("menuToggle");
@@ -241,8 +255,7 @@
     });
   </script>
 
-  <!-- MAIN PASS JS (correct file) -->
+  <!-- MAIN PASS JS (your pass.js should populate events, participant forms and payment) -->
   <script type="module" src="pass.js" defer></script>
-
 </body>
 </html>
