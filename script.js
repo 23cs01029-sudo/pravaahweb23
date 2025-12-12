@@ -214,6 +214,109 @@ document.addEventListener("DOMContentLoaded", () => {
       link.addEventListener("click", () => menu.classList.remove("active"));
     });
   }
+   /* ===========================================================
+   🔵 PRAVAAH LIGHTBOX SYSTEM (Full-screen Gallery Viewer)
+   =========================================================== */
+
+const lightbox = document.createElement("div");
+lightbox.className = "lightbox hidden";
+
+lightbox.innerHTML = `
+  <span class="close-lightbox">&times;</span>
+  <span class="lb-arrow left">&#10094;</span>
+  <img id="lightboxImg" src="">
+  <span class="lb-arrow right">&#10095;</span>
+
+  <div class="lightbox-info">
+      <h3 id="lightboxTitle"></h3>
+      <p id="lightboxDesc"></p>
+      <a id="downloadBtn" class="download-btn" download>Download</a>
+  </div>
+`;
+document.body.appendChild(lightbox);
+
+const lbImg = document.getElementById("lightboxImg");
+const lbTitle = document.getElementById("lightboxTitle");
+const lbDesc = document.getElementById("lightboxDesc");
+const downloadBtn = document.getElementById("downloadBtn");
+
+const closeBtn = document.querySelector(".close-lightbox");
+const leftArrow = document.querySelector(".lb-arrow.left");
+const rightArrow = document.querySelector(".lb-arrow.right");
+
+let galleryImages = [];
+let currentIndex = 0;
+
+/* Collect ALL highlight images */
+galleryImages = Array.from(document.querySelectorAll(".slide img")).map((img, index) => ({
+  src: img.src,
+  title: img.parentElement.getAttribute("data-title"),
+  desc: "This is one of the premium highlights of PRAVAAH 2K25.",
+  index
+}));
+
+/* Open lightbox */
+function openLightbox(index) {
+  currentIndex = index;
+  const item = galleryImages[index];
+
+  lbImg.src = item.src;
+  lbTitle.textContent = item.title;
+  lbDesc.textContent = item.desc;
+
+  downloadBtn.href = item.src;
+  downloadBtn.setAttribute("download", item.title.replace(/\s+/g, "_"));
+
+  lightbox.classList.remove("hidden");
+}
+
+/* Close */
+closeBtn.addEventListener("click", () => {
+  lightbox.classList.add("hidden");
+});
+
+/* Click on slide to open */
+document.querySelectorAll(".slide img").forEach((img, i) => {
+  img.addEventListener("click", () => openLightbox(i));
+});
+
+/* LEFT ARROW */
+leftArrow.addEventListener("click", () => {
+  currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+  openLightbox(currentIndex);
+});
+
+/* RIGHT ARROW */
+rightArrow.addEventListener("click", () => {
+  currentIndex = (currentIndex + 1) % galleryImages.length;
+  openLightbox(currentIndex);
+});
+
+/* Close on clicking background */
+lightbox.addEventListener("click", (e) => {
+  if (e.target === lightbox) {
+    lightbox.classList.add("hidden");
+  }
+});
+
+/* SWIPE SUPPORT FOR MOBILE */
+let startX = 0;
+
+lightbox.addEventListener("touchstart", (e) => {
+  startX = e.changedTouches[0].clientX;
+});
+
+lightbox.addEventListener("touchend", (e) => {
+  let endX = e.changedTouches[0].clientX;
+
+  if (startX - endX > 50) {
+    rightArrow.click(); // swipe left → next
+  }
+  if (endX - startX > 50) {
+    leftArrow.click(); // swipe right → previous
+  }
+});
 
 });
+
 
