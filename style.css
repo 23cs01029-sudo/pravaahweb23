@@ -1302,6 +1302,9 @@ footer {
   color: #00F6FF;
   font-size: 1.2rem;
 }
+.zoom-icon {
+    cursor: pointer;
+}
 
 
 /* ============================================================
@@ -1329,6 +1332,9 @@ footer {
   color: white;
   text-shadow: 0 0 12px #00F6FF;
 }
+#lightboxImg {
+    transition: opacity .25s ease-in-out;
+}
 
 /* Download Icon beside close button */
 .download-icon {
@@ -1343,6 +1349,7 @@ footer {
   color: white;
   text-shadow: 0 0 12px #00F6FF;
 }
+
 
 
 
