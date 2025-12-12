@@ -382,3 +382,19 @@ body {
 .starnite-toggle-row input[type="checkbox"] {
   margin: 0 !important;      /* 🔥 removes unwanted auto margin */
 }
+/* FIX: Prevent CHECKBOX from stretching to full width */
+.starnite-toggle-row input[type="checkbox"] {
+  width: auto !important;
+  height: auto !important;
+  display: inline-block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+/* Ensure wrapper does not stretch checkbox */
+.starnite-toggle-row label {
+  width: auto !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 10px;
+}
+
