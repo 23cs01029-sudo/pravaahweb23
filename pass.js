@@ -1,4 +1,5 @@
-const scriptURL = "https://script.google.com/macros/s/AKfycby4F5rBxS_-KLmP05Yqm-R7PmjIx9_7dMsa28D1xds3X2jWSMKini-AJ-1wgGR6EmvDlg/exec";
+const scriptURL =
+  "https://script.google.com/macros/s/AKfycby4F5rBxS_-KLmP05Yqm-R7PmjIx9_7dMsa28D1xds3X2jWSMKini-AJ-1wgGR6EmvDlg/exec";
 
 const EVENTS = {
   day0: [],
@@ -42,7 +43,6 @@ const incBtn = document.getElementById("incPart");
 const totalAmountEl = document.getElementById("totalAmount");
 const payBtn = document.getElementById("payBtn");
 
-// ensure payBtn won't submit any parent form accidentally
 if (payBtn) payBtn.setAttribute("type", "button");
 
 let currentPassType = null;
@@ -59,29 +59,40 @@ const phoneRe = /^[0-9+\-\s]{7,15}$/;
 const RULEBOOK_URL = "rulebooks/sample.pdf";
 
 function getCachedProfile() {
-  try { return JSON.parse(localStorage.getItem("profileData") || "{}"); } catch { return {}; }
+  try {
+    return JSON.parse(localStorage.getItem("profileData") || "{}");
+  } catch {
+    return {};
+  }
 }
+
 function saveProfileCache(obj) {
-  try { localStorage.setItem("profileData", JSON.stringify(obj || {})); } catch {}
+  try {
+    localStorage.setItem("profileData", JSON.stringify(obj || {}));
+  } catch {}
 }
+
 async function refreshProfileFromSheets(email) {
   if (!email) return;
   try {
     const r = await fetch(`${scriptURL}?email=${encodeURIComponent(email)}&type=profile`);
     const d = await r.json();
     if (d && d.email) {
-      saveProfileCache({ name: d.name || "", email: d.email || email, phone: d.phone || "", college: d.college || "" });
+      saveProfileCache({
+        name: d.name || "",
+        email: d.email || email,
+        phone: d.phone || "",
+        college: d.college || ""
+      });
       cachedProfile = getCachedProfile();
     }
-  } catch (err) {
-    // silent fail - optional: console.error(err);
-  }
+  } catch {}
 }
 
 if (auth && auth.onAuthStateChanged) {
-  auth.onAuthStateChanged(u => {
+  auth.onAuthStateChanged((u) => {
     cachedProfile = getCachedProfile();
-    if ((!cachedProfile || !cachedProfile.email) && u?.email) {
+    if ((!cachedProfile?.email) && u?.email) {
       saveProfileCache({ email: u.email });
       cachedProfile = getCachedProfile();
     }
@@ -100,25 +111,26 @@ function escapeHtml(s) {
 function renderEventRow(name, opt = {}) {
   const day = opt.dayKey || "";
   const selectable = !!opt.selectable;
-  const safe = String(name).replace(/\s+/g, "").replace(/[^a-zA-Z0-9\-]/g, "");
-  const id = `${opt.idPrefix || "ev"}_${safe}`;
+  const safe = name.replace(/\s+/g, "").replace(/[^a-zA-Z0-9\-]/g, "");
+  const id = `ev_${safe}`;
 
   return `
-  <div class="event-row" data-day="${day}">
-    <div class="event-left">
-      ${selectable ? `<input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}">` : ""}
-      <label for="${id}" class="event-label">${escapeHtml(name)}</label>
+    <div class="event-row" data-day="${day}">
+      <div class="event-left">
+        ${selectable ? `<input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}">` : ""}
+        <label for="${id}" class="event-label">${escapeHtml(name)}</label>
+      </div>
+      <a href="${RULEBOOK_URL}" target="_blank"><i class="fa-regular fa-file-pdf pdf-icon"></i></a>
     </div>
-    <a href="${RULEBOOK_URL}" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-file-pdf pdf-icon"></i></a>
-  </div>`;
+  `;
 }
 
-/* ===========================
-    PASS CARD SELECTION
-=========================== */
-passCards.forEach(c => {
+/* ============================================================
+   PASS CARD SELECTION
+============================================================ */
+passCards.forEach((c) => {
   c.addEventListener("click", () => {
-    passCards.forEach(x => x.classList.remove("selected"));
+    passCards.forEach((x) => x.classList.remove("selected"));
     c.classList.add("selected");
 
     let t = c.dataset.type || c.textContent.trim();
@@ -132,29 +144,21 @@ passCards.forEach(c => {
     currentVisitorDays = [];
     includeStarNite = false;
     participantsCount = 0;
-    if (numInput) numInput.value = 0;
+    numInput.value = 0;
 
     renderSelectionArea();
   });
 });
 
-/* ===========================
-    RENDER SELECTION UI
-    (buttons inside forms must be type="button" to avoid accidental submit)
-=========================== */
+/* ============================================================
+   RENDER SELECTION AREA UI
+============================================================ */
 function renderSelectionArea() {
-  if (!selectionArea) return;
-
   selectionArea.classList.remove("hidden");
-  if (selectedPassTxt) selectedPassTxt.textContent = `Selected: ${currentPassType || "—"}`;
-  if (participantForm) participantForm.innerHTML = "";
+  selectedPassTxt.textContent = `Selected: ${currentPassType}`;
+  participantForm.innerHTML = "";
 
-  // prevent actual form submission if participantForm is a <form>
-  if (participantForm && participantForm.tagName === "FORM") {
-    participantForm.addEventListener("submit", ev => ev.preventDefault());
-  }
-
-  /* ---------------- DAY PASS ---------------- */
+  /* ---------- DAY PASS ---------- */
   if (currentPassType === "Day Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
@@ -166,28 +170,27 @@ function renderSelectionArea() {
           <button type="button" class="day-card" data-day="day3">DAY 3</button>
         </div>
       </div>
+
       <div id="dayEventsContainer"></div>
       <div id="participantsContainerPlaceholder"></div>
     `;
 
-    document.querySelectorAll(".day-card").forEach(btn => {
-      btn.addEventListener("click", (ev) => {
-        // ensure no submit / default behavior
-        if (ev && typeof ev.preventDefault === "function") ev.preventDefault();
-
-        document.querySelectorAll(".day-card").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".day-card").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".day-card").forEach((x) => x.classList.remove("active"));
         btn.classList.add("active");
 
         currentDay = btn.dataset.day;
         includeStarNite = false;
+
         renderDayEvents(currentDay);
         calculateTotal();
       });
     });
   }
 
-  /* ---------------- VISITOR PASS (UPDATED) ---------------- */
-  if (currentPassType === "Visitor Pass") {
+  /* ---------- VISITOR PASS ---------- */
+  else if (currentPassType === "Visitor Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
         <h4>Choose Days</h4>
@@ -198,17 +201,18 @@ function renderSelectionArea() {
           <div class="visitor-day-card" data-day="day3">DAY 3</div>
         </div>
       </div>
+
       <div id="visitorEventsContainer"></div>
       <div id="visitorStarContainer"></div>
       <div id="participantsContainerPlaceholder"></div>
     `;
 
-    document.querySelectorAll(".visitor-day-card").forEach(btn => {
+    document.querySelectorAll(".visitor-day-card").forEach((btn) => {
       btn.addEventListener("click", () => {
         let d = btn.dataset.day;
 
         if (currentVisitorDays.includes(d)) {
-          currentVisitorDays = currentVisitorDays.filter(x => x !== d);
+          currentVisitorDays = currentVisitorDays.filter((x) => x !== d);
           btn.classList.remove("active");
         } else {
           currentVisitorDays.push(d);
@@ -216,6 +220,7 @@ function renderSelectionArea() {
         }
 
         includeStarNite = false;
+
         renderVisitorEvents(currentVisitorDays);
         renderVisitorStarToggleIfNeeded();
         calculateTotal();
@@ -223,24 +228,26 @@ function renderSelectionArea() {
     });
   }
 
-  /* ---------------- FEST PASS ---------------- */
-  if (currentPassType === "Fest Pass") {
+  /* ---------- FEST PASS ---------- */
+  else if (currentPassType === "Fest Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box"><h4>Fest Pass — All Days</h4></div>
       <div id="festEventsContainer"></div>
       <div id="festStarContainer"></div>
       <div id="participantsContainerPlaceholder"></div>
     `;
+
     renderFestEvents();
   }
 
-  /* ---------------- STARNITE PASS ---------------- */
-  if (currentPassType === "Starnite Pass") {
+  /* ---------- STARNITE PASS ---------- */
+  else if (currentPassType === "Starnite Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
         <h4>Starnite Pass</h4>
-        <p>Standalone access to Star Nite (Day 3)</p>
+        <p>Standalone entry for Star Nite</p>
       </div>
+
       <div id="participantsContainerPlaceholder"></div>
     `;
   }
@@ -248,116 +255,133 @@ function renderSelectionArea() {
   calculateTotal();
 }
 
-/* ===========================
+/* ============================================================
+   UNIFIED STAR NITE TOGGLE HTML
+============================================================ */
+function starNiteToggleHTML(id) {
+  return `
+    <div class="starnite-toggle-row">
+      <label>
+        <input type="checkbox" id="${id}">
+        <span>Include Star Nite</span>
+      </label>
+    </div>
+  `;
+}
+
+/* ============================================================
    DAY PASS EVENTS
-=========================== */
+============================================================ */
 function renderDayEvents(dayKey) {
   const container = document.getElementById("dayEventsContainer");
-  if (!container) return;
 
   const evs = EVENTS[dayKey] || [];
 
   container.innerHTML = `
     <div class="participant-card center-box">
-      <h4>${String(dayKey || "").toUpperCase()} Events</h4>
+      <h4>${dayKey.toUpperCase()} EVENTS</h4>
+
       <div class="events-list">
-        ${evs.map(ev => renderEventRow(ev, { dayKey, selectable: true })).join("")}
+        ${evs.map((ev) => renderEventRow(ev, { dayKey, selectable: true })).join("")}
       </div>
-      ${dayKey === "day3" ? `
-        <div class="starnite-toggle-row">
-          <label><input type="checkbox" id="day3StarToggle"><span>Include Star Nite</span></label>
-        </div>` : ""}
+
+      ${dayKey === "day3" ? starNiteToggleHTML("day3StarToggle") : ""}
     </div>
   `;
 
-  const tg = document.getElementById("day3StarToggle");
-  if (tg) tg.addEventListener("change", () => {
-    includeStarNite = tg.checked;
-    calculateTotal();
-  });
+  const toggle = document.getElementById("day3StarToggle");
+  if (toggle)
+    toggle.addEventListener("change", () => {
+      includeStarNite = toggle.checked;
+      calculateTotal();
+    });
 }
 
-/* ===========================
+/* ============================================================
    VISITOR PASS EVENTS
-=========================== */
+============================================================ */
 function renderVisitorEvents(days) {
   const container = document.getElementById("visitorEventsContainer");
-  if (!container) return;
 
   if (!days.length) {
     container.innerHTML = "";
     return;
   }
 
-  container.innerHTML = days.map(d => `
+  container.innerHTML = days
+    .map(
+      (d) => `
     <div class="participant-card center-box">
-      <h4>${String(d).toUpperCase()} Events</h4>
+      <h4>${d.toUpperCase()} EVENTS</h4>
+
       <div class="events-list">
-        ${(EVENTS[d] || []).map(ev => renderEventRow(ev, { dayKey: d, selectable: false })).join("")}
+        ${(EVENTS[d] || [])
+          .map((ev) => renderEventRow(ev, { dayKey: d, selectable: false }))
+          .join("")}
       </div>
     </div>
-  `).join("");
+  `
+    )
+    .join("");
 }
 
-/* Star toggle for visitor */
+/* ---------------- STAR toggle for visitor ---------------- */
 function renderVisitorStarToggleIfNeeded() {
   const container = document.getElementById("visitorStarContainer");
-  if (!container) return;
 
   if (currentVisitorDays.includes("day3")) {
-    container.innerHTML = `
-      <div class="starnite-toggle-row">
-        <label><input type="checkbox" id="visitorStar"><span>Include Star Nite (Day 3)</span></label>
-      </div>
-    `;
+    container.innerHTML = starNiteToggleHTML("visitorStar");
 
-    const cb = document.getElementById("visitorStar");
-    if (cb) cb.addEventListener("change", e => {
-      includeStarNite = e.target.checked;
+    const toggle = document.getElementById("visitorStar");
+    toggle.addEventListener("change", () => {
+      includeStarNite = toggle.checked;
       calculateTotal();
     });
-
   } else {
     container.innerHTML = "";
     includeStarNite = false;
   }
 }
 
-/* ===========================
-   FEST EVENTS
-=========================== */
+/* ============================================================
+   FEST PASS EVENTS
+============================================================ */
 function renderFestEvents() {
   const container = document.getElementById("festEventsContainer");
-  if (!container) return;
 
-  container.innerHTML = ["day0","day1","day2","day3"].map(d => `
-    <div class="participant-card center-box">
-      <h4>${String(d).toUpperCase()}</h4>
-      <div class="events-list">
-        ${(EVENTS[d] || []).map(ev => renderEventRow(ev, { dayKey: d, selectable: true })).join("")}
+  container.innerHTML = ["day0", "day1", "day2", "day3"]
+    .map(
+      (d) => `
+      <div class="participant-card center-box">
+        <h4>${d.toUpperCase()}</h4>
+
+        <div class="events-list">
+          ${(EVENTS[d] || [])
+            .map((ev) => renderEventRow(ev, { dayKey: d, selectable: true }))
+            .join("")}
+        </div>
+
+        ${d === "day3" ? starNiteToggleHTML("festStar") : ""}
       </div>
-      ${d === "day3" ? `
-        <div class="starnite-toggle-row">
-          <label><input type="checkbox" id="festStar"><span>Include Star Nite</span></label>
-        </div>` : ""}
-    </div>
-  `).join("");
+    `
+    )
+    .join("");
 
-  const tg = document.getElementById("festStar");
-  if (tg) tg.addEventListener("change", () => {
-    includeStarNite = tg.checked;
-    calculateTotal();
-  });
+  const toggle = document.getElementById("festStar");
+  if (toggle)
+    toggle.addEventListener("change", () => {
+      includeStarNite = toggle.checked;
+      calculateTotal();
+    });
 }
 
-/* ===========================
-   PARTICIPANTS FORM
-=========================== */
+/* ============================================================
+   PARTICIPANT FORM CREATION
+============================================================ */
 function buildParticipantForms(count) {
-  const placeholder = document.getElementById("participantsContainerPlaceholder");
+  const container = document.getElementById("participantsContainerPlaceholder");
   participantsCount = count;
-  if (!placeholder) return;
-  placeholder.innerHTML = "";
+  container.innerHTML = "";
 
   if (count <= 0) {
     calculateTotal();
@@ -372,65 +396,67 @@ function buildParticipantForms(count) {
 
     div.innerHTML = `
       <h4>Participant ${i}</h4>
+
       <input class="pname" placeholder="Full name" value="${i === 1 ? escapeHtml(cache.name || "") : ""}">
       <input class="pemail" placeholder="Email" value="${i === 1 ? escapeHtml(cache.email || "") : ""}">
       <input class="pphone" placeholder="Phone" value="${i === 1 ? escapeHtml(cache.phone || "") : ""}">
       <input class="pcollege" placeholder="College" value="${i === 1 ? escapeHtml(cache.college || "") : ""}">
     `;
 
-    placeholder.appendChild(div);
+    container.appendChild(div);
   }
 
   calculateTotal();
 }
 
-/* PARTICIPANT COUNTER */
-if (incBtn) {
-  incBtn.addEventListener("click", () => {
-    let v = parseInt(numInput.value) || 0;
-    if (v < 10) numInput.value = ++v;
-    buildParticipantForms(v);
-  });
-}
+/* ============================================================
+   COUNTER CONTROLS
+============================================================ */
+incBtn.addEventListener("click", () => {
+  let v = parseInt(numInput.value) || 0;
+  if (v < 10) numInput.value = ++v;
+  buildParticipantForms(v);
+});
 
-if (decBtn) {
-  decBtn.addEventListener("click", () => {
-    let v = parseInt(numInput.value) || 0;
-    if (v > 0) numInput.value = --v;
-    buildParticipantForms(v);
-  });
-}
+decBtn.addEventListener("click", () => {
+  let v = parseInt(numInput.value) || 0;
+  if (v > 0) numInput.value = --v;
+  buildParticipantForms(v);
+});
 
-if (numInput) {
-  numInput.addEventListener("input", () => {
-    let v = parseInt(numInput.value) || 0;
-    if (v < 0) v = 0;
-    if (v > 10) v = 10;
-    numInput.value = v;
-    buildParticipantForms(v);
-  });
-}
+numInput.addEventListener("input", () => {
+  let v = parseInt(numInput.value) || 0;
+  if (v < 0) v = 0;
+  if (v > 10) v = 10;
+  numInput.value = v;
+  buildParticipantForms(v);
+});
 
-/* ===========================
-   CALCULATE TOTAL
-=========================== */
+/* ============================================================
+   PRICE CALCULATION
+============================================================ */
 function calculateTotal() {
   let t = 0;
 
   if (currentPassType === "Day Pass") {
     if (!currentDay) return updateTotal(0);
-    t = currentDay !== "day3"
-      ? (PRICES.dayPass[currentDay] || 0)
-      : (includeStarNite ? PRICES.dayPass.day3_star : PRICES.dayPass.day3_normal);
+
+    t =
+      currentDay !== "day3"
+        ? PRICES.dayPass[currentDay]
+        : includeStarNite
+        ? PRICES.dayPass.day3_star
+        : PRICES.dayPass.day3_normal;
   }
 
   if (currentPassType === "Visitor Pass") {
-    currentVisitorDays.forEach(d => {
-      if (d !== "day3") {
-        t += (PRICES.visitor[d] || 0);
-      } else {
-        t += includeStarNite ? PRICES.visitor.day3_star : PRICES.visitor.day3_normal;
-      }
+    currentVisitorDays.forEach((d) => {
+      t +=
+        d !== "day3"
+          ? PRICES.visitor[d]
+          : includeStarNite
+          ? PRICES.visitor.day3_star
+          : PRICES.visitor.day3_normal;
     });
   }
 
@@ -445,102 +471,117 @@ function calculateTotal() {
   updateTotal(t);
 }
 
-function updateTotal(t) {
-  currentTotal = t;
-  if (totalAmountEl) totalAmountEl.textContent = `Total: ₹${t}`;
-  if (payBtn) payBtn.style.display = (t > 0 && participantsCount > 0) ? "inline-block" : "none";
+function updateTotal(amount) {
+  currentTotal = amount;
+  totalAmountEl.textContent = `Total: ₹${amount}`;
+  payBtn.style.display = amount > 0 && participantsCount > 0 ? "inline-block" : "none";
 }
 
-/* ===========================
+/* ============================================================
    EVENT COLLECTION
-=========================== */
+============================================================ */
 function collectSelectedEvents() {
   const out = { day0: [], day1: [], day2: [], day3: [] };
 
-  document.querySelectorAll(".event-checkbox:checked").forEach(c => {
-    const day = c.dataset.day || "day0";
-    if (!out[day]) out[day] = [];
-    out[day].push(c.value);
+  document.querySelectorAll(".event-checkbox:checked").forEach((c) => {
+    out[c.dataset.day].push(c.value);
   });
 
   return out;
 }
 
-/* ===========================
+/* ============================================================
    PAYMENT HANDLER
-=========================== */
-if (payBtn) {
-  payBtn.addEventListener("click", async e => {
-    e.preventDefault();
-    if (paying) return;
-    paying = true;
+============================================================ */
+payBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (paying) return;
+  paying = true;
 
-    const names = [...document.querySelectorAll(".pname")].map(x => x.value.trim());
-    const emails = [...document.querySelectorAll(".pemail")].map(x => x.value.trim());
-    const phones = [...document.querySelectorAll(".pphone")].map(x => x.value.trim());
-    const colleges = [...document.querySelectorAll(".pcollege")].map(x => x.value.trim());
+  const names = [...document.querySelectorAll(".pname")].map((x) => x.value.trim());
+  const emails = [...document.querySelectorAll(".pemail")].map((x) => x.value.trim());
+  const phones = [...document.querySelectorAll(".pphone")].map((x) => x.value.trim());
+  const colleges = [...document.querySelectorAll(".pcollege")].map((x) => x.value.trim());
 
-    if (names.length === 0) { alert("Add at least one participant"); paying = false; return; }
+  if (!names.length) {
+    alert("Add at least one participant.");
+    paying = false;
+    return;
+  }
 
-    for (let i = 0; i < names.length; i++) {
-      if (!names[i] || !emails[i] || !phones[i] || !colleges[i]) {
-        alert("Please fill all participant fields");
-        paying = false;
-        return;
-      }
-      if (!emailRe.test(emails[i])) { alert("Invalid email"); paying = false; return; }
-      if (!phoneRe.test(phones[i])) { alert("Invalid phone"); paying = false; return; }
-    }
-
-    const participants = names.map((n, i) => ({
-      name: n,
-      email: emails[i],
-      phone: phones[i],
-      college: colleges[i]
-    }));
-
-    const payload = {
-      registeredEmail: emails[0],
-      passType: currentPassType,
-      totalAmount: currentTotal,
-      participants,
-      selectedDay: currentDay,
-      visitorDays: currentVisitorDays,
-      includeStarNite,
-      selectedEvents: collectSelectedEvents()
-    };
-
-    const rzp = new Razorpay({
-      key: "rzp_test_Re1mOkmIGroT2c",
-      amount: currentTotal * 100,
-      currency: "INR",
-      name: "PRAVAAH 2026",
-      description: `${currentPassType} — Registration`,
-      handler: async response => {
-        payload.paymentId = response.razorpay_payment_id;
-
-        try {
-          navigator.sendBeacon(scriptURL, new Blob([JSON.stringify(payload)], { type: "application/json" }));
-        } catch (err) {
-          // fallback to fetch if sendBeacon fails
-          try { await fetch(scriptURL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } }); } catch(_) {}
-        }
-
-        // redirect on success
-        window.location.href = "payment_success.html";
-      }
-    });
-
-    try {
-      rzp.open();
-    }
-    catch (err) {
-      alert("Payment failed to start");
+  for (let i = 0; i < names.length; i++) {
+    if (!names[i] || !emails[i] || !phones[i] || !colleges[i]) {
+      alert("Please fill all participant fields.");
       paying = false;
+      return;
+    }
+    if (!emailRe.test(emails[i])) {
+      alert("Invalid email.");
+      paying = false;
+      return;
+    }
+    if (!phoneRe.test(phones[i])) {
+      alert("Invalid phone number.");
+      paying = false;
+      return;
+    }
+  }
+
+  const participants = names.map((n, i) => ({
+    name: n,
+    email: emails[i],
+    phone: phones[i],
+    college: colleges[i]
+  }));
+
+  const payload = {
+    registeredEmail: emails[0],
+    passType: currentPassType,
+    totalAmount: currentTotal,
+    participants,
+    selectedDay: currentDay,
+    visitorDays: currentVisitorDays,
+    includeStarNite,
+    selectedEvents: collectSelectedEvents()
+  };
+
+  const rzp = new Razorpay({
+    key: "rzp_test_Re1mOkmIGroT2c",
+    amount: currentTotal * 100,
+    currency: "INR",
+    name: "PRAVAAH 2026",
+    description: `${currentPassType} — Registration`,
+    handler: async (response) => {
+      payload.paymentId = response.razorpay_payment_id;
+
+      try {
+        navigator.sendBeacon(
+          scriptURL,
+          new Blob([JSON.stringify(payload)], { type: "application/json" })
+        );
+      } catch (err) {
+        await fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      window.location.href = "payment_success.html";
     }
   });
-}
 
+  try {
+    rzp.open();
+  } catch (err) {
+    alert("Payment failed to start.");
+    paying = false;
+  }
+});
+
+/* ============================================================
+   INITIAL RELOAD PROFILE APPLY
+============================================================ */
 setTimeout(() => {
   cachedProfile = getCachedProfile();
   calculateTotal();
