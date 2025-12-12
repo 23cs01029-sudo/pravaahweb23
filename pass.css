@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
+/* -------- GLOBAL -------- */
 body {
   font-family: 'Orbitron', sans-serif;
   background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
@@ -31,10 +32,10 @@ body {
 }
 
 .passes-box {
-  background: rgba(0, 0, 0, 0.75);
-  border: 1.5px solid rgba(0, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.72);
+  border: 1.5px solid rgba(0, 255, 255, 0.35);
   border-radius: 20px;
-  box-shadow: 0 0 18px rgba(0, 255, 255, 0.25);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
   padding: 40px;
   width: 90%;
   max-width: 1100px;
@@ -42,16 +43,8 @@ body {
 
 .passes-box h1 {
   color: cyan;
-  text-shadow: 0 0 8px rgba(0,255,255,0.5);
-  margin-bottom: 10px;
+  text-shadow: 0 0 5px rgba(0,255,255,0.4);
   font-size: 2.3rem;
-}
-
-.instructions {
-  color: #ccc;
-  font-size: 1rem;
-  margin-bottom: 35px;
-  line-height: 1.6;
 }
 
 /* -------- PASS CARDS -------- */
@@ -64,26 +57,26 @@ body {
 }
 
 .pass-card {
-  background: rgba(0,0,0,0.55);
-  border: 1px solid rgba(0,255,255,0.6);
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(0,255,255,0.35);
   border-radius: 15px;
   padding: 25px 20px;
   width: 300px;
   cursor: pointer;
-  transition: .3s;
+  transition: .25s;
   position: relative;
-  box-shadow: 0 0 10px rgba(0,255,255,0.15);
+  box-shadow: 0 0 6px rgba(0,255,255,0.15);
 }
 
 .pass-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(0,255,255,0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 0 12px rgba(0,255,255,0.25);
 }
 
 .pass-card.selected {
   border: 2px solid cyan;
-  box-shadow: 0 0 35px rgba(0,255,255,0.9);
-  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(0,255,255,0.6);
+  transform: scale(1.03);
 }
 
 .select-indicator {
@@ -93,7 +86,7 @@ body {
   font-size: 1.4rem;
   color: cyan;
   opacity: 0;
-  transition: .3s;
+  transition: .25s;
 }
 
 .pass-card.selected .select-indicator {
@@ -102,14 +95,14 @@ body {
 
 /* -------- SELECTION AREA -------- */
 #selectionArea {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(0,255,255,0.4);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(0,255,255,0.28);
   border-radius: 12px;
   padding: 30px;
   margin-top: 30px;
   width: 100%;
   max-width: 900px;
-  box-shadow: 0 0 15px rgba(0,255,255,0.2);
+  box-shadow: 0 0 8px rgba(0,255,255,0.15);
 }
 
 .hidden { display: none; }
@@ -117,12 +110,12 @@ body {
 #selectedPass {
   color: cyan;
   font-size: 1.7rem;
-  text-shadow: 0 0 12px cyan;
+  text-shadow: 0 0 7px rgba(0,255,255,0.5);
   margin-bottom: 1rem;
   text-align: center;
 }
 
-/* -------- HORIZONTAL DAY SELECTOR -------- */
+/* -------- DAY SELECTORS -------- */
 .day-selector-row,
 .visitor-days-row {
   display: flex;
@@ -134,37 +127,37 @@ body {
 
 .day-card,
 .visitor-day-card {
-  background: rgba(0,0,0,0.55);
-  border: 1px solid rgba(0,255,255,0.5);
-  padding: 14px 22px;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(0,255,255,0.35);
+  padding: 12px 20px;
   border-radius: 12px;
   color: cyan;
   cursor: pointer;
-  transition: .3s;
+  transition: .25s;
   font-size: 1rem;
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 0 14px rgba(0,255,255,0.2);
+  box-shadow: 0 0 8px rgba(0,255,255,0.15);
 }
 
 .visitor-day-card input {
-  transform: scale(1.3);
+  transform: scale(1.2);
   accent-color: cyan;
 }
 
 .day-card:hover,
 .visitor-day-card:hover {
-  box-shadow: 0 0 18px rgba(0,255,255,0.5);
-  transform: translateY(-3px);
+  box-shadow: 0 0 10px rgba(0,255,255,0.35);
+  transform: translateY(-2px);
 }
 
 .day-card.active,
 .visitor-day-card input:checked + span {
-  background: rgba(0,255,255,0.15);
+  background: rgba(0,255,255,0.12);
   border: 2px solid cyan;
-  box-shadow: 0 0 25px cyan;
-  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(0,255,255,0.45);
+  transform: scale(1.04);
 }
 
 /* -------- EVENT ROW -------- */
@@ -172,44 +165,38 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.32);
   padding: 14px 18px;
   border-radius: 12px;
-  border: 1px solid rgba(0,255,255,0.4);
+  border: 1px solid rgba(0,255,255,0.32);
   margin: 10px 0;
   width: 100%;
-  box-shadow: 0 0 12px rgba(0,255,255,0.15);
-  transition: .3s;
+  transition: .25s;
+  box-shadow: 0 0 8px rgba(0,255,255,0.12);
 }
 
 .event-row:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 20px rgba(0,255,255,0.5);
-}
-
-.event-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(0,255,255,0.25);
 }
 
 .event-label {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: white;
 }
 
 .pdf-icon {
   color: cyan;
-  font-size: 1.3rem;
-  transition: .3s;
+  font-size: 1.2rem;
+  transition: .25s;
 }
 
 .pdf-icon:hover {
   color: white;
-  text-shadow: 0 0 15px cyan;
+  text-shadow: 0 0 8px cyan;
 }
 
-/* -------- STARNITE BEAUTIFUL TOGGLE -------- */
+/* -------- STARNITE TOGGLE -------- */
 .starnite-toggle-row {
   margin-top: 15px;
   display: flex;
@@ -220,43 +207,43 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(0,255,255,0.1);
-  padding: 12px 18px;
-  border-radius: 12px;
-  border: 1.5px solid cyan;
-  box-shadow: 0 0 18px rgba(0,255,255,0.3);
+  background: rgba(0,255,255,0.08);
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1.2px solid cyan;
+  box-shadow: 0 0 10px rgba(0,255,255,0.25);
   cursor: pointer;
-  transition: .3s;
+  transition: .25s;
 }
 
 .starnite-toggle-row input {
-  transform: scale(1.4);
+  transform: scale(1.25);
   accent-color: cyan;
 }
 
 .starnite-toggle-row label:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 30px cyan;
+  transform: scale(1.02);
+  box-shadow: 0 0 14px rgba(0,255,255,0.35);
 }
 
 /* -------- PARTICIPANT FORM -------- */
 .participant-card {
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(0,255,255,0.5);
+  background: rgba(0,0,0,0.30);
+  border: 1px solid rgba(0,255,255,0.35);
   border-radius: 12px;
   padding: 20px;
   margin: 12px auto;
   width: 90%;
   max-width: 480px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.15);
   text-align: center;
-  box-shadow: 0 0 12px rgba(0,255,255,0.2);
 }
 
 .participant-card input {
   width: 90%;
   padding: 12px;
   margin: 6px 0;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.07);
   border: none;
   border-radius: 8px;
   color: white;
@@ -266,19 +253,19 @@ body {
 
 .participant-card input:focus {
   outline: none;
-  box-shadow: 0 0 15px cyan;
+  box-shadow: 0 0 10px cyan;
 }
 
-/* -------- NEW CUSTOM COUNTER -------- */
+/* -------- COUNTER -------- */
 .custom-number-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1.5px solid rgba(0,255,255,0.5);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1.3px solid rgba(0,255,255,0.35);
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,255,255,0.15);
+  box-shadow: 0 0 8px rgba(0,255,255,0.12);
   padding: 8px 12px;
   margin-bottom: 15px;
 }
@@ -291,43 +278,35 @@ body {
   outline: none;
   color: cyan;
   font-size: 1.1rem;
-  font-weight: 600;
   background: transparent;
-  font-family: 'Orbitron', sans-serif;
-}
-
-.custom-number-box input::-webkit-inner-spin-button,
-.custom-number-box input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+  font-weight: 600;
 }
 
 .num-btn {
   background: cyan;
   border: none;
   color: black;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  font-weight: 700;
   cursor: pointer;
-  transition: .3s;
-  box-shadow: 0 0 8px rgba(0,255,255,0.3);
+  transition: .25s;
+  box-shadow: 0 0 6px rgba(0,255,255,0.25);
 }
 
 .num-btn:hover {
-  background: #00ffff;
-  box-shadow: 0 0 15px rgba(0,255,255,0.5);
   transform: scale(1.05);
+  background: #00ffff;
+  box-shadow: 0 0 10px rgba(0,255,255,0.35);
 }
 
 /* -------- TOTAL + PAYMENT -------- */
 .total-section {
   margin-top: 1.5rem;
   color: cyan;
-  text-shadow: 0 0 7px cyan;
-  font-size: 1.4rem;
+  text-shadow: 0 0 6px rgba(0,255,255,0.4);
+  font-size: 1.35rem;
   text-align: center;
 }
 
@@ -340,14 +319,15 @@ body {
   border-radius: 12px;
   cursor: pointer;
   font-size: 1.1rem;
-  transition: .3s;
+  transition: .25s;
   margin-top: 10px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.25);
 }
 
 .main-btn:hover {
-  transform: scale(1.08);
+  transform: scale(1.06);
   background: #00ffff;
-  box-shadow: 0 0 25px cyan;
+  box-shadow: 0 0 12px rgba(0,255,255,0.35);
 }
 
 /* -------- RESPONSIVE -------- */
