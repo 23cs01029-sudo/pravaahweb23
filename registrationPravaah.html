@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <!-- THEME CSS -->
-  <link rel="stylesheet" href="style.css">   <!-- keep your existing common styles -->
-  <link rel="stylesheet" href="pass.css">    <!-- page-specific CSS below -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="pass.css">
 
   <!-- RAZORPAY -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -51,18 +51,20 @@
   </script>
 
   <style>
-    /* small inline fallback variables used by this page (keeps consistent look if pass.css loading delays) */
-    :root{ --primary:#24E0EC; --muted:#BFC7D5; --text:#F4F9FC; }
+    :root { --primary:#24E0EC; --muted:#BFC7D5; --text:#F4F9FC; }
   </style>
 </head>
 
 <body style="font-family:'Exo 2', sans-serif;">
 
-  <!-- NAVBAR (same as your site) -->
+  <!-- NAVBAR -->
   <nav>
-    <a href="https://www.iitbbs.ac.in/" class="iitbbs-logo" target="_blank"><img src="iitbbs-logo.png" alt="IITBBS"></a>
+    <a href="https://www.iitbbs.ac.in/" class="iitbbs-logo" target="_blank">
+      <img src="iitbbs-logo.png" alt="IITBBS">
+    </a>
     <div class="logo" style="font-family:'Goldman'; color:var(--primary)">PRAVAAH</div>
     <div class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></div>
+
     <ul id="menu" style="font-family:'Rajdhani';">
       <li><a href="home.html">Home</a></li>
       <li><a href="events.html">Events</a></li>
@@ -74,6 +76,7 @@
       <li><a href="profile.html">Profile</a></li>
       <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
     </ul>
+
     <button id="logoutDesktop" class="logout-btn">Logout</button>
   </nav>
 
@@ -82,112 +85,122 @@
     <section class="passes-section" style="width:100%; max-width:1200px;">
       <div class="passes-box">
         <h1 style="font-family:'Oranienbaum'; color:var(--primary)">🎟️ PRAVAAH PASSES</h1>
-        <p class="instructions">Select a pass type. Configure days/events and participants (if required). Price updates live.</p>
+        <p class="instructions">Select a pass type. Configure days/events and participants. Price updates live.</p>
 
         <!-- PASS CARDS -->
         <div class="passes-grid" id="passGrid">
-          <div class="pass-card" data-type="DAY">
+          
+          <div class="pass-card" data-type="Day Pass">
             <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
             <h2>Day Pass</h2>
             <p class="price">₹300 / 800 / 800 / 800(+starnite)</p>
-            <p class="desc">Choose one day and events for that day. Day 3 can include Starnite for extra ₹300.</p>
+            <p class="desc">Choose one day and events. Day 3 can include Starnite.</p>
           </div>
 
-          <div class="pass-card" data-type="FEST">
+          <div class="pass-card" data-type="Fest Pass">
             <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
             <h2>Fest Pass</h2>
-            <p class="price">₹2000 (no starnite) / ₹2500 (with starnite)</p>
-            <p class="desc">Access all 4 days. Fixed price; choose event checkboxes per day (price stays same).</p>
+            <p class="price">₹2000 / ₹2500 (with Starnite)</p>
+            <p class="desc">All 4 days. Price fixed. Select events per day.</p>
           </div>
 
-          <div class="pass-card" data-type="VISITOR">
+          <div class="pass-card" data-type="Visitor Pass">
             <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
             <h2>Visitor Pass</h2>
             <p class="price">Per-day pricing</p>
-            <p class="desc">Pick the days you want to visit. Select events to attend (viewing).</p>
+            <p class="desc">Choose days to visit. Select events for viewing.</p>
           </div>
 
-          <div class="pass-card" data-type="STARNITE">
+          <div class="pass-card" data-type="Starnite Pass">
             <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
             <h2>Starnite Pass</h2>
             <p class="price">₹1100</p>
-            <p class="desc">Standalone access to the Day 3 concert night.</p>
+            <p class="desc">Standalone concert-night access.</p>
           </div>
+
         </div>
 
         <!-- CONFIG AREA -->
         <div id="selectionArea" class="hidden">
           <h3 id="selectedPass">Selected: —</h3>
 
+          <!-- CONTROL BOXES -->
           <div id="controls" style="display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin:12px 0;">
-            <!-- Day selector (for DAY pass) -->
+            
+            <!-- DAY PASS -->
             <div id="daySelector" style="display:none;">
-              <label style="font-weight:600; color:var(--text)">Select Day</label>
+              <label>Select Day</label>
               <select id="daySelect">
                 <option value="0">Day 0</option>
                 <option value="1">Day 1</option>
                 <option value="2">Day 2</option>
                 <option value="3">Day 3</option>
               </select>
-              <div style="font-size:.9rem;color:var(--muted);margin-top:6px">Day0 ₹300 · Day1/2 ₹800 · Day3 ₹800 (or ₹1100 with Starnite)</div>
+              <div style="font-size:.9rem;color:var(--muted);margin-top:6px">
+                Day0 ₹300 · Day1/2 ₹800 · Day3 ₹800/₹1100
+              </div>
             </div>
 
-            <!-- Fest starnite -->
+            <!-- FEST -->
             <div id="festStarnite" style="display:none;">
-              <label style="font-weight:600;color:var(--text)">Include Starnite (Day 3)</label>
+              <label>Include Starnite</label>
               <input type="checkbox" id="festStarniteCheckbox">
             </div>
 
-            <!-- Visitor days -->
+            <!-- VISITOR -->
             <div id="visitorDays" style="display:none;">
-              <label style="font-weight:600;color:var(--text)">Visitor — Select Days</label>
+              <label>Select Days</label>
               <div style="display:flex;gap:8px;flex-wrap:wrap;">
                 <label><input type="checkbox" class="visitor-day" value="0"> Day 0</label>
                 <label><input type="checkbox" class="visitor-day" value="1"> Day 1</label>
                 <label><input type="checkbox" class="visitor-day" value="2"> Day 2</label>
                 <label><input type="checkbox" class="visitor-day" value="3"> Day 3</label>
               </div>
-              <div style="font-size:.9rem;color:var(--muted);margin-top:6px">Visitor: Day0 ₹400 · Day1/2 ₹500 · Day3 ₹500 (or ₹800 with Starnite)</div>
+              <div style="font-size:.9rem;color:var(--muted);margin-top:6px">
+                Visitor: D0 ₹400 · D1/2 ₹500 · D3 ₹500/₹800
+              </div>
             </div>
 
-            <!-- Day3 starnite toggle (for DAY/VISITOR flows) -->
+            <!-- DAY3 STARNITE (DAY / VISITOR) -->
             <div id="day3StarniteOption" style="display:none;">
-              <label style="font-weight:600;color:var(--text)">Include Day 3 Starnite</label>
+              <label>Include Day 3 Starnite</label>
               <input type="checkbox" id="day3Starnite">
             </div>
+
           </div>
 
-          <!-- Events -->
+          <!-- EVENTS -->
           <div id="eventsContainer" style="margin:8px 0;"></div>
 
-          <!-- Participants (required only for DAY & FEST) -->
+          <!-- PARTICIPANTS -->
           <div id="participantsArea" style="display:none; margin-top:12px;">
-            <label style="font-weight:600;color:var(--text)">Number of Participants</label>
-            <div class="custom-number-box" style="display:inline-flex; align-items:center; gap:10px; margin-top:8px;">
+            <label>Number of Participants</label>
+            <div class="custom-number-box" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
               <button class="num-btn" id="decPart">−</button>
-              <input type="number" id="numParticipants" min="0" max="10" value="0" style="width:70px;text-align:center;background:transparent;border:none;color:var(--primary);font-weight:700;">
+              <input type="number" id="numParticipants" min="0" max="10" value="0">
               <button class="num-btn" id="incPart">+</button>
             </div>
 
             <form id="participantForm" class="participants-form" style="margin-top:12px;"></form>
           </div>
 
-          <!-- Total & Pay -->
+          <!-- TOTAL -->
           <div class="total-section" style="margin-top:14px;">
             <h3 id="totalAmount">Total: ₹0</h3>
             <p id="payment-timer" style="display:none;color:var(--primary);font-weight:700;"></p>
             <button id="payBtn" class="main-btn" style="display:none;margin-top:8px;">Proceed to Pay</button>
           </div>
+
         </div>
       </div>
     </section>
   </main>
 
-  <!-- FOOTER (same as your home) -->
+  <!-- FOOTER -->
   <footer>
     <div class="footer-container">
       <div class="footer-left">
-        <img src="pravah-logo.png" alt="PRAVAAH Logo" class="footer-logo">
+        <img src="pravah-logo.png" class="footer-logo">
         <a href="registrationPravaah.html" class="register-btn">Register Now</a>
       </div>
       <div class="footer-links">
@@ -200,28 +213,36 @@
           <ul><li><a href="#">Star Attractions</a></li><li><a href="#">Hall of Fame</a></li><li><a href="#">Brochure</a></li></ul>
         </div>
         <div class="footer-column">
-          <h3>Reach Out to Us</h3>
+          <h3>Reach Out</h3>
           <ul><li><a href="contact_us.html">Contact Us</a></li></ul>
         </div>
       </div>
     </div>
 
-    <div class="footer-social"><a href="#"><i class="fab fa-instagram"></i></a> <a href="#"><i class="fab fa-linkedin-in"></i></a> <a href="#"><i class="fab fa-youtube"></i></a></div>
+    <div class="footer-social">
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#"><i class="fab fa-youtube"></i></a>
+    </div>
+
     <hr class="footer-line">
-    <div class="footer-bottom"><p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM | All Rights Reserved</p></div>
+    <div class="footer-bottom"><p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 WEB TEAM</p></div>
   </footer>
 
-  <!-- NAV MENU SCRIPT -->
+  <!-- MENU -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const menuToggle = document.getElementById("menuToggle");
       const menu = document.getElementById("menu");
       menuToggle?.addEventListener("click", () => menu.classList.toggle("active"));
-      document.querySelectorAll("#menu a").forEach(link => link.addEventListener("click", () => menu.classList.remove("active")));
+      document.querySelectorAll("#menu a").forEach(link =>
+        link.addEventListener("click", () => menu.classList.remove("active"))
+      );
     });
   </script>
 
-  <!-- MAIN PASS JS -->
-  <script type="module" src="registrationPravaah.js" defer></script>
+  <!-- MAIN PASS JS (correct file) -->
+  <script type="module" src="pass.js" defer></script>
+
 </body>
 </html>
