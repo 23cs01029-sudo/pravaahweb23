@@ -64,7 +64,7 @@ function saveProfileCache(obj) {
 async function refreshProfileFromSheets(email) {
   if (!email) return;
   try {
-    const r = await fetch(`${scriptURL}?email=${encodeURIComponent(email)}&type=profile`);
+    const r = await fetch(${scriptURL}?email=${encodeURIComponent(email)}&type=profile);
     const d = await r.json();
     if (d && d.email) {
       saveProfileCache({ name: d.name || "", email: d.email || email, phone: d.phone || "", college: d.college || "" });
@@ -92,32 +92,19 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
-/* ===========================================
-   FINAL FIXED renderEventRow() (YOUR REQUEST)
-   Checkbox FIRST → Event Name → PDF Icon
-   Checkbox styled like Starnite toggle
-=========================================== */
 function renderEventRow(name, opt = {}) {
   const day = opt.dayKey || "";
   const selectable = !!opt.selectable;
   const safe = name.replace(/\s+/g, "").replace(/[^a-zA-Z0-9\-]/g, "");
-  const id = `${opt.idPrefix || "ev"}_${safe}`;
+  const id = ${opt.idPrefix || "ev"}_${safe};
 
   return `
   <div class="event-row" data-day="${day}">
-      
-      <label class="event-toggle">
-         ${selectable ? `
-           <input type="checkbox" id="${id}" class="event-checkbox" 
-                  data-day="${day}" value="${escapeHtml(name)}">
-         ` : ""}
-         <span class="event-label">${escapeHtml(name)}</span>
-      </label>
-
-      <a href="${RULEBOOK_URL}" target="_blank">
-        <i class="fa-regular fa-file-pdf pdf-icon"></i>
-      </a>
-
+    <div class="event-left">
+      ${selectable ? <input type="checkbox" id="${id}" class="event-checkbox" data-day="${day}" value="${escapeHtml(name)}"> : ""}
+      <label for="${id}" class="event-label">${escapeHtml(name)}</label>
+    </div>
+    <a href="${RULEBOOK_URL}" target="_blank"><i class="fa-regular fa-file-pdf pdf-icon"></i></a>
   </div>`;
 }
 
@@ -153,7 +140,7 @@ function renderSelectionArea() {
   if (!selectionArea) return;
 
   selectionArea.classList.remove("hidden");
-  selectedPassTxt.textContent = `Selected: ${currentPassType}`;
+  selectedPassTxt.textContent = Selected: ${currentPassType};
   participantForm.innerHTML = "";
 
   /* ---------------- DAY PASS ---------------- */
@@ -185,7 +172,7 @@ function renderSelectionArea() {
     });
   }
 
-  /* ---------------- VISITOR PASS ---------------- */
+  /* ---------------- VISITOR PASS (UPDATED) ---------------- */
   if (currentPassType === "Visitor Pass") {
     participantForm.innerHTML = `
       <div class="participant-card center-box">
@@ -441,7 +428,7 @@ function calculateTotal() {
 
 function updateTotal(t) {
   currentTotal = t;
-  totalAmountEl.textContent = `Total: ₹${t}`;
+  totalAmountEl.textContent = Total: ₹${t};
   payBtn.style.display = (t > 0 && participantsCount > 0) ? "inline-block" : "none";
 }
 
@@ -507,7 +494,7 @@ if (payBtn) {
       amount: currentTotal * 100,
       currency: "INR",
       name: "PRAVAAH 2026",
-      description: `${currentPassType} — Registration`,
+      description: ${currentPassType} — Registration,
       handler: async response => {
         payload.paymentId = response.razorpay_payment_id;
 
