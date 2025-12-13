@@ -582,33 +582,48 @@ payBtn.addEventListener("click", async () => {
   saveFailedCache();
 
   const rzp = new Razorpay({
-    key: "rzp_test_Re1mOkmIGroT2c",
-    amount: currentTotal * 100,
-    currency: "INR",
-    name: "PRAVAAH 2026",
-    handler: async (res) => {
-      payload.paymentId = res.razorpay_payment_id;
-      clearFailedCache();
+  key: "rzp_test_Re1mOkmIGroT2c",
+  amount: currentTotal * 100,
+  currency: "INR",
+  name: "PRAVAAH 2026",
+  description: `${currentPassType} — Registration`,
 
+  handler: async function (response) {
+    payload.paymentId = response.razorpay_payment_id;
+
+    clearFailedCache();
+
+    try {
       await fetch(scriptURL, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: { "Content-Type": "application/json" }
       });
-
-      window.location.href = "payment_success.html";
+    } catch (e) {
+      console.error("Sheet save failed", e);
     }
-  });
 
-  try {
-    rzp.open();
-  } catch (err) {
-    console.error("Razorpay Error:", err);
-    alert("Payment could not be started.");
-    paying = false;
+    // ✅ FORCE REDIRECT AFTER SUCCESS
+    window.location.replace("payment_success.html");
+  },
+
+  modal: {
+    ondismiss: function () {
+      // ❌ Payment cancelled / closed
+      paying = false;
+      window.location.replace("payment_failure.html");
+    }
   }
 });
 
+/* ❌ PAYMENT FAILURE EVENT */
+rzp.on("payment.failed", function (response) {
+  console.error("Payment Failed:", response.error);
+  paying = false;
+  window.location.replace("payment_failure.html");
+});
+
+    rzp.open();
 /* =======================================
       INITIAL LOAD
 ======================================= */
@@ -627,5 +642,6 @@ setTimeout(() => {
     buildParticipantForms(f.participantsCount);
   }
 }, 150);
+
 
 
