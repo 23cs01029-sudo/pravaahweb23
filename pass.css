@@ -432,6 +432,17 @@ body {
   margin-right: auto;       /* centers in parent */
 }
 
+/* Increase spacing between Selected Pass → Choose Day */
+.participant-card h4 {
+  margin-top: 20px;      /* Add top space */
+  margin-bottom: 20px;   /* Add bottom space */
+}
+
+.day-selector-row {
+  margin-top: 15px;      /* Extra gap above day buttons */
+  margin-bottom: 25px;   /* Extra gap below */
+}
+
 
 
 
