@@ -21,7 +21,7 @@ const storage = getStorage(app);
 
 /* ---------- Backend Script URL (UPDATED) ---------- */
 const scriptURL =
-  "https://script.google.com/macros/s/AKfycbyc72D1uOGyAaHruVkkdsQpFZJBJ80KvLRpFhWZ0-2VduaaxPWkqt0M0dtYvhDFB_c2jg/exec";   // ⭐ FIXED
+  "https://script.google.com/macros/s/AKfycbyc72D1uOGyAaHruVkkdsQpFZJBJ80KvLRpFhWZ0-2VduaaxPWkqt0M0dtYvhDFB_c2jg/exec";
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -36,8 +36,8 @@ function showToast(message, type = "info") {
   }, 3000);
 }
 
-/* ---------- Convert Google Drive link → direct image ---------- */
-function convertDriveLink(link) {                // ⭐ FIXED
+/* ---------- Convert ANY Google Drive link to direct image ---------- */
+function convertDriveLink(link) {
   const id = link.match(/[-\w]{25,}/)?.[0];
   if (!id) return null;
   return `https://drive.google.com/uc?export=view&id=${id}`;
@@ -53,18 +53,17 @@ function setEditMode(on, ctx) {
   ctx.editActions.style.display = on ? "flex" : "none";
 
   ctx.uploadOptions.style.display = on ? "flex" : "none";
-
   ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
 }
 
-/* ---------- Save profile to Sheets ---------- */
+/* ---------- Save profile to Sheets (name/email untouched) ---------- */
 async function saveProfileToSheet(profile) {
   const payload = JSON.stringify({
-    name: profile.name || "",
-    email: profile.email || "",
-    phone: profile.phone || "",
-    college: profile.college || "",
-    photo: profile.photo || ""   // ⭐ FIXED (photo saved ALWAYS)
+    name: profile.name,
+    email: profile.email,
+    phone: profile.phone,
+    college: profile.college,
+    photo: profile.photo
   });
 
   try {
@@ -78,7 +77,7 @@ async function saveProfileToSheet(profile) {
   }
 }
 
-/* ---------- ensureSpan ---------- */
+/* ---------- Helper ---------- */
 function ensureFieldSpan(input, id) {
   let span = document.getElementById(id);
   if (!span) {
@@ -107,7 +106,6 @@ onAuthStateChanged(auth, async (user) => {
   const userEmailEl = document.getElementById("userEmail");
   const userPhoneInput = document.getElementById("userPhone");
   const userCollegeInput = document.getElementById("userCollege");
-  const passesList = document.getElementById("passesList");
 
   const editPen = document.getElementById("editPen");
   const editActions = document.getElementById("editActions");
@@ -117,13 +115,13 @@ onAuthStateChanged(auth, async (user) => {
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
 
-  /* PREFILL */
+  /* PREFILL BASIC INFO */
   userNameEl.textContent = user.displayName || "PRAVAAH User";
   userEmailEl.textContent = user.email;
 
-  userPhoto.src = "default-avatar.png";   // ⭐ ALWAYS OVERRIDE with Sheet photo later
+  userPhoto.src = "default-avatar.png"; // Override with Sheet pic later
 
-  /* Fetch profile from Sheets */
+  /* ---------- Load profile from Google Sheet ---------- */
   try {
     const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
     const p = await res.json();
@@ -133,7 +131,7 @@ onAuthStateChanged(auth, async (user) => {
       userCollegeInput.value = p.college || "";
 
       if (p.photo) {
-        userPhoto.src = p.photo + `?t=${Date.now()}`;     // ⭐ FIXED (cache-bypass)
+        userPhoto.src = p.photo + `?t=${Date.now()}`;  // Cache bypass
       }
     }
   } catch (err) {
@@ -152,19 +150,16 @@ onAuthStateChanged(auth, async (user) => {
 
   /* ---------- Save ---------- */
   saveBtn.addEventListener("click", async () => {
-    const phone = userPhoneInput.value.trim();
-    const college = userCollegeInput.value.trim();
-
     await saveProfileToSheet({
       name: user.displayName,
       email: user.email,
-      phone,
-      college,
-      photo: userPhoto.src          // ⭐ FIXED — save photo on SAVE
+      phone: userPhoneInput.value.trim(),
+      college: userCollegeInput.value.trim(),
+      photo: userPhoto.src.split("?")[0] // remove timestamp
     });
 
-    phoneSpan.textContent = phone || "-";
-    collegeSpan.textContent = college || "-";
+    phoneSpan.textContent = userPhoneInput.value || "-";
+    collegeSpan.textContent = userCollegeInput.value || "-";
 
     showToast("Profile updated!", "success");
     setEditMode(false, { container, uploadOptions, userPhoto, editActions });
@@ -187,7 +182,6 @@ onAuthStateChanged(auth, async (user) => {
     uploadPhotoInput.click();
   });
 
-  /* ---------- Device upload handler ---------- */
   uploadPhotoInput.addEventListener("change", async (e) => {
     if (!isEditing || !e.target.files?.length) return;
 
@@ -204,14 +198,14 @@ onAuthStateChanged(auth, async (user) => {
 
       await updateProfile(auth.currentUser, { photoURL: url });
 
-      userPhoto.src = url + `?t=${Date.now()}`;   // ⭐ FIXED
+      userPhoto.src = url + `?t=${Date.now()}`;
 
       await saveProfileToSheet({
         name: user.displayName,
         email: user.email,
         phone: userPhoneInput.value,
         college: userCollegeInput.value,
-        photo: url                              // ⭐ SAVE TO SHEET
+        photo: url
       });
 
       showToast("Photo updated!", "success");
@@ -226,21 +220,20 @@ onAuthStateChanged(auth, async (user) => {
     if (!isEditing) return;
 
     const link = prompt("Paste Google Drive image link:");
-    if (!link?.includes("drive.google.com")) return showToast("Invalid link!", "error");
+    const directURL = convertDriveLink(link);
 
-    const directURL = convertDriveLink(link);   // ⭐ FIXED
-    if (!directURL) return showToast("Invalid link format!", "error");
+    if (!directURL) return showToast("Invalid Google Drive link!", "error");
 
     await updateProfile(user, { photoURL: directURL });
 
-    userPhoto.src = directURL + `?t=${Date.now()}`;  // ⭐ FIX
+    userPhoto.src = directURL + `?t=${Date.now()}`;
 
     await saveProfileToSheet({
       name: user.displayName,
       email: user.email,
       phone: userPhoneInput.value,
       college: userCollegeInput.value,
-      photo: directURL                       // ⭐ SAVE
+      photo: directURL
     });
 
     showToast("Photo updated!", "success");
@@ -254,6 +247,7 @@ onAuthStateChanged(auth, async (user) => {
   logoutDesktop.addEventListener("click", logout);
   logoutMobile.addEventListener("click", logout);
 });
+
 
 /* ---------- Toast CSS ---------- */
 const style = document.createElement("style");
