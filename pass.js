@@ -1,6 +1,6 @@
 /*******************************
  *  PRAVAAH 2026 — FINAL SCRIPT.JS
- *  (Clean version — NO form cache)
+ *  (Complete working version)
  *******************************/
 
 const scriptURL =
@@ -46,7 +46,36 @@ if (!auth) {
 }
 
 /* =======================================
-      PROFILE CACHE (ONLY PROFILE)
+      DOM ELEMENTS
+======================================= */
+const passCards = document.querySelectorAll(".pass-card");
+const selectionArea = document.getElementById("selectionArea");
+const selectedPassTxt = document.getElementById("selectedPass");
+const participantForm = document.getElementById("participantForm");
+
+const numInput = document.getElementById("numParticipants");
+const decBtn = document.getElementById("decPart");
+const incBtn = document.getElementById("incPart");
+
+const totalAmountEl = document.getElementById("totalAmount");
+const payBtn = document.getElementById("payBtn");
+if (payBtn) payBtn.setAttribute("type", "button");
+
+let currentPassType = null;
+let currentDay = null;
+let currentVisitorDays = [];
+let includeStarNite = false;
+let participantsCount = 0;
+
+let cachedProfile = {};
+let currentTotal = 0;
+let paying = false;
+
+const RULEBOOK_URL = "rulebooks/sample.pdf";
+
+
+/* =======================================
+      PROFILE CACHE (Sheets + Firebase)
 ======================================= */
 function getCachedProfile() {
   try {
@@ -62,97 +91,85 @@ function saveProfileCache(obj) {
 
 async function refreshProfileFromSheets(email) {
   if (!email) return;
+
   const r = await fetch(`${scriptURL}?email=${encodeURIComponent(email)}&type=profile`);
   const d = await r.json();
-  if (d?.email) {
-    saveProfileCache(d);
+
+  if (d && d.email) {
+    saveProfileCache({
+      name: d.name || "",
+      email: d.email || email,
+      phone: d.phone || "",
+      college: d.college || ""
+    });
+    cachedProfile = getCachedProfile();
   }
 }
 
-if (auth?.onAuthStateChanged) {
+if (auth && auth.onAuthStateChanged) {
   auth.onAuthStateChanged((u) => {
     if (u?.email) refreshProfileFromSheets(u.email);
   });
 }
 
 /* =======================================
-      DOM ELEMENTS
-======================================= */
-const passCards = document.querySelectorAll(".pass-card");
-const selectionArea = document.getElementById("selectionArea");
-const selectedPassTxt = document.getElementById("selectedPass");
-const participantForm = document.getElementById("participantForm");
-
-const numInput = document.getElementById("numParticipants");
-const decBtn = document.getElementById("decPart");
-const incBtn = document.getElementById("incPart");
-
-const totalAmountEl = document.getElementById("totalAmount");
-const payBtn = document.getElementById("payBtn");
-payBtn.type = "button";
-
-/* =======================================
-      STATE
-======================================= */
-let currentPassType = null;
-let currentDay = null;
-let currentVisitorDays = [];
-let includeStarNite = false;
-let participantsCount = 0;
-let currentTotal = 0;
-let paying = false;
-
-const RULEBOOK_URL = "rulebooks/sample.pdf";
-
-/* =======================================
-      EVENT ROW
+      EVENT ROW TEMPLATE
 ======================================= */
 function renderEventRow(name, opt = {}) {
   const id = "ev_" + name.replace(/\s+/g, "");
+
   return `
     <div class="event-row">
       <div class="event-left">
-        ${opt.selectable ? `<input type="checkbox" class="event-checkbox" data-day="${opt.dayKey}" value="${name}" id="${id}">` : ""}
-        <label for="${id}">${name}</label>
+        ${opt.selectable ? `<input type="checkbox" id="${id}" class="event-checkbox" data-day="${opt.dayKey}" value="${name}">` : ""}
+        <label for="${id}" class="event-label">${name}</label>
       </div>
       <a href="${RULEBOOK_URL}" target="_blank">
-        <i class="fa-regular fa-file-pdf"></i>
+        <i class="fa-regular fa-file-pdf pdf-icon"></i>
       </a>
-    </div>`;
+    </div>
+  `;
 }
 
 /* =======================================
-      PASS SELECTION
+      PASS CARD CLICK HANDLER
 ======================================= */
 passCards.forEach((c) => {
-  c.onclick = () => {
+  c.addEventListener("click", () => {
     passCards.forEach((x) => x.classList.remove("selected"));
     c.classList.add("selected");
 
-    const t = c.dataset.type.toLowerCase();
-    currentPassType =
-      t.includes("day") ? "Day Pass" :
-      t.includes("visitor") ? "Visitor Pass" :
-      t.includes("fest") ? "Fest Pass" :
-      "Starnite Pass";
+    let t = c.dataset.type;
+    if (/day/i.test(t)) t = "Day Pass";
+    else if (/visitor/i.test(t)) t = "Visitor Pass";
+    else if (/fest/i.test(t)) t = "Fest Pass";
+    else if (/star/i.test(t)) t = "Starnite Pass";
 
+    currentPassType = t;
     currentDay = null;
     currentVisitorDays = [];
     includeStarNite = false;
-    numInput.value = 0;
+
     participantsCount = 0;
+    numInput.value = 0;
 
     renderSelectionArea();
-  };
+  });
 });
 
 /* =======================================
-      STAR TOGGLE
+      STAR NITE TOGGLE TEMPLATE
 ======================================= */
-const starToggle = (id) => `
-<div class="starnite-toggle-row">
-  <label><input type="checkbox" id="${id}"> Include Star Nite</label>
-</div>`;
+function starNiteToggleHTML(id) {
+  return `
+    <div class="starnite-toggle-row">
+        <label>
+            <input type="checkbox" id="${id}">
+            <span>Include Star Nite</span>
+        </label>
+    </div>
+  `;
+}
 
 /* =======================================
       RENDER SELECTION AREA
@@ -162,250 +179,437 @@ function renderSelectionArea() {
   selectedPassTxt.textContent = `Selected: ${currentPassType}`;
   participantForm.innerHTML = "";
 
+  /* ---------- DAY PASS ---------- */
   if (currentPassType === "Day Pass") {
     participantForm.innerHTML = `
       <div class="participant-card">
-        <button class="day-card" data-day="day0">DAY 0</button>
-        <button class="day-card" data-day="day1">DAY 1</button>
-        <button class="day-card" data-day="day2">DAY 2</button>
-        <button class="day-card" data-day="day3">DAY 3</button>
-      </div>
-      <div id="dayEventsContainer"></div>
-      <div id="participantsContainerPlaceholder"></div>`;
+        <h4>Choose Day</h4>
+        <div class="day-selector-row">
 
-    document.querySelectorAll(".day-card").forEach((b) => {
-      b.onclick = () => {
+          <button type="button" class="day-card" data-day="day0">DAY 0</button>
+          <button type="button" class="day-card" data-day="day1">DAY 1</button>
+          <button type="button" class="day-card" data-day="day2">DAY 2</button>
+          <button type="button" class="day-card" data-day="day3">DAY 3</button>
+
+        </div>
+      </div>
+
+      <div id="dayEventsContainer"></div>
+      <div id="participantsContainerPlaceholder"></div>
+    `;
+
+    document.querySelectorAll(".day-card").forEach((btn) =>
+      btn.addEventListener("click", () => {
         document.querySelectorAll(".day-card").forEach((x) => x.classList.remove("active"));
-        b.classList.add("active");
-        currentDay = b.dataset.day;
+        btn.classList.add("active");
+
+        currentDay = btn.dataset.day;
         includeStarNite = false;
+
         renderDayEvents(currentDay);
         calculateTotal();
-      };
-    });
+
+      })
+    );
   }
 
+  /* ---------- VISITOR PASS ---------- */
   if (currentPassType === "Visitor Pass") {
     participantForm.innerHTML = `
       <div class="participant-card">
-        <button class="visitor-day-card" data-day="day0">DAY 0</button>
-        <button class="visitor-day-card" data-day="day1">DAY 1</button>
-        <button class="visitor-day-card" data-day="day2">DAY 2</button>
-        <button class="visitor-day-card" data-day="day3">DAY 3</button>
+        <h4>Select Days</h4>
+        <div class="visitor-days-col">
+          <button type="button" class="visitor-day-card" data-day="day0">DAY 0</button>
+          <button type="button" class="visitor-day-card" data-day="day1">DAY 1</button>
+          <button type="button" class="visitor-day-card" data-day="day2">DAY 2</button>
+          <button type="button" class="visitor-day-card" data-day="day3">DAY 3</button>
+        </div>
       </div>
+
       <div id="visitorEventsContainer"></div>
       <div id="visitorStarContainer"></div>
-      <div id="participantsContainerPlaceholder"></div>`;
+      <div id="participantsContainerPlaceholder"></div>
+    `;
 
-    document.querySelectorAll(".visitor-day-card").forEach((b) => {
-      b.onclick = () => {
-        const d = b.dataset.day;
-        b.classList.toggle("active");
-        currentVisitorDays.includes(d)
-          ? currentVisitorDays = currentVisitorDays.filter(x => x !== d)
-          : currentVisitorDays.push(d);
+    document.querySelectorAll(".visitor-day-card").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        let d = btn.dataset.day;
+
+        if (currentVisitorDays.includes(d)) {
+          currentVisitorDays = currentVisitorDays.filter((x) => x !== d);
+          btn.classList.remove("active");
+        } else {
+          currentVisitorDays.push(d);
+          btn.classList.add("active");
+        }
 
         renderVisitorEvents(currentVisitorDays);
         renderVisitorStarToggleIfNeeded();
         calculateTotal();
-      };
-    });
+
+      })
+    );
   }
 
+  /* ---------- FEST PASS ---------- */
   if (currentPassType === "Fest Pass") {
     participantForm.innerHTML = `
+      <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
       <div id="festEventsContainer"></div>
-      <div id="participantsContainerPlaceholder"></div>`;
+      <div id="participantsContainerPlaceholder"></div>
+    `;
+
     renderFestEvents();
   }
 
+  /* ---------- STARNITE PASS ---------- */
   if (currentPassType === "Starnite Pass") {
-    participantForm.innerHTML = `<div id="participantsContainerPlaceholder"></div>`;
+    participantForm.innerHTML = `
+      <div class="participant-card">
+        <h4>Starnite Pass</h4>
+        <p>Standalone entry</p>
+      </div>
+      <div id="participantsContainerPlaceholder"></div>
+    `;
   }
 
   calculateTotal();
+
 }
 
 /* =======================================
-      EVENTS RENDERERS
+      RENDER DAY PASS EVENTS
 ======================================= */
 function renderDayEvents(day) {
+  const evs = EVENTS[day] || [];
+
   document.getElementById("dayEventsContainer").innerHTML = `
     <div class="participant-card">
-      ${EVENTS[day].map(e => renderEventRow(e, { dayKey: day, selectable: true })).join("")}
-      ${day === "day3" ? starToggle("dayStar") : ""}
-    </div>`;
+      <h4>${day.toUpperCase()}</h4>
+      <div>${evs.map((e) => renderEventRow(e, { dayKey: day, selectable: true })).join("")}</div>
+      ${day === "day3" ? starNiteToggleHTML("day3StarToggle") : ""}
+    </div>
+  `;
 
-  document.getElementById("dayStar")?.addEventListener("change", e => {
-    includeStarNite = e.target.checked;
-    calculateTotal();
-  });
-}
+  const toggle = document.getElementById("day3StarToggle");
+  if (toggle)
+    toggle.addEventListener("change", () => {
+      includeStarNite = toggle.checked;
+      calculateTotal();
 
-function renderVisitorEvents(days) {
-  document.getElementById("visitorEventsContainer").innerHTML = days.map(d => `
-    <div class="participant-card">
-      ${EVENTS[d].map(e => renderEventRow(e, { dayKey: d, selectable: false })).join("")}
-    </div>`).join("");
-}
-
-
-function renderVisitorStarToggleIfNeeded() {
-  const c = document.getElementById("visitorStarContainer");
-  if (!currentVisitorDays.includes("day3")) {
-    c.innerHTML = "";
-    includeStarNite = false;
-    return;
-  }
-  c.innerHTML = starToggle("visitorStar");
-  document.getElementById("visitorStar").onchange = e => {
-    includeStarNite = e.target.checked;
-    calculateTotal();
-  };
-}
-
-function renderFestEvents() {
-  document.getElementById("festEventsContainer").innerHTML =
-    ["day0", "day1", "day2", "day3"].map(d => `
-      <div class="participant-card">
-        ${EVENTS[d].map(e => renderEventRow(e, { dayKey: d, selectable: true })).join("")}
-        ${d === "day3" ? starToggle("festStar") : ""}
-      </div>`).join("");
-
-  document.getElementById("festStar")?.addEventListener("change", e => {
-    includeStarNite = e.target.checked;
-    calculateTotal();
-  });
+    });
 }
 
 /* =======================================
-      PARTICIPANTS
+      VISITOR PASS EVENTS
+======================================= */
+function renderVisitorEvents(days) {
+  const c = document.getElementById("visitorEventsContainer");
+
+  if (!days.length) {
+    c.innerHTML = "";
+    return;
+  }
+
+  c.innerHTML = days
+    .map(
+      (d) => `
+    <div class="participant-card">
+      <h4>${d.toUpperCase()}</h4>
+      <div>${EVENTS[d].map((ev) => renderEventRow(ev, { dayKey: d, selectable: false })).join("")}</div>
+    </div>
+  `
+    )
+    .join("");
+}
+
+/* --- Visitor Star toggle --- */
+function renderVisitorStarToggleIfNeeded() {
+  const c = document.getElementById("visitorStarContainer");
+
+  if (currentVisitorDays.includes("day3")) {
+    c.innerHTML = starNiteToggleHTML("visitorStar");
+
+    document.getElementById("visitorStar").addEventListener("change", (e) => {
+      includeStarNite = e.target.checked;
+      calculateTotal();
+
+
+    });
+  } else {
+    c.innerHTML = "";
+    includeStarNite = false;
+  }
+}
+
+/* =======================================
+      FEST EVENTS
+======================================= */
+function renderFestEvents() {
+  const c = document.getElementById("festEventsContainer");
+
+  c.innerHTML = ["day0", "day1", "day2", "day3"]
+    .map(
+      (d) => `
+      <div class="participant-card">
+        <h4>${d.toUpperCase()}</h4>
+        <div>${EVENTS[d].map((ev) => renderEventRow(ev, { dayKey: d, selectable: true })).join("")}</div>
+        ${d === "day3" ? starNiteToggleHTML("festStar") : ""}
+      </div>
+  `
+    )
+    .join("");
+
+  const toggle = document.getElementById("festStar");
+  if (toggle)
+    toggle.addEventListener("change", () => {
+      includeStarNite = toggle.checked;
+      calculateTotal();
+
+    });
+}
+
+/* =======================================
+      PARTICIPANT FORM GENERATION
 ======================================= */
 function buildParticipantForms(count) {
   participantsCount = count;
   const c = document.getElementById("participantsContainerPlaceholder");
   c.innerHTML = "";
-  if (!count) return calculateTotal();
+
+  if (count <= 0) {
+    calculateTotal();
+    return;
+  }
 
   const profile = getCachedProfile();
 
   for (let i = 1; i <= count; i++) {
+
     const div = document.createElement("div");
     div.className = "participant-card";
+
     div.innerHTML = `
       <h4>Participant ${i}</h4>
+
       <input class="pname" placeholder="Full name">
-      <input class="pemail" placeholder="Email">
-      <input class="pphone" placeholder="Phone">
-      <input class="pcollege" placeholder="College">`;
+<input class="pemail" placeholder="Email">
+<input class="pphone" placeholder="Phone">
+<input class="pcollege" placeholder="College">
 
-    const [n, e, p, c1] = div.querySelectorAll("input");
+    `;
 
-    n.oninput = () => {
-      if (profile.name && n.value.trim().toLowerCase() === profile.name.toLowerCase()) {
-        e.value = profile.email || "";
-        p.value = profile.phone || "";
-        c1.value = profile.college || "";
-      } else if (!n.value.trim()) {
-        e.value = p.value = c1.value = "";
-      }
-    };
+    const nameInput = div.querySelector(".pname");
+    const emailInput = div.querySelector(".pemail");
+    const phoneInput = div.querySelector(".pphone");
+    const collegeInput = div.querySelector(".pcollege");
 
+    /* ✅ SMART AUTOFILL — WORKS FOR ALL PARTICIPANTS */
+   nameInput.addEventListener("input", () => {
+  const nameVal = nameInput.value.trim();
+
+  /* 🔴 NAME CLEARED → CLEAR ALL DETAILS */
+  if (nameVal === "") {
+    emailInput.value = "";
+    phoneInput.value = "";
+    collegeInput.value = "";
+    return;
+  }
+
+  /* 🟢 NAME MATCHES PROFILE → AUTOFILL */
+  if (
+    profile.name &&
+    nameVal.toLowerCase() === profile.name.trim().toLowerCase()
+  ) {
+    emailInput.value = profile.email || "";
+    phoneInput.value = profile.phone || "";
+    collegeInput.value = profile.college || "";
+  }
+  /* 🟠 NAME DOES NOT MATCH → CLEAR */
+  else {
+    emailInput.value = "";
+    phoneInput.value = "";
+    collegeInput.value = "";
+  }
+
+});
     c.appendChild(div);
   }
   calculateTotal();
 }
 
-/* =======================================
-      COUNTER
-======================================= */
-incBtn.onclick = () => buildParticipantForms(Math.min(10, ++numInput.value));
-decBtn.onclick = () => buildParticipantForms(Math.max(0, --numInput.value));
-numInput.oninput = () => buildParticipantForms(Math.min(10, Math.max(0, +numInput.value)));
 
 /* =======================================
-      PRICE
+      PARTICIPANT COUNTER
+======================================= */
+incBtn.addEventListener("click", () => {
+  let v = +numInput.value || 0;
+  if (v < 10) numInput.value = ++v;
+  buildParticipantForms(v);
+});
+
+decBtn.addEventListener("click", () => {
+  let v = +numInput.value || 0;
+  if (v > 0) numInput.value = --v;
+  buildParticipantForms(v);
+});
+
+numInput.addEventListener("input", () => {
+  let v = +numInput.value || 0;
+  if (v < 0) v = 0;
+  if (v > 10) v = 10;
+  numInput.value = v;
+  buildParticipantForms(v);
+});
+
+/* =======================================
+      PRICE CALCULATION
+      Total = base × participants 
 ======================================= */
 function calculateTotal() {
   let base = 0;
-  if (currentPassType === "Day Pass" && currentDay) {
-    base = currentDay !== "day3"
-      ? PRICES.dayPass[currentDay]
-      : includeStarNite ? PRICES.dayPass.day3_star : PRICES.dayPass.day3_normal;
+
+  if (currentPassType === "Day Pass") {
+    if (!currentDay) return updateTotal(0);
+
+    base =
+      currentDay !== "day3"
+        ? PRICES.dayPass[currentDay]
+        : includeStarNite
+        ? PRICES.dayPass.day3_star
+        : PRICES.dayPass.day3_normal;
   }
+
   if (currentPassType === "Visitor Pass") {
-    currentVisitorDays.forEach(d => {
-      base += d !== "day3"
-        ? PRICES.visitor[d]
-        : includeStarNite ? PRICES.visitor.day3_star : PRICES.visitor.day3_normal;
+    currentVisitorDays.forEach((d) => {
+      base +=
+        d !== "day3"
+          ? PRICES.visitor[d]
+          : includeStarNite
+          ? PRICES.visitor.day3_star
+          : PRICES.visitor.day3_normal;
     });
   }
+
   if (currentPassType === "Fest Pass") {
     base = includeStarNite ? PRICES.fest.star : PRICES.fest.normal;
   }
-  if (currentPassType === "Starnite Pass") base = PRICES.starnite;
 
-  currentTotal = base * participantsCount;
-  totalAmountEl.textContent = `Total: ₹${currentTotal}`;
-  payBtn.style.display = currentTotal ? "inline-block" : "none";
+  if (currentPassType === "Starnite Pass") {
+    base = PRICES.starnite;
+  }
+
+  updateTotal(base * participantsCount);
+}
+
+function updateTotal(amount) {
+  currentTotal = amount;
+  totalAmountEl.textContent = `Total: ₹${amount}`;
+  payBtn.style.display = amount > 0 ? "inline-block" : "none";
 }
 
 /* =======================================
-      PAYMENT
+      EVENT COLLECTION
 ======================================= */
-payBtn.onclick = async () => {
-  if (paying || !currentTotal) return;
+function collectSelectedEvents() {
+  const out = { day0: [], day1: [], day2: [], day3: [] };
+
+  document.querySelectorAll(".event-checkbox:checked").forEach((c) => {
+    out[c.dataset.day].push(c.value);
+  });
+
+  return out;
+}
+
+/* =======================================
+      PAYMENT HANDLER
+======================================= */
+/* =======================================
+      PAYMENT HANDLER (FINAL FIXED)
+======================================= */
+payBtn.addEventListener("click", async () => {
+  if (paying) return;
   paying = true;
 
-  const participants = [...document.querySelectorAll(".participant-card")]
-    .map(c => ({
-      name: c.querySelector(".pname")?.value,
-      email: c.querySelector(".pemail")?.value,
-      phone: c.querySelector(".pphone")?.value,
-      college: c.querySelector(".pcollege")?.value
-    }));
-
-  if (participants.some(p => !p.name || !p.email || !p.phone || !p.college)) {
-    alert("Fill all participant fields");
+  participantsCount = parseInt(numInput.value) || 0;
+  if (participantsCount <= 0) {
+    alert("Please add at least 1 participant.");
     paying = false;
     return;
   }
 
+  const cards = [...document.querySelectorAll("#participantsContainerPlaceholder .participant-card")];
+
+  const participants = cards.map((c) => ({
+    name: c.querySelector(".pname")?.value.trim() || "",
+    email: c.querySelector(".pemail")?.value.trim() || "",
+    phone: c.querySelector(".pphone")?.value.trim() || "",
+    college: c.querySelector(".pcollege")?.value.trim() || ""
+  }));
+
+  for (let p of participants) {
+    if (!p.name || !p.email || !p.phone || !p.college) {
+      alert("Fill all participant fields.");
+      paying = false;
+      return;
+    }
+  }
+
+  const payload = {
+    registeredEmail: participants[0].email,
+    passType: currentPassType,
+    totalAmount: currentTotal,
+    participants,
+    daySelected: currentDay,
+    visitorDays: currentVisitorDays,
+    starnite: includeStarNite,
+    events: collectSelectedEvents()
+  };
+
+
   const rzp = new Razorpay({
-    key: "rzp_test_Re1mOkmIGroT2c",
-    amount: currentTotal * 100,
-    currency: "INR",
-    name: "PRAVAAH 2026",
-    handler: async (res) => {
+  key: "rzp_test_Re1mOkmIGroT2c",
+  amount: currentTotal * 100,
+  currency: "INR",
+  name: "PRAVAAH 2026",
+  description: `${currentPassType} — Registration`,
+
+  handler: async function (response) {
+    payload.paymentId = response.razorpay_payment_id;
+
+    /* ✅ CLEAR CACHE DEFINITIVELY */
+    localStorage.removeItem("failedForm");
+
+    try {
       await fetch(scriptURL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          paymentId: res.razorpay_payment_id,
-          passType: currentPassType,
-          totalAmount: currentTotal,
-          participants,
-          daySelected: currentDay,
-          visitorDays: currentVisitorDays,
-          starnite: includeStarNite
-        })
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" }
       });
-      location.href = "payment_success.html";
+    } catch (e) {
+      console.error("Sheet save failed", e);
     }
-  });
 
-  rzp.open();
+    window.location.replace("payment_success.html");
+  },
 
-rzp.on("payment.failed", () => {
-  paying = false;
-  location.href = "payment_failure.html";
+  modal: {
+    ondismiss: function () {
+
+      paying = false;
+      window.location.replace("payment_failure.html");
+    }
+  }
 });
 
-};
+/* ❌ Payment failed → SAVE FORM */
+rzp.on("payment.failed", function () {
+  paying = false;
+  window.location.replace("payment_failure.html");
+});
 
-/* =======================================
-      INIT
-======================================= */
-setTimeout(() => {
-  refreshProfileFromSheets(auth?.currentUser?.email);
-}, 150);
+rzp.open();
+
+});
+
+
