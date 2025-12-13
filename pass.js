@@ -106,6 +106,11 @@ function clearFailedCache() {
   localStorage.removeItem("failedForm");
 }
 
+function autoSaveFormState() {
+  if (!participantsCount || !currentPassType) return;
+  saveFailedCache();
+}
+
 /* =======================================
       PROFILE CACHE (Sheets + Firebase)
 ======================================= */
@@ -431,20 +436,40 @@ function buildParticipantForms(count) {
     const collegeInput = div.querySelector(".pcollege");
 
     /* ✅ SMART AUTOFILL — WORKS FOR ALL PARTICIPANTS */
-    nameInput.addEventListener("input", () => {
-      if (
-        profile.name &&
-        nameInput.value.trim().toLowerCase() === profile.name.trim().toLowerCase()
-      ) {
-        emailInput.value = profile.email || "";
-        phoneInput.value = profile.phone || "";
-        collegeInput.value = profile.college || "";
-      } else {
-        emailInput.value = "";
-        phoneInput.value = "";
-        collegeInput.value = "";
-      }
-    });
+   nameInput.addEventListener("input", () => {
+  const nameVal = nameInput.value.trim();
+
+  /* 🔴 NAME CLEARED → CLEAR ALL DETAILS */
+  if (nameVal === "") {
+    emailInput.value = "";
+    phoneInput.value = "";
+    collegeInput.value = "";
+    autoSaveFormState();
+    return;
+  }
+
+  /* 🟢 NAME MATCHES PROFILE → AUTOFILL */
+  if (
+    profile.name &&
+    nameVal.toLowerCase() === profile.name.trim().toLowerCase()
+  ) {
+    emailInput.value = profile.email || "";
+    phoneInput.value = profile.phone || "";
+    collegeInput.value = profile.college || "";
+  }
+  /* 🟠 NAME DOES NOT MATCH → CLEAR */
+  else {
+    emailInput.value = "";
+    phoneInput.value = "";
+    collegeInput.value = "";
+  }
+
+  autoSaveFormState();
+});
+[emailInput, phoneInput, collegeInput].forEach((input) => {
+  input.addEventListener("input", autoSaveFormState);
+});
+
 
     c.appendChild(div);
   }
@@ -649,10 +674,6 @@ setTimeout(() => {
   }
 }, 150);
 
-
-
-
-
-
-
-
+window.addEventListener("beforeunload", () => {
+  autoSaveFormState();
+});
