@@ -415,6 +415,23 @@ body {
   outline: none !important;
   box-shadow: none !important;
 }
+.custom-number-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1.3px solid rgba(0,255,255,0.35);
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.12);
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  
+  width: max-content;       /* 🔥 prevents stretching */
+  margin-left: auto;        /* centers in parent */
+  margin-right: auto;       /* centers in parent */
+}
+
 
 
 
