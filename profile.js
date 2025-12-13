@@ -40,20 +40,41 @@ function showToast(message, type = "info") {
 
 /* ---------- State ---------- */
 let isEditing = false;
+let originalProfile = { phone: "", college: "" };
+
+function setEditMode(on, ctx) {
+  isEditing = on;
+
+  ctx.editActions.style.display = on ? "flex" : "none";
+  ctx.uploadOptions.style.display = on ? "flex" : "none";
+
+  ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
+}
 
 /* ---------- Save profile to Sheets ---------- */
 async function saveProfileToSheet(profile) {
-  const payload = JSON.stringify(profile);
-
   try {
     await fetch(scriptURL, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: payload
+      body: JSON.stringify(profile)
     });
   } catch (err) {
     console.error("Save failed:", err);
   }
+}
+
+/* ---------- Helper ---------- */
+function ensureFieldSpan(input, id) {
+  let span = document.getElementById(id);
+  if (!span) {
+    span = document.createElement("span");
+    span.id = id;
+    span.className = "field-text";
+    input.insertAdjacentElement("afterend", span);
+  }
+  span.textContent = input.value.trim() || "-";
+  return span;
 }
 
 /* ---------- MAIN ---------- */
@@ -79,38 +100,37 @@ onAuthStateChanged(auth, async (user) => {
   const saveBtn = document.getElementById("saveProfileBtn");
   const cancelBtn = document.getElementById("cancelEditBtn");
 
+  const logoutDesktop = document.getElementById("logoutDesktop");
+  const logoutMobile = document.getElementById("logoutMobile");
+
   /* PREFILL */
   userNameEl.textContent = user.displayName || "PRAVAAH User";
   userEmailEl.textContent = user.email;
 
-  /* Load from Firebase photoURL */
-  let firebasePhoto = user.photoURL;
-  if (firebasePhoto) userPhoto.src = firebasePhoto;
-  else userPhoto.src = "default-avatar.png";
+  userPhoto.src = user.photoURL || "default-avatar.png";
 
   /* Load profile from Sheet */
-  let profileData = {};
   try {
     const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
-    profileData = await res.json();
+    const p = await res.json();
 
-    userPhoneInput.value = profileData.phone || "";
-    userCollegeInput.value = profileData.college || "";
-
-    if (profileData.photo) userPhoto.src = profileData.photo;
-
+    if (p && p.email) {
+      userPhoneInput.value = p.phone || "";
+      userCollegeInput.value = p.college || "";
+      if (p.photo) userPhoto.src = p.photo;
+    }
   } catch (err) {
     console.error("Profile load error:", err);
   }
 
+  const phoneSpan = ensureFieldSpan(userPhoneInput, "userPhoneText");
+  const collegeSpan = ensureFieldSpan(userCollegeInput, "userCollegeText");
+
+  originalProfile = { phone: userPhoneInput.value, college: userCollegeInput.value };
+
   /* ---------- Edit Mode ---------- */
   editPen.addEventListener("click", () => {
-    isEditing = !isEditing;
-
-    uploadOptions.style.display = isEditing ? "flex" : "none";
-    editActions.style.display = isEditing ? "flex" : "none";
-
-    userPhoto.style.outline = isEditing ? "2px dashed cyan" : "none";
+    setEditMode(!isEditing, { uploadOptions, userPhoto, editActions });
   });
 
   /* ---------- Save ---------- */
@@ -118,25 +138,37 @@ onAuthStateChanged(auth, async (user) => {
     await saveProfileToSheet({
       name: user.displayName,
       email: user.email,
-      phone: userPhoneInput.value.trim(),
-      college: userCollegeInput.value.trim(),
+      phone: userPhoneInput.value,
+      college: userCollegeInput.value,
       photo: userPhoto.src
     });
 
+    phoneSpan.textContent = userPhoneInput.value || "-";
+    collegeSpan.textContent = userCollegeInput.value || "-";
+
     showToast("Profile updated!", "success");
-    isEditing = false;
-    uploadOptions.style.display = "none";
-    editActions.style.display = "none";
+    setEditMode(false, { uploadOptions, userPhoto, editActions });
   });
 
-  /* ---------- Upload From Device ---------- */
+  /* ---------- Cancel ---------- */
+  cancelBtn.addEventListener("click", () => {
+    userPhoneInput.value = originalProfile.phone;
+    userCollegeInput.value = originalProfile.college;
+
+    phoneSpan.textContent = originalProfile.phone || "-";
+    collegeSpan.textContent = originalProfile.college || "-";
+
+    setEditMode(false, { uploadOptions, userPhoto, editActions });
+  });
+
+  /* ---------- Upload from Device ---------- */
   deviceUploadBtn.addEventListener("click", () => {
     if (!isEditing) return showToast("Tap ✏️ to edit!", "info");
     uploadPhotoInput.click();
   });
 
   uploadPhotoInput.addEventListener("change", async (e) => {
-
+    if (!isEditing) return;
     if (!e.target.files?.length) return;
 
     const file = e.target.files[0];
@@ -161,25 +193,26 @@ onAuthStateChanged(auth, async (user) => {
         photo: url
       });
 
-    } catch (err) {
+      showToast("Photo updated!", "success");
+    } catch {
       showToast("Upload failed!", "error");
     }
   });
 
-  /* ---------- Upload From Drive ---------- */
+  /* ---------- Upload from Drive ---------- */
   driveUploadBtn.addEventListener("click", async () => {
-    if (!isEditing) return showToast("Tap ✏️ to edit!", "info");
+    if (!isEditing) return;
 
     const link = prompt("Paste Google Drive image link:");
-    if (!link?.includes("drive.google.com")) return showToast("Invalid link!", "error");
+    if (!link?.includes("drive.google.com"))
+      return showToast("Invalid link!", "error");
 
     const id = link.match(/[-\w]{25,}/)?.[0];
-    if (!id) return showToast("Bad Drive URL!", "error");
+    if (!id) return showToast("Invalid Drive URL!", "error");
 
     const directURL = `https://drive.google.com/uc?export=view&id=${id}`;
 
     userPhoto.src = directURL;
-
     await updateProfile(user, { photoURL: directURL });
 
     await saveProfileToSheet({
@@ -198,17 +231,27 @@ onAuthStateChanged(auth, async (user) => {
     await signOut(auth);
     window.location.href = "index.html";
   };
-  document.getElementById("logoutDesktop").onclick = logout;
-  document.getElementById("logoutMobile").onclick = logout;
+
+  logoutDesktop.addEventListener("click", logout);
+  logoutMobile.addEventListener("click", logout);
 
 });
 
 /* ---------- Toast CSS ---------- */
 const style = document.createElement("style");
 style.innerHTML = `
-.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); padding: 12px 25px; color: cyan; border: 1px solid cyan; border-radius: 25px; opacity: 0; transition: .4s; }
+.toast {
+  position: fixed; bottom: 30px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.85);
+  padding: 12px 25px; color: cyan;
+  border: 1px solid cyan; border-radius: 25px;
+  opacity: 0; transition: .4s;
+}
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+.toast.success { color: #00ffcc; border-color: #00ffcc; }
+.toast.error { color: #ff8888; border-color: #ff5555; }
 `;
 document.head.appendChild(style);
 
-});
+});  // END DOMContentLoaded
