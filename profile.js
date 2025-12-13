@@ -19,9 +19,9 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 const auth = getAuth(app);
 const storage = getStorage(app);
 
-/* ---------- Backend Script URL ---------- */
+/* ---------- Backend Script URL (UPDATED) ---------- */
 const scriptURL =
-  "https://script.google.com/macros/s/AKfycbxq-IkyZ9Jr23G4Z9RKUYm65iviYSX-RMw7BxElg41Y-u3a1pTclAk6UpN_yMD6qn6xHQ/exec";
+  "https://script.google.com/macros/s/AKfycbyc72D1uOGyAaHruVkkdsQpFZJBJ80KvLRpFhWZ0-2VduaaxPWkqt0M0dtYvhDFB_c2jg/exec";   // ⭐ FIXED
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -36,6 +36,13 @@ function showToast(message, type = "info") {
   }, 3000);
 }
 
+/* ---------- Convert Google Drive link → direct image ---------- */
+function convertDriveLink(link) {                // ⭐ FIXED
+  const id = link.match(/[-\w]{25,}/)?.[0];
+  if (!id) return null;
+  return `https://drive.google.com/uc?export=view&id=${id}`;
+}
+
 /* ---------- State ---------- */
 let isEditing = false;
 let originalProfile = { phone: "", college: "" };
@@ -45,13 +52,7 @@ function setEditMode(on, ctx) {
   ctx.container?.classList.toggle("is-edit", on);
   ctx.editActions.style.display = on ? "flex" : "none";
 
-  if (on) {
-    ctx.uploadOptions.classList.remove("hidden");
-    ctx.uploadOptions.style.display = "flex";
-  } else {
-    ctx.uploadOptions.classList.add("hidden");
-    ctx.uploadOptions.style.display = "none";
-  }
+  ctx.uploadOptions.style.display = on ? "flex" : "none";
 
   ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
 }
@@ -63,7 +64,7 @@ async function saveProfileToSheet(profile) {
     email: profile.email || "",
     phone: profile.phone || "",
     college: profile.college || "",
-    photo: profile.photo || ""
+    photo: profile.photo || ""   // ⭐ FIXED (photo saved ALWAYS)
   });
 
   try {
@@ -77,7 +78,7 @@ async function saveProfileToSheet(profile) {
   }
 }
 
-/* ---------- Helper ---------- */
+/* ---------- ensureSpan ---------- */
 function ensureFieldSpan(input, id) {
   let span = document.getElementById(id);
   if (!span) {
@@ -119,9 +120,10 @@ onAuthStateChanged(auth, async (user) => {
   /* PREFILL */
   userNameEl.textContent = user.displayName || "PRAVAAH User";
   userEmailEl.textContent = user.email;
-  userPhoto.src = user.photoURL || "default-avatar.png";
 
-  /* Load profile from Sheet */
+  userPhoto.src = "default-avatar.png";   // ⭐ ALWAYS OVERRIDE with Sheet photo later
+
+  /* Fetch profile from Sheets */
   try {
     const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
     const p = await res.json();
@@ -129,6 +131,10 @@ onAuthStateChanged(auth, async (user) => {
     if (p && p.email) {
       userPhoneInput.value = p.phone || "";
       userCollegeInput.value = p.college || "";
+
+      if (p.photo) {
+        userPhoto.src = p.photo + `?t=${Date.now()}`;     // ⭐ FIXED (cache-bypass)
+      }
     }
   } catch (err) {
     console.error("Profile load error:", err);
@@ -153,7 +159,8 @@ onAuthStateChanged(auth, async (user) => {
       name: user.displayName,
       email: user.email,
       phone,
-      college
+      college,
+      photo: userPhoto.src          // ⭐ FIXED — save photo on SAVE
     });
 
     phoneSpan.textContent = phone || "-";
@@ -174,7 +181,7 @@ onAuthStateChanged(auth, async (user) => {
     setEditMode(false, { container, uploadOptions, userPhoto, editActions });
   });
 
-  /* ---------- FIXED: Upload from Device ---------- */
+  /* ---------- Upload from Device ---------- */
   deviceUploadBtn.addEventListener("click", () => {
     if (!isEditing) return showToast("Tap ✏️ to edit!", "info");
     uploadPhotoInput.click();
@@ -182,9 +189,7 @@ onAuthStateChanged(auth, async (user) => {
 
   /* ---------- Device upload handler ---------- */
   uploadPhotoInput.addEventListener("change", async (e) => {
-    if (!isEditing) return;
-
-    if (!e.target.files?.length) return;
+    if (!isEditing || !e.target.files?.length) return;
 
     const file = e.target.files[0];
 
@@ -198,18 +203,20 @@ onAuthStateChanged(auth, async (user) => {
       const url = await getDownloadURL(storageRef);
 
       await updateProfile(auth.currentUser, { photoURL: url });
-      userPhoto.src = url;
+
+      userPhoto.src = url + `?t=${Date.now()}`;   // ⭐ FIXED
 
       await saveProfileToSheet({
         name: user.displayName,
         email: user.email,
         phone: userPhoneInput.value,
         college: userCollegeInput.value,
-        photo: url
+        photo: url                              // ⭐ SAVE TO SHEET
       });
 
       showToast("Photo updated!", "success");
-    } catch {
+    } catch (err) {
+      console.error(err);
       showToast("Upload failed!", "error");
     }
   });
@@ -221,20 +228,19 @@ onAuthStateChanged(auth, async (user) => {
     const link = prompt("Paste Google Drive image link:");
     if (!link?.includes("drive.google.com")) return showToast("Invalid link!", "error");
 
-    const id = link.match(/[-\w]{25,}/)?.[0];
-    if (!id) return showToast("Invalid Drive URL!", "error");
-
-    const directURL = `https://drive.google.com/uc?export=view&id=${id}`;
+    const directURL = convertDriveLink(link);   // ⭐ FIXED
+    if (!directURL) return showToast("Invalid link format!", "error");
 
     await updateProfile(user, { photoURL: directURL });
-    userPhoto.src = directURL;
+
+    userPhoto.src = directURL + `?t=${Date.now()}`;  // ⭐ FIX
 
     await saveProfileToSheet({
       name: user.displayName,
       email: user.email,
       phone: userPhoneInput.value,
       college: userCollegeInput.value,
-      photo: directURL
+      photo: directURL                       // ⭐ SAVE
     });
 
     showToast("Photo updated!", "success");
