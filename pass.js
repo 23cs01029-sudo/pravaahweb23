@@ -245,6 +245,8 @@ function renderSelectionArea() {
 
         renderDayEvents(currentDay);
         calculateTotal();
+        autoSaveFormState();
+
       })
     );
   }
@@ -282,6 +284,8 @@ function renderSelectionArea() {
         renderVisitorEvents(currentVisitorDays);
         renderVisitorStarToggleIfNeeded();
         calculateTotal();
+        autoSaveFormState();
+
       })
     );
   }
@@ -309,6 +313,8 @@ function renderSelectionArea() {
   }
 
   calculateTotal();
+  autoSaveFormState();
+
 }
 
 /* =======================================
@@ -330,6 +336,8 @@ function renderDayEvents(day) {
     toggle.addEventListener("change", () => {
       includeStarNite = toggle.checked;
       calculateTotal();
+      autoSaveFormState();
+
     });
 }
 
@@ -366,6 +374,8 @@ function renderVisitorStarToggleIfNeeded() {
     document.getElementById("visitorStar").addEventListener("change", (e) => {
       includeStarNite = e.target.checked;
       calculateTotal();
+      autoSaveFormState();
+
     });
   } else {
     c.innerHTML = "";
@@ -396,6 +406,8 @@ function renderFestEvents() {
     toggle.addEventListener("change", () => {
       includeStarNite = toggle.checked;
       calculateTotal();
+      autoSaveFormState();
+
     });
 }
 
@@ -475,6 +487,8 @@ function buildParticipantForms(count) {
   }
 
   calculateTotal();
+  autoSaveFormState();
+
 }
 
 
@@ -677,3 +691,4 @@ setTimeout(() => {
 window.addEventListener("beforeunload", () => {
   autoSaveFormState();
 });
+
