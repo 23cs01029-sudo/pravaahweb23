@@ -513,14 +513,18 @@ function updateTotal(amount) {
       EVENT COLLECTION
 ======================================= */
 function collectSelectedEvents() {
-  const out = [];
+  const events = {};
 
   document.querySelectorAll(".event-checkbox:checked").forEach((c) => {
-    out.push(`${c.dataset.day.toUpperCase()}: ${c.value}`);
+    const day = c.dataset.day.toUpperCase();  
+    if (!events[day]) events[day] = [];
+
+    events[day].push(c.value);
   });
 
-  return out;
+  return events;
 }
+
 
 
 /* =======================================
@@ -585,6 +589,7 @@ payBtn.addEventListener("click", async () => {
     try {
       await fetch(scriptURL, {
         method: "POST",
+        mode: "no-cors",
         body: JSON.stringify(payload),
         headers: { "Content-Type": "application/json" }
       });
@@ -613,6 +618,7 @@ rzp.on("payment.failed", function () {
 rzp.open();
 
 });
+
 
 
 
