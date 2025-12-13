@@ -170,7 +170,9 @@ body {
   transition: 0.25s ease;
 }
 
-
+.event-left input[type="checkbox"]:hover {
+  filter: drop-shadow(0 0 6px cyan);
+}
 
 .event-label {
   font-size: 1.1rem;
@@ -396,6 +398,23 @@ body {
   gap: 10px;
 }
 
+
+/* REMOVE CYAN GLOW / BACKGROUND WHEN CLICKING CHECKBOX */
+.event-left input[type="checkbox"],
+.starnite-toggle-row input[type="checkbox"] {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-focus-ring-color: transparent !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.event-left input[type="checkbox"]:focus,
+.event-left input[type="checkbox"]:active,
+.starnite-toggle-row input[type="checkbox"]:focus,
+.starnite-toggle-row input[type="checkbox"]:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
 
 
 
