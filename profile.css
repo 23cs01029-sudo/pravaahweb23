@@ -383,4 +383,58 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   .pass-item h3 { font-size: 1.08rem; }
   footer { margin-top: 32px; }
 }
+/* ===============================
+   FIX PASS CARD TEXT + QR LAYOUT
+   =============================== */
+
+/* Make pass card horizontal */
+.pass-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Text container (left side) */
+.pass-item > div:not(.qr-box),
+.pass-item .pass-details {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Prevent vertical text breaking */
+.pass-item h3,
+.pass-item p {
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+  writing-mode: horizontal-tb;
+}
+
+/* QR on right */
+.qr-box {
+  flex-shrink: 0;
+  width: 140px;
+  height: 140px;
+  background: white;
+  padding: 6px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* MOBILE: stack QR below text */
+@media (max-width: 600px) {
+  .pass-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+  }
+
+  .qr-box {
+    margin-top: 12px;
+  }
+}
+
 
