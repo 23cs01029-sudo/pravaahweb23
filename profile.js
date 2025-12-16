@@ -85,12 +85,12 @@ function ensureFieldSpan(input, id) {
 }
 
 /* ---------- Fetch Passes ---------- */
-new QRCode(document.getElementById(qrId), {
-  text: `${scriptURL}?paymentId=${encodeURIComponent(paymentId)}`,
-  width: 130,
-  height: 130
-});
-
+async function fetchUserPasses(email) {
+  const res = await fetch(
+    `${scriptURL}?type=passes&email=${encodeURIComponent(email)}`
+  );
+  return await res.json();
+}
 
 
 /* ---------- Render Passes + QR ---------- */
@@ -127,10 +127,11 @@ function renderPasses(passes, container, userEmail) {
     container.appendChild(card);
 
     new QRCode(document.getElementById(qrId), {
-  text: `${scriptURL}?email=${encodeURIComponent(userEmail)}`,
+  text: `${scriptURL}?paymentId=${encodeURIComponent(paymentId)}`,
   width: 130,
   height: 130
 });
+
 
   });
 }
@@ -292,8 +293,6 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
-
-
 
 
 
