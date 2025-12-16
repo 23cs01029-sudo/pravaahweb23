@@ -78,18 +78,14 @@
     </div>
   </section>
 
-  <!-- SCAN ACTIONS -->
+  <!-- ✅ SINGLE SCAN BUTTON -->
   <section class="dashboard-actions">
-    <button onclick="openScanner('gate')">
-      <i class="fa-solid fa-door-open"></i> Main Gate Scan
-    </button>
-
-    <button onclick="openScanner('event')">
-      <i class="fa-solid fa-calendar-check"></i> Event Scan
+    <button onclick="openScanner()">
+      <i class="fa-solid fa-qrcode"></i> Open Scanner
     </button>
   </section>
 
-  <!-- 🔐 ROLE MANAGEMENT (INSIDE DASHBOARD ONLY) -->
+  <!-- 🔐 ROLE MANAGEMENT (DASHBOARD ONLY) -->
   <section id="roleManagement" class="role-section hidden">
     <h2><i class="fa-solid fa-user-shield"></i> Role Management</h2>
 
@@ -100,7 +96,8 @@
     </div>
 
     <p class="role-note">
-      ⚠️ Primary transfer will downgrade current primary to <b>SuperAccount</b>.
+      ⚠️ Transferring primary will downgrade the current primary to
+      <b>SuperAccount</b>.
     </p>
   </section>
 
@@ -108,8 +105,7 @@
   <section class="offline-section">
     <h2><i class="fa-solid fa-cloud-slash"></i> Offline Scan Queue</h2>
     <p>
-      If scans happen offline, they will be stored locally and auto-synced
-      when internet is restored.
+      Offline scans are saved locally and auto-synced once internet is restored.
     </p>
     <p>
       Pending scans: <b id="offlineCount">0</b>
@@ -159,7 +155,7 @@
   </div>
 </footer>
 
-<!-- 📱 MOBILE MENU -->
+<!-- 📱 MOBILE MENU + SCAN ROUTE -->
 <script>
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
@@ -174,9 +170,13 @@
     }
   });
 
-  function openScanner(type) {
+  /* ✅ SINGLE ENTRY TO APPS SCRIPT SCAN */
+  function openScanner() {
+    const SCAN_URL =
+      "https://script.google.com/macros/s/AKfycbxTtdt1HmTIP0i5WOeXMLRWLKA1k4RpD153EmgU-Ow6CPRGOISzjOVLplKFDm-gUaggmg/exec";
+
     window.location.href =
-      `scan.html?mode=admin&page=${type}&scanner=dashboard`;
+      `${SCAN_URL}?mode=admin&page=scan&scanner=dashboard`;
   }
 </script>
 
