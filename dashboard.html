@@ -37,13 +37,8 @@
     <li><a href="contact_us.html">Contact Us</a></li>
     <li><a href="profile.html">Profile</a></li>
 
-    <li class="active">
-      <a href="dashboard.html">Dashboard</a>
-    </li>
-
-    <li class="mobile-only">
-      <a id="logoutMobile">Logout</a>
-    </li>
+    <li class="active"><a href="dashboard.html">Dashboard</a></li>
+    <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
   </ul>
 
   <button id="logoutDesktop" class="logout-btn">Logout</button>
@@ -61,7 +56,7 @@
     </p>
   </section>
 
-  <!-- 🗓️ DAY WISE FILTER (SUPERADMIN+) -->
+  <!-- 🗓️ DAY FILTER (SUPERADMIN+) -->
   <section id="dayFilter" class="dashboard-filter hidden">
     <select id="dayDropdown">
       <option value="ALL">All Days</option>
@@ -75,42 +70,36 @@
   <!-- 📊 STATS -->
   <section class="dashboard-cards">
 
-    <!-- INSIDE CAMPUS (DAY BASED) -->
     <div class="dash-card">
       <i class="fa-solid fa-building"></i>
       <h3>Inside Campus</h3>
       <p id="statInCampus">—</p>
     </div>
 
-    <!-- TOTAL REGISTRATIONS (SUPERADMIN+) -->
     <div class="dash-card hidden" id="cardTotalReg">
       <i class="fa-solid fa-users"></i>
       <h3>Total Registrations</h3>
       <p id="statTotalReg">—</p>
     </div>
 
-    <!-- EVENT REGISTRATIONS -->
     <div class="dash-card">
       <i class="fa-solid fa-calendar-check"></i>
       <h3>Event Registrations</h3>
       <p id="statEventReg">—</p>
     </div>
 
-    <!-- ACCOMMODATION -->
     <div class="dash-card">
       <i class="fa-solid fa-bed"></i>
       <h3>Accommodation</h3>
       <p id="statAccommodation">—</p>
     </div>
 
-    <!-- SCANS TODAY -->
     <div class="dash-card">
       <i class="fa-solid fa-qrcode"></i>
       <h3>Scans Today</h3>
       <p id="statScan">—</p>
     </div>
 
-    <!-- 💰 MONEY (SUPERACCOUNT ONLY) -->
     <div class="dash-card hidden" id="cardMoney">
       <i class="fa-solid fa-indian-rupee-sign"></i>
       <h3>Total Amount Collected</h3>
@@ -119,13 +108,47 @@
 
   </section>
 
-  <!-- 🔽 EVENT DROPDOWN -->
-  <section class="dashboard-filter">
+  <!-- 🔍 PARTICIPANT SEARCH -->
+  <section class="role-section">
+    <h2>
+      <i class="fa-solid fa-magnifying-glass"></i>
+      Search Participant / Pass
+    </h2>
+
+    <div class="role-form">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Name / Email / Phone / Payment ID"
+      />
+      <button id="searchBtn">
+        <i class="fa-solid fa-search"></i> Search
+      </button>
+    </div>
+
+    <div id="searchResults" style="margin-top:18px;overflow-x:auto;"></div>
+  </section>
+
+  <!-- 🔽 EVENT DROPDOWN + COUNT + SHEET -->
+  <section class="dashboard-filter" style="flex-direction:column;gap:14px;">
     <select id="eventDropdown">
       <option value="ALL">All Events</option>
     </select>
-    <p style="text-align:center;font-size:0.85rem;opacity:0.7">
-      Selecting an event opens its sheet
+
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <div style="font-weight:600;">
+        Registrations:
+        <span id="eventCount" style="color:var(--gold)">—</span>
+      </div>
+
+      <button id="openEventSheetBtn" class="hidden">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        Open Event Sheet
+      </button>
+    </div>
+
+    <p style="font-size:0.8rem;opacity:0.7;text-align:center;">
+      Select an event to view count & open its Google Sheet
     </p>
   </section>
 
@@ -136,13 +159,13 @@
     </button>
   </section>
 
-  <!-- 📶 OFFLINE SCAN QUEUE -->
+  <!-- 📶 OFFLINE -->
   <section class="offline-section">
     <h2><i class="fa-solid fa-cloud-slash"></i> Offline Scan Queue</h2>
     <p>Pending scans: <b id="offlineCount">0</b></p>
   </section>
 
-  <!-- 🔐 ROLE MANAGEMENT (SUPERACCOUNT ONLY) -->
+  <!-- 🔐 ROLE MANAGEMENT -->
   <section id="roleSection" class="role-section hidden">
     <h2><i class="fa-solid fa-user-shield"></i> Role Management</h2>
 
@@ -161,38 +184,6 @@
 
 <!-- ⚫ FOOTER -->
 <footer>
-  <div class="footer-container">
-    <div class="footer-left">
-      <img src="pravah-logo.png" class="footer-logo" />
-      <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-    </div>
-
-    <div class="footer-column">
-      <h3>Quick Links</h3>
-      <ul>
-        <li><a href="#">Events Portal</a></li>
-        <li><a href="#">CA Portal</a></li>
-        <li><a href="#">Join the Community</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Explore More</h3>
-      <ul>
-        <li><a href="#">Star Attractions</a></li>
-        <li><a href="#">Hall of Fame</a></li>
-        <li><a href="#">Brochure</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Reach Out</h3>
-      <ul>
-        <li><a href="contact_us.html">Contact Us</a></li>
-      </ul>
-    </div>
-  </div>
-
   <div class="footer-bottom">
     <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM</p>
   </div>
