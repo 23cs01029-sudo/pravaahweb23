@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD STYLES (FINAL)
+   PRAVAAH — ADMIN DASHBOARD STYLES (FINAL + SEARCH + EVENT)
    Compatible with global style.css
 ============================================================ */
 
@@ -43,6 +43,8 @@
   display: flex;
   justify-content: center;
   margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .dashboard-filter select {
@@ -105,7 +107,7 @@
   color: var(--gold);
 }
 
-/* 💰 MONEY CARD EMPHASIS (SUPERACCOUNT ONLY) */
+/* 💰 MONEY CARD */
 #cardMoney {
   border: 1.5px solid var(--gold);
   box-shadow: 0 0 28px rgba(255,215,0,0.35);
@@ -113,7 +115,72 @@
 
 #cardMoney i {
   color: var(--gold);
-  text-shadow: 0 0 12px var(--gold);
+}
+
+/* ============================================================
+   🔍 PARTICIPANT SEARCH
+============================================================ */
+
+#searchResults {
+  margin-top: 18px;
+  overflow-x: auto;
+}
+
+#searchResults table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+#searchResults th,
+#searchResults td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+#searchResults th {
+  color: var(--primary);
+  font-weight: 700;
+  background: rgba(0,0,0,0.6);
+}
+
+#searchResults td {
+  color: var(--text);
+}
+
+#searchResults tr:hover {
+  background: rgba(36,224,236,0.08);
+}
+
+/* ============================================================
+   🔽 EVENT COUNT + SHEET BUTTON
+============================================================ */
+
+#eventCount {
+  font-weight: 800;
+  color: var(--gold);
+}
+
+#openEventSheetBtn {
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, var(--primary), var(--violet));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 14px rgba(36,224,236,0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#openEventSheetBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 26px var(--primary-soft);
 }
 
 /* ============================================================
@@ -172,8 +239,6 @@
   text-align: center;
   color: var(--primary);
   margin-bottom: 22px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px var(--primary-soft);
 }
 
 .role-form {
@@ -194,10 +259,6 @@
   outline: none;
 }
 
-.role-form input::placeholder {
-  color: var(--muted);
-}
-
 .role-form button {
   padding: 12px 22px;
   border-radius: 14px;
@@ -206,20 +267,6 @@
   color: #000;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 0 18px rgba(255,215,0,0.4);
-  transition: all 0.3s ease;
-}
-
-.role-form button:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 32px var(--gold);
-}
-
-.role-note {
-  margin-top: 14px;
-  font-size: 0.85rem;
-  text-align: center;
-  color: var(--muted);
 }
 
 /* ============================================================
@@ -235,24 +282,8 @@
   margin-bottom: 2rem;
 }
 
-.offline-section h2 {
-  color: var(--primary);
-  margin-bottom: 12px;
-  text-shadow: 0 0 8px var(--primary-soft);
-}
-
-.offline-section p {
-  font-size: 0.95rem;
-  color: var(--muted);
-}
-
-.offline-section b {
-  color: var(--gold);
-  font-size: 1.2rem;
-}
-
 /* ============================================================
-   RESPONSIVE BREAKPOINTS
+   RESPONSIVE
 ============================================================ */
 
 @media (max-width: 1000px) {
@@ -270,22 +301,12 @@
     grid-template-columns: 1fr;
   }
 
-  .dash-card p {
-    font-size: 1.8rem;
-  }
-
   .dashboard-actions button,
   .dashboard-filter select {
     width: 100%;
   }
 
-  .role-form {
-    flex-direction: column;
-  }
-
-  .role-form input,
-  .role-form select,
-  .role-form button {
-    width: 100%;
+  #searchResults table {
+    min-width: 600px;
   }
 }
