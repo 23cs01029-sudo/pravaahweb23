@@ -114,13 +114,16 @@ function renderPasses(passes, container, userEmail) {
     const card = document.createElement("div");
     card.className = "pass-item";
     card.innerHTML = `
-      <h3>${passType}</h3>
-      <p><strong>Payment ID:</strong> ${paymentId}</p>
-      <p><strong>Days:</strong> ${days}</p>
-      <p><strong>StarNite:</strong> ${starnite}</p>
-      <p><strong>Events:</strong> ${events}</p>
-      <div id="${qrId}" class="qr-box"></div>
-    `;
+  <div class="pass-details">
+    <h3>${passType}</h3>
+    <p><strong>Payment ID:</strong> ${paymentId}</p>
+    <p><strong>Days:</strong> ${days}</p>
+    <p><strong>StarNite:</strong> ${starnite}</p>
+    <p><strong>Events:</strong> ${events}</p>
+  </div>
+  <div id="${qrId}" class="qr-box"></div>
+`;
+
     container.appendChild(card);
 
     new QRCode(document.getElementById(qrId), {
@@ -296,6 +299,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
