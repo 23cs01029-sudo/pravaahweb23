@@ -3,8 +3,7 @@
 ========================================================== */
 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
+import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 /* ---------- Firebase ---------- */
 const firebaseConfig = {
@@ -21,7 +20,6 @@ const auth = getAuth(app);
 /* ---------- Backend Script URL ---------- */
 const scriptURL =
   "https://script.google.com/macros/s/AKfycbxy7u4jBBPfRpfyybHXlu7ZO0Gke9D6fowYD4wROw9VuWg3pEP4f-MH3a7LXV9TQ4He/exec";
-
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -42,52 +40,38 @@ let originalProfile = { phone: "", college: "" };
 
 function setEditMode(on, ctx) {
   isEditing = on;
-  ctx.container?.classList.toggle("is-edit", on);
-  if (ctx.editActions) ctx.editActions.style.display = on ? "flex" : "none";
+  ctx.container.classList.toggle("is-edit", on);
+  ctx.editActions.style.display = on ? "flex" : "none";
 
-  if (ctx.uploadOptions) {
-    if (on) {
-      ctx.uploadOptions.classList.remove("hidden");
-      ctx.uploadOptions.style.display = "flex";
-    } else {
-      ctx.uploadOptions.classList.add("hidden");
-      ctx.uploadOptions.style.display = "none";
-    }
-  }
+  ctx.uploadOptions.classList.toggle("hidden", !on);
+  ctx.uploadOptions.style.display = on ? "flex" : "none";
 
-  if (ctx.userPhoto) {
-    ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
-    ctx.userPhoto.style.outlineOffset = "6px";
-  }
+  ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
+  ctx.userPhoto.style.outlineOffset = "6px";
 }
 
-/* ---------- Save to Sheets ---------- */
+/* ---------- Save Profile ---------- */
 async function saveProfileToSheet(profile) {
   const payload = JSON.stringify({
-    name: profile.name?.trim() || "",
-    email: profile.email?.trim().toLowerCase() || "",
+    name: profile.name || "",
+    email: profile.email || "",
     phone: profile.phone || "",
     college: profile.college || "",
     photo: profile.photo || ""
   });
 
-  try {
-    if (navigator.sendBeacon) {
-      const blob = new Blob([payload], { type: "text/plain" });
-      navigator.sendBeacon(scriptURL, blob);
-    } else {
-      await fetch(scriptURL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: payload
-      });
-    }
-  } catch (err) {
-    console.error("Save failed:", err);
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(scriptURL, new Blob([payload], { type: "text/plain" }));
+  } else {
+    await fetch(scriptURL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: payload
+    });
   }
 }
 
-/* ---------- Ensure span next to field ---------- */
+/* ---------- Field Text ---------- */
 function ensureFieldSpan(input, id) {
   let span = document.getElementById(id);
   if (!span) {
@@ -98,6 +82,58 @@ function ensureFieldSpan(input, id) {
   }
   span.textContent = input.value.trim() || "-";
   return span;
+}
+
+/* ---------- Fetch Passes ---------- */
+async function fetchUserPasses(email) {
+  const res = await fetch(`${scriptURL}?email=${encodeURIComponent(email)}`);
+  return await res.json();
+}
+
+/* ---------- Render Passes + QR ---------- */
+function renderPasses(passes, container, userEmail) {
+  if (!Array.isArray(passes) || passes.length === 0) {
+    container.innerHTML = `<div class="no-passes">No passes found</div>`;
+    return;
+  }
+
+  container.innerHTML = "";
+
+  passes.forEach((p, i) => {
+    const passType   = p["Pass Type"] || p.passType || "-";
+    const paymentId = p["Payment ID"] || p.paymentId || "-";
+    const days      = p["Selected Days"] || p.accessDays || "-";
+    const starnite  = p["Starnite"] || p.starnite || "NO";
+    const events    = p["Events"] || p.events || "-";
+
+    const qrId = `qr_${i}`;
+
+    const card = document.createElement("div");
+    card.className = "pass-item";
+    card.innerHTML = `
+      <h3>${passType}</h3>
+      <p><strong>Payment ID:</strong> ${paymentId}</p>
+      <p><strong>Days:</strong> ${days}</p>
+      <p><strong>StarNite:</strong> ${starnite}</p>
+      <p><strong>Events:</strong> ${events}</p>
+      <div id="${qrId}" class="qr-box"></div>
+    `;
+    container.appendChild(card);
+
+    new QRCode(document.getElementById(qrId), {
+      text: JSON.stringify({
+        system: "PRAVAAH2026",
+        paymentId,
+        passType,
+        days,
+        starnite,
+        events,
+        email: userEmail
+      }),
+      width: 130,
+      height: 130
+    });
+  });
 }
 
 /* ---------- Main ---------- */
@@ -116,6 +152,7 @@ onAuthStateChanged(auth, async (user) => {
   const userCollegeInput = document.getElementById("userCollege");
   const passesList = document.getElementById("passesList");
 
+  const editActions = document.getElementById("editActions");
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
 
@@ -124,208 +161,122 @@ onAuthStateChanged(auth, async (user) => {
   userEmailEl.textContent = user.email;
   userPhoto.src = user.photoURL || "default-avatar.png";
 
-  /* Profile fetch */
-  try {
-    const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
-    const p = await res.json();
-
-    if (p && p.email) {
-      userPhoneInput.value = p.phone || "";
-      userCollegeInput.value = p.college || "";
-      localStorage.setItem("profileData", JSON.stringify(p));
-    } else {
-      const newP = { name: user.displayName, email: user.email, phone: "", college: "" };
-      await saveProfileToSheet(newP);
-      localStorage.setItem("profileData", JSON.stringify(newP));
-    }
-  } catch (e) {
-    console.error("Profile load failed:", e);
+  /* Load profile */
+  const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
+  const p = await res.json();
+  if (p?.email) {
+    userPhoneInput.value = p.phone || "";
+    userCollegeInput.value = p.college || "";
+    if (p.photo) userPhoto.src = p.photo;
   }
 
   const phoneSpan = ensureFieldSpan(userPhoneInput, "userPhoneText");
   const collegeSpan = ensureFieldSpan(userCollegeInput, "userCollegeText");
 
-  originalProfile = {
-    phone: userPhoneInput.value,
-    college: userCollegeInput.value
+  originalProfile = { phone: userPhoneInput.value, college: userCollegeInput.value };
+
+  /* Load passes */
+  const passes = await fetchUserPasses(user.email);
+  renderPasses(passes, passesList, user.email);
+
+  /* Edit toggle */
+  document.getElementById("editPen").onclick = () => {
+    originalProfile = { phone: userPhoneInput.value, college: userCollegeInput.value };
+    setEditMode(!isEditing, { container, uploadOptions, userPhoto, editActions });
   };
 
-  /* Edit Pen */
-  let editPen = document.getElementById("editPen");
-  if (!editPen) {
-    editPen = document.createElement("button");
-    editPen.id = "editPen";
-    editPen.className = "edit-pen";
-    editPen.innerHTML = `<i class="fa-solid fa-pen"></i>`;
-    document.querySelector(".photo-wrapper").appendChild(editPen);
-  }
-
-  /* Save & Cancel Buttons */
-  let editActions = document.getElementById("editActions");
-  if (!editActions) {
-    editActions = document.createElement("div");
-    editActions.id = "editActions";
-    editActions.className = "edit-actions";
-    editActions.innerHTML = `
-      <button id="saveProfileBtn" class="save-btn">Save</button>
-      <button id="cancelEditBtn" class="save-btn secondary">Cancel</button>
-    `;
-    document.querySelector(".profile-info").appendChild(editActions);
-  }
-
-  const saveBtn = document.getElementById("saveProfileBtn");
-  const cancelBtn = document.getElementById("cancelEditBtn");
-
-  /* Edit Mode */
-  editPen.addEventListener("click", () => {
-    if (!isEditing) {
-      originalProfile = {
-        phone: userPhoneInput.value,
-        college: userCollegeInput.value
-      };
-    }
-    setEditMode(!isEditing, { container, uploadOptions, userPhoto, editActions });
-  });
-
   /* Save */
-  saveBtn.addEventListener("click", async () => {
-    const phone = userPhoneInput.value.trim();
-    const college = userCollegeInput.value.trim();
-
-    await saveProfileToSheet({ name: user.displayName, email: user.email, phone, college });
-
-    phoneSpan.textContent = phone || "-";
-    collegeSpan.textContent = college || "-";
-
-    localStorage.setItem(
-      "profileData",
-      JSON.stringify({ name: user.displayName, email: user.email, phone, college })
-    );
-
+  document.getElementById("saveProfileBtn").onclick = async () => {
+    await saveProfileToSheet({
+      name: user.displayName,
+      email: user.email,
+      phone: userPhoneInput.value,
+      college: userCollegeInput.value,
+      photo: userPhoto.src
+    });
+    phoneSpan.textContent = userPhoneInput.value || "-";
+    collegeSpan.textContent = userCollegeInput.value || "-";
     showToast("Profile updated!", "success");
     setEditMode(false, { container, uploadOptions, userPhoto, editActions });
-  });
+  };
 
   /* Cancel */
-  cancelBtn.addEventListener("click", () => {
+  document.getElementById("cancelEditBtn").onclick = () => {
     userPhoneInput.value = originalProfile.phone;
     userCollegeInput.value = originalProfile.college;
-
     phoneSpan.textContent = originalProfile.phone || "-";
     collegeSpan.textContent = originalProfile.college || "-";
-
     setEditMode(false, { container, uploadOptions, userPhoto, editActions });
-  });
+  };
 
-  /* Upload From Device Button */
-  if (uploadOptions && !document.getElementById("deviceUploadBtn")) {
-    const btn = document.createElement("button");
-    btn.id = "deviceUploadBtn";
-    btn.className = "upload-btn";
-    btn.innerHTML = `<i class="fa-solid fa-desktop"></i> Upload from Device`;
-    uploadOptions.prepend(btn);
+  /* -------- DEVICE PHOTO UPLOAD -------- */
+  document.getElementById("deviceUploadBtn").onclick = () => {
+    if (!isEditing) return showToast("Tap ✏️ to edit", "info");
+    uploadPhotoInput.click();
+  };
 
-    btn.addEventListener("click", () => {
-      if (!isEditing) return showToast("Tap ✏️ to edit!", "info");
-      uploadPhotoInput.click();
-    });
-  }
+  uploadPhotoInput.onchange = async (e) => {
+    if (!e.target.files.length) return;
 
-  /* Device Upload Handler — FINAL FIXED VERSION */
-  uploadPhotoInput.addEventListener("change", async (e) => {
-  if (!isEditing) return showToast("Tap ✏️ to edit!", "info");
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = async () => {
+      userPhoto.src = reader.result;
+      const base64 = reader.result.split(",")[1];
 
-  uploadOptions.classList.add("hidden");
-  uploadOptions.style.display = "none";
-
-  if (!e.target.files || e.target.files.length === 0) {
-    showToast("No file selected.", "info");
-    return;
-  }
-
-  const file = e.target.files[0];
-
-  const reader = new FileReader();
-  reader.onload = async () => {
-    userPhoto.src = reader.result;
-    showToast("Uploading photo...", "info");
-
-    const base64 = reader.result.split(",")[1];
-
-    try {
-      const res = await fetch(scriptURL, {
+      const r = await fetch(scriptURL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
           type: "photoUpload",
-          email: auth.currentUser.email,
+          email: user.email,
           mimetype: file.type,
           file: base64
         })
       });
 
-      const out = await res.json();
-
+      const out = await r.json();
       if (out.ok) {
-        userPhoto.src = out.photo; // Google Drive image
+        userPhoto.src = out.photo;
         showToast("Photo updated!", "success");
-      } else {
-        showToast("Upload failed!", "error");
       }
-    } catch (err) {
-      console.error(err);
-      showToast("Upload failed!", "error");
-    }
+    };
+    reader.readAsDataURL(file);
   };
 
-  reader.readAsDataURL(file);
-});
+  /* -------- DRIVE PHOTO UPLOAD -------- */
+  driveUploadBtn.onclick = async () => {
+    if (!isEditing) return showToast("Tap ✏️ to edit", "info");
 
+    const link = prompt("Paste Google Drive image link");
+    const id = link?.match(/[-\w]{25,}/)?.[0];
+    if (!id) return showToast("Invalid link", "error");
 
-  /* Drive Upload */
-  driveUploadBtn.addEventListener("click", async () => {
-    if (!isEditing) return showToast("Tap ✏️ to edit!", "info");
+    const direct = `https://drive.google.com/uc?export=view&id=${id}`;
+    userPhoto.src = direct;
 
-    uploadOptions.classList.add("hidden");
-    uploadOptions.style.display = "none";
+    await updateProfile(user, { photoURL: direct });
+    await saveProfileToSheet({
+      name: user.displayName,
+      email: user.email,
+      phone: userPhoneInput.value,
+      college: userCollegeInput.value,
+      photo: direct
+    });
 
-    const link = prompt("Paste Google Drive image link:");
-    if (!link || !link.includes("drive.google.com"))
-      return showToast("Invalid link!", "error");
-
-    const id = link.match(/[-\w]{25,}/);
-    if (!id) return showToast("Invalid link format!", "error");
-
-    const direct = `https://drive.google.com/uc?export=view&id=${id[0]}`;
-
-    try {
-      await updateProfile(auth.currentUser, { photoURL: direct });
-      userPhoto.src = direct;
-
-      await saveProfileToSheet({
-        name: auth.currentUser.displayName,
-        email: auth.currentUser.email,
-        phone: userPhoneInput.value,
-        college: userCollegeInput.value,
-        photo: direct
-      });
-
-      showToast("Photo updated!", "success");
-    } catch {
-      showToast("Failed to use this image.", "error");
-    }
-  });
+    showToast("Photo updated!", "success");
+  };
 
   /* Logout */
   const logout = async () => {
     await signOut(auth);
     window.location.href = "index.html";
   };
-  logoutDesktop.addEventListener("click", logout);
-  logoutMobile.addEventListener("click", logout);
+  logoutDesktop.onclick = logout;
+  logoutMobile.onclick = logout;
 });
 
-/* ---------- Inject Toast CSS ---------- */
+/* ---------- Toast CSS ---------- */
 const style = document.createElement("style");
 style.innerHTML = `
 .toast {
@@ -342,4 +293,3 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
-
