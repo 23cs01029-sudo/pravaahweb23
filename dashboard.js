@@ -35,17 +35,18 @@ const statReg  = document.getElementById("statReg");
 const statAcc  = document.getElementById("statAcc");
 const statScan = document.getElementById("statScan");
 
-const roleSection = document.getElementById("roleSection");
+const roleSection = document.getElementById("roleManagement");
 const roleEmail   = document.getElementById("roleEmail");
 const roleSelect  = document.getElementById("roleSelect");
-const roleSaveBtn = document.getElementById("saveRoleBtn");
+const roleSaveBtn = document.getElementById("assignRoleBtn");
 
 const offlineCountEl = document.getElementById("offlineCount");
 
-/* ================= AUTH + ROLE ================= */
+/* ================= STATE ================= */
 let CURRENT_ROLE = "";
 let IS_PRIMARY = false;
 
+/* ================= AUTH + ROLE CHECK ================= */
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
@@ -58,8 +59,10 @@ onAuthStateChanged(auth, async (user) => {
     );
     const roleObj = await res.json();
 
-    if (!["Admin", "SuperAdmin", "SuperAccount", "PrimarySuperAccount"]
-        .includes(roleObj.role)) {
+    if (
+      !["Admin", "SuperAdmin", "SuperAccount", "PrimarySuperAccount"]
+        .includes(roleObj.role)
+    ) {
       alert("Access denied");
       window.location.href = "home.html";
       return;
@@ -101,16 +104,16 @@ async function loadDashboardStats() {
 
 /* ================= ROLE MANAGEMENT ================= */
 function configureRoleUI() {
-  // Admins never see role management
+  // Admins NEVER see role management
   if (CURRENT_ROLE === "Admin") {
     roleSection.classList.add("hidden");
     return;
   }
 
   roleSection.classList.remove("hidden");
-
-  // Allowed promotions based on hierarchy
   roleSelect.innerHTML = "";
+
+  // 🧠 ROLE VISIBILITY MATRIX ENFORCED
 
   if (CURRENT_ROLE === "SuperAdmin") {
     roleSelect.add(new Option("Admin", "Admin"));
@@ -135,7 +138,7 @@ roleSaveBtn?.addEventListener("click", async () => {
   const newRole = roleSelect.value;
 
   if (!email || !newRole) {
-    alert("Enter email and role");
+    alert("Enter email and select role");
     return;
   }
 
@@ -154,24 +157,25 @@ roleSaveBtn?.addEventListener("click", async () => {
     });
 
     const result = await res.json();
-
     alert(result.message || "Role updated");
 
-    // Primary transfer rule
+    // 🔁 Primary transfer rule
     if (newRole === "TRANSFER_PRIMARY") {
-      alert("You are now SuperAccount only.");
+      alert("Primary transferred. You are now SuperAccount.");
       location.reload();
     }
 
   } catch (err) {
+    console.error(err);
     alert("Role update failed");
   }
 });
 
-/* ================= SCAN LAUNCHER ================= */
+/* ================= SINGLE SCAN BUTTON ================= */
 /* Goes to Apps Script scan.html */
 window.goScan = function () {
-  window.location.href = `${API}?mode=admin&page=scan&scanner=dashboard`;
+  window.location.href =
+    `${API}?mode=admin&scanner=dashboard`;
 };
 
 /* ================= OFFLINE SCAN QUEUE ================= */
