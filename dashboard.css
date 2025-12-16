@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD STYLES
+   PRAVAAH — ADMIN DASHBOARD STYLES (FINAL)
    Compatible with global style.css
 ============================================================ */
 
@@ -14,7 +14,7 @@
 /* ---------- HEADER ---------- */
 .dashboard-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2.8rem;
 }
 
 .dashboard-header h1 {
@@ -35,10 +35,34 @@
   font-weight: 600;
 }
 
+/* ============================================================
+   🔽 EVENT FILTER
+============================================================ */
+
+.dashboard-filter {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2.8rem;
+}
+
+.dashboard-filter select {
+  min-width: 260px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--primary-soft);
+  background: rgba(0,0,0,0.65);
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(36,224,236,0.18);
+}
+
 /* ---------- STAT CARDS ---------- */
 .dashboard-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 28px;
   margin-bottom: 3.5rem;
 }
@@ -67,7 +91,7 @@
 }
 
 .dash-card h3 {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   margin-bottom: 10px;
   color: var(--text);
 }
@@ -78,50 +102,42 @@
   color: var(--gold);
 }
 
-/* ---------- ACTION BUTTONS ---------- */
+/* ============================================================
+   ACTION BUTTONS
+============================================================ */
+
 .dashboard-actions {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 26px;
   margin-bottom: 3.5rem;
 }
 
-/* Single scan button (final architecture) */
-.dashboard-actions.single-scan {
-  justify-content: center;
-}
-
 .dashboard-actions button {
-  min-width: 230px;
+  min-width: 240px;
   padding: 14px 24px;
-  border-radius: 14px;
+  border-radius: 16px;
   border: none;
   background: linear-gradient(135deg, var(--violet), var(--primary));
   color: #fff;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 1px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  box-shadow: 0 0 16px rgba(36,224,236,0.25);
+  box-shadow: 0 0 18px rgba(36,224,236,0.25);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.dashboard-actions button i {
-  font-size: 1.2rem;
 }
 
 .dashboard-actions button:hover {
   transform: scale(1.08);
-  box-shadow: 0 0 28px var(--primary-soft);
+  box-shadow: 0 0 32px var(--primary-soft);
 }
 
 /* ============================================================
-   🔐 ROLE MANAGEMENT SECTION (DASHBOARD ONLY)
+   🔐 ROLE MANAGEMENT
 ============================================================ */
 
 .role-section {
@@ -169,12 +185,12 @@
 }
 
 .role-form button {
-  padding: 12px 20px;
+  padding: 12px 22px;
   border-radius: 14px;
   border: none;
   background: linear-gradient(135deg, var(--gold), var(--primary));
   color: #000;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   box-shadow: 0 0 18px rgba(255,215,0,0.4);
   transition: all 0.3s ease;
@@ -182,7 +198,7 @@
 
 .role-form button:hover {
   transform: scale(1.08);
-  box-shadow: 0 0 30px var(--gold);
+  box-shadow: 0 0 32px var(--gold);
 }
 
 .role-note {
@@ -248,7 +264,10 @@
 
   .dashboard-actions button {
     width: 100%;
-    min-width: unset;
+  }
+
+  .dashboard-filter select {
+    width: 100%;
   }
 
   .role-form {
