@@ -239,6 +239,7 @@ roleSaveBtn?.addEventListener("click", async () => {
 
   await fetch(API, {
     method: "POST",
+     mode: "no-cors",
     body: JSON.stringify({
       type: "setRole",
       targetEmail: roleEmail.value.trim(),
