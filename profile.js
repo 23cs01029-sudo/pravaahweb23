@@ -127,18 +127,11 @@ function renderPasses(passes, container, userEmail) {
     container.appendChild(card);
 
     new QRCode(document.getElementById(qrId), {
-      text: JSON.stringify({
-        system: "PRAVAAH2026",
-        paymentId,
-        passType,
-        days,
-        starnite,
-        events,
-        email: userEmail
-      }),
-      width: 130,
-      height: 130
-    });
+  text: `${scriptURL}?email=${encodeURIComponent(userEmail)}`,
+  width: 130,
+  height: 130
+});
+
   });
 }
 
@@ -299,6 +292,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
