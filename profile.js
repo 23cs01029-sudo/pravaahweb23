@@ -19,7 +19,7 @@ const auth = getAuth(app);
 
 /* ---------- Backend Script URL ---------- */
 const scriptURL =
-  "https://script.google.com/macros/s/AKfycbxTtdt1HmTIP0i5WOeXMLRWLKA1k4RpD153EmgU-Ow6CPRGOISzjOVLplKFDm-gUaggmg/exec";
+  "https://script.google.com/macros/s/AKfycbzTEBghmv7_zmf62sIq6ov64reyOIC6mWLfl_Rc3ZPThO05ccQYhIrJ48lrSYcRlT-PTA/exec";
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -294,6 +294,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
