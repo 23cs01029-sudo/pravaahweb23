@@ -18,8 +18,7 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 const auth = getAuth(app);
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL =
-  "https://script.google.com/macros/s/AKfycbxA4kUMYAaDE-HP07EWZa5Nm8pWYqUvUO-WzxkUoR3jXRjqPOvJ9Rv91P8glYNLJfMjrw/exec";
+const scriptURL = "/api/pravaah";
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -294,6 +293,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
