@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, CLEAN & STABLE)
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, STABLE)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -13,7 +13,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
   authDomain: "pravaah-55b1d.firebaseapp.com",
-  projectId: "pravaah-55b1d",
+  projectId: "pravaah-55b1d.firebaseapp.com",
   storageBucket: "pravaah-55b1d.appspot.com",
   messagingSenderId: "287687647267",
   appId: "1:287687647267:web:7aecd603ee202779b89196"
@@ -60,7 +60,7 @@ const offlineCountEl = document.getElementById("offlineCount");
 /* ================= STATE ================= */
 let CURRENT_ROLE = "";
 let IS_PRIMARY = false;
-let CURRENT_DAY = "";     // "" = ALL DAYS
+let CURRENT_DAY = "";      // "" = ALL DAYS
 let CURRENT_EVENT = "";
 
 /* ================= AUTH ================= */
@@ -90,7 +90,7 @@ onAuthStateChanged(auth, async (user) => {
   configureRoleUI();
   setupPrimaryWarning();
   setupDayFilter();
-  await setupEventFilter();
+  setupEventFilter();
   loadDashboardStats();
   updateOfflineCount();
 });
@@ -138,7 +138,7 @@ function configureRoleUI() {
 
 /* ================= PRIMARY WARNING ================= */
 function setupPrimaryWarning() {
-  roleSelect?.addEventListener("change", () => {
+  roleSelect.addEventListener("change", () => {
     primaryWarning?.classList.toggle(
       "hidden",
       roleSelect.value !== "TRANSFER_PRIMARY"
@@ -185,12 +185,14 @@ async function loadDashboardStats() {
   statEventReg.textContent = d.eventRegistrations ?? "--";
   eventCountEl.textContent = d.eventRegistrations ?? "0";
 
+  // INSIDE CAMPUS (ALL DAYS + DAY SAME FORMAT)
   statInCampus.innerHTML = `
     Live: <b>${d.insideCampus?.live ?? 0}</b><br>
     Max: <b>${d.insideCampus?.max ?? 0}</b><br>
     Unique: <b>${d.insideCampus?.unique ?? 0}</b>
   `;
 
+  // ACCOMMODATION
   statAccommodation.innerHTML = `
     Live: <b>${d.accommodation?.live ?? 0}</b><br>
     Max: <b>${d.accommodation?.max ?? 0}</b><br>
