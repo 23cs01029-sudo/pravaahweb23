@@ -1,6 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL STABLE)
-   Role Model: role + isPrimary
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, CORRECTED)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -14,7 +13,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
   authDomain: "pravaah-55b1d.firebaseapp.com",
-  projectId: "pravaah-55b1d.firebaseapp.com",
+  projectId: "pravaah-55b1d",
   storageBucket: "pravaah-55b1d.appspot.com",
   messagingSenderId: "287687647267",
   appId: "1:287687647267:web:7aecd603ee202779b89196"
@@ -68,10 +67,10 @@ let CURRENT_EVENT = "";
 onAuthStateChanged(auth, async (user) => {
   if (!user) return (location.href = "login.html");
 
-  const res = await fetch(
+  const roleRes = await fetch(
     `${API}?type=role&email=${encodeURIComponent(user.email)}`
   );
-  const roleObj = await res.json();
+  const roleObj = await roleRes.json();
 
   CURRENT_ROLE = roleObj.role;
   IS_PRIMARY = roleObj.isPrimary === true;
@@ -90,8 +89,8 @@ onAuthStateChanged(auth, async (user) => {
   applyRoleVisibility();
   configureRoleUI();
   setupPrimaryWarning();
-  loadDayFilter();
-  loadEventFilter();
+  setupDayFilter();
+  setupEventFilter();
   loadDashboardStats();
   updateOfflineCount();
 });
@@ -102,7 +101,6 @@ function applyRoleVisibility() {
     cardTotalReg.classList.add("hidden");
     cardMoney.classList.add("hidden");
     roleSection.classList.add("hidden");
-    return;
   }
 
   if (CURRENT_ROLE === "SuperAdmin") {
@@ -149,15 +147,11 @@ function setupPrimaryWarning() {
 }
 
 /* ================= FILTERS ================= */
-function loadDayFilter() {
-  const dayFilterSection = document.getElementById("dayFilter");
-
+function setupDayFilter() {
   if (CURRENT_ROLE === "Admin") {
-    dayFilterSection.classList.add("hidden");
+    document.getElementById("dayFilter").classList.add("hidden");
     return;
   }
-
-  dayFilterSection.classList.remove("hidden");
 
   dayDropdown.addEventListener("change", () => {
     CURRENT_DAY = dayDropdown.value === "ALL" ? "" : dayDropdown.value;
@@ -165,12 +159,12 @@ function loadDayFilter() {
   });
 }
 
-async function loadEventFilter() {
+async function setupEventFilter() {
   const res = await fetch(`${API}?type=eventList`);
   const events = await res.json();
 
   eventDropdown.innerHTML = `<option value="">All Events</option>`;
-  events.forEach((e) => eventDropdown.add(new Option(e, e)));
+  events.forEach(e => eventDropdown.add(new Option(e, e)));
 
   eventDropdown.addEventListener("change", () => {
     CURRENT_EVENT = eventDropdown.value;
@@ -184,20 +178,40 @@ async function loadDashboardStats() {
   const qs = new URLSearchParams({
     type: "dashboardStats",
     day: CURRENT_DAY,
-    event: CURRENT_EVENT
+    event: CURRENT_EVENT,
+    role: CURRENT_ROLE
   });
 
   const res = await fetch(`${API}?${qs}`);
   const d = await res.json();
 
+  // TOTAL REG
   statTotalReg.textContent = d.totalRegistrations ?? "--";
-  statEventReg.textContent = d.eventRegistrations ?? "--";
-  statAccommodation.textContent = d.accommodation ?? "--";
-  statInCampus.textContent = d.inCampus ?? "--";
-  statScan.textContent = d.scansToday ?? "--";
-  statMoney.textContent = d.totalAmount ?? "--";
 
+  // EVENT REG
+  statEventReg.textContent = d.eventRegistrations ?? "--";
   eventCountEl.textContent = d.eventRegistrations ?? "0";
+
+  // INSIDE CAMPUS
+  statInCampus.innerHTML = `
+    Live: <b>${d.insideCampus?.live ?? 0}</b><br>
+    Max: <b>${d.insideCampus?.max ?? 0}</b><br>
+    Unique: <b>${d.insideCampus?.unique ?? 0}</b>
+  `;
+
+  // ACCOMMODATION
+  statAccommodation.innerHTML = `
+    Live: <b>${d.accommodation?.live ?? 0}</b><br>
+    Max: <b>${d.accommodation?.max ?? 0}</b><br>
+    Unique: <b>${d.accommodation?.unique ?? 0}</b>
+  `;
+
+  // SCANS
+  statScan.textContent = d.scansToday ?? "--";
+
+  // MONEY
+  statMoney.textContent =
+    d.totalAmount != null ? `₹${d.totalAmount}` : "--";
 }
 
 /* ================= EVENT SHEET ================= */
@@ -208,11 +222,12 @@ function updateEventSheetButton() {
   }
 
   openEventSheetBtn.classList.remove("hidden");
-  openEventSheetBtn.onclick = () => {
-    window.open(
-      `${API}?type=openEventSheet&event=${encodeURIComponent(CURRENT_EVENT)}`,
-      "_blank"
+  openEventSheetBtn.onclick = async () => {
+    const res = await fetch(
+      `${API}?type=openEventSheet&event=${encodeURIComponent(CURRENT_EVENT)}`
     );
+    const data = await res.json();
+    if (data.url) window.open(data.url, "_blank");
   };
 }
 
@@ -232,45 +247,39 @@ searchBtn.addEventListener("click", async () => {
   }
 
   let html = `
-  <table>
-    <tr>
-      <th>Name</th><th>Email</th><th>Phone</th>
-      <th>College</th><th>Payment ID</th><th>Pass</th><th>QR</th>
-    </tr>`;
+    <table>
+      <tr>
+        <th>Name</th><th>Email</th><th>Phone</th>
+        <th>College</th><th>Payment ID</th><th>Pass</th><th>QR</th>
+      </tr>`;
 
-  rows.forEach((r, index) => {
+  rows.forEach((r, i) => {
     html += `
-    <tr>
-      <td>${r.Name}</td>
-      <td>${r.Email}</td>
-      <td>${r.Phone}</td>
-      <td>${r.College}</td>
-      <td>${r["Payment ID"]}</td>
-      <td>${r["Pass Type"]}</td>
-      <td>
-        <div id="qr-${index}" style="cursor:pointer;"></div>
-      </td>
-    </tr>`;
+      <tr>
+        <td>${r.Name}</td>
+        <td>${r.Email}</td>
+        <td>${r.Phone}</td>
+        <td>${r.College}</td>
+        <td>${r["Payment ID"]}</td>
+        <td>${r["Pass Type"]}</td>
+        <td><div id="qr-${i}" style="cursor:pointer"></div></td>
+      </tr>`;
   });
 
   html += "</table>";
   searchResults.innerHTML = html;
 
-  // ✅ Generate REAL scannable QR
-  rows.forEach((r, index) => {
-    const scanURL =
+  rows.forEach((r, i) => {
+    const url =
       `${API}?mode=admin&page=scan&scanner=dashboard&paymentId=${encodeURIComponent(
         r["Payment ID"]
       )}`;
 
-    const qrBox = document.getElementById(`qr-${index}`);
-    if (!qrBox) return;
+    const box = document.getElementById(`qr-${i}`);
+    box.onclick = () => window.open(url, "_blank");
 
-    qrBox.innerHTML = ""; // ✅ clear previous QR
-    qrBox.onclick = () => window.open(scanURL, "_blank");
-
-    new QRCode(qrBox, {
-      text: scanURL,
+    new QRCode(box, {
+      text: url,
       width: 64,
       height: 64,
       correctLevel: QRCode.CorrectLevel.H
@@ -278,19 +287,9 @@ searchBtn.addEventListener("click", async () => {
   });
 });
 
-
 /* ================= ROLE SAVE ================= */
 roleSaveBtn.addEventListener("click", async () => {
   if (!roleEmail.value || !roleSelect.value) return;
-
-  if (roleSelect.value === "TRANSFER_PRIMARY") {
-    if (
-      !confirm(
-        "⚠️ Transfer PRIMARY access?\nYou will lose primary privileges."
-      )
-    )
-      return;
-  }
 
   await fetch(API, {
     method: "POST",
