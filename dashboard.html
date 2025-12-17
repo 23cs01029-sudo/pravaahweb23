@@ -10,10 +10,8 @@
   <link rel="stylesheet" href="dashboard.css" />
 
   <!-- ICONS -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <!-- QR -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -49,7 +47,7 @@
 <!-- ================= DASHBOARD ================= -->
 <main class="dashboard-wrapper">
 
-  <!-- HEADER -->
+  <!-- ================= HEADER ================= -->
   <section class="dashboard-header">
     <h1>Admin Dashboard</h1>
     <p>
@@ -58,11 +56,11 @@
     </p>
   </section>
 
-  <!-- ================= OVERVIEW ================= -->
-  <section class="dashboard-section">
-    <h2>Overview</h2>
-
-    <div class="dashboard-cards">
+  <!-- =================================================
+      1️⃣ EVENT REGISTRATIONS & ACCOMMODATION
+  ================================================= -->
+  <section>
+    <div class="dashboard-cards" style="justify-content:center;">
       <div class="dash-card">
         <h3>Event Registrations</h3>
         <p id="statEventReg">—</p>
@@ -75,11 +73,13 @@
     </div>
   </section>
 
-  <!-- ================= DAY FILTER ================= -->
-  <section class="dashboard-section">
-    <h2>Day Filter</h2>
-
+  <!-- =================================================
+      2️⃣ DAY FILTER
+      (All Days → only max unique shown)
+  ================================================= -->
+  <section class="dashboard-filter">
     <select id="dayDropdown">
+      <option value="">All Days</option>
       <option value="day0">Day 0</option>
       <option value="day1">Day 1</option>
       <option value="day2">Day 2</option>
@@ -87,158 +87,142 @@
     </select>
   </section>
 
-  <!-- ================= CAMPUS & ACCOMMODATION ================= -->
-  <section class="dashboard-section">
-    <h2>Inside Campus & Accommodation</h2>
-
+  <!-- =================================================
+      3️⃣ INSIDE CAMPUS & ACCOMMODATION
+  ================================================= -->
+  <section>
     <div class="dashboard-cards">
+
+      <!-- INSIDE CAMPUS -->
       <div class="dash-card">
         <h3>Inside Campus</h3>
-        <p>
-          Live (Day): <b id="campusLive">—</b><br />
-          Max (Day): <b id="campusMaxDay">—</b><br />
-          Max Unique (All Days): <b id="campusMaxAll">—</b>
-        </p>
 
-        <button id="openGateLogsSheet">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          Gate Logs
-        </button>
+        <p>
+          <span class="day-only">
+            Live: <b id="campusLive">—</b><br />
+            Max (Day): <b id="campusMaxDay">—</b>
+          </span>
+
+          <span class="all-only hidden">
+            Max Unique (All Days): <b id="campusMaxAll">—</b>
+          </span>
+        </p>
       </div>
 
+      <!-- ACCOMMODATION -->
       <div class="dash-card">
         <h3>Accommodation</h3>
+
         <p>
-          Live (Day): <b id="accLive">—</b><br />
-          Max (Day): <b id="accMaxDay">—</b><br />
-          Max Unique (All Days): <b id="accMaxAll">—</b>
+          <span class="day-only">
+            Live: <b id="accLive">—</b><br />
+            Max (Day): <b id="accMaxDay">—</b>
+          </span>
+
+          <span class="all-only hidden">
+            Max Unique (All Days): <b id="accMaxAll">—</b>
+          </span>
         </p>
       </div>
+
     </div>
   </section>
 
-  <!-- ================= REGISTRATIONS & SCANS ================= -->
-  <section class="dashboard-section">
-    <h2>Registrations & Activity</h2>
-
+  <!-- =================================================
+      4️⃣ REGISTRATIONS & SCANS
+  ================================================= -->
+  <section>
     <div class="dashboard-cards">
+
       <div class="dash-card hidden" id="cardTotalReg">
         <h3>Total Registrations</h3>
         <p id="statTotalReg">—</p>
-
-        <button id="openPassesSheet">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          Passes Sheet
-        </button>
       </div>
 
       <div class="dash-card">
         <h3>Scans Today</h3>
         <p id="statScan">—</p>
       </div>
+
+      <div class="dash-card hidden" id="cardMoney">
+        <h3>Total Amount</h3>
+        <p id="statMoney">—</p>
+      </div>
+
     </div>
   </section>
 
-  <!-- ================= PASS FILTER ================= -->
-  <section id="passFilterSection" class="dashboard-section hidden">
-    <h2>Pass Filter</h2>
-
-    <select id="passFilter">
-      <option value="DAY">Day Pass</option>
-      <option value="VISITOR">Visitor Pass</option>
-      <option value="FEST">Fest Pass</option>
-      <option value="STARNITE">StarNite Pass</option>
-    </select>
-  </section>
-
-  <!-- ================= PASS COUNTS ================= -->
-  <section id="passCardsSection" class="dashboard-section hidden">
-    <h2>Pass-wise Unique Count</h2>
-
-    <div class="dashboard-cards">
-      <div class="dash-card"><h3>Day Pass</h3><p id="countDayPass">—</p></div>
-      <div class="dash-card"><h3>Fest Pass</h3><p id="countFestPass">—</p></div>
-      <div class="dash-card"><h3>StarNite Pass</h3><p id="countStarPass">—</p></div>
-      <div class="dash-card"><h3>Visitor Pass</h3><p id="countVisitorPass">—</p></div>
-    </div>
-  </section>
-
-  <!-- ================= MONEY ================= -->
-  <section id="moneySection" class="dashboard-section hidden">
-    <h2>Total Revenue</h2>
-    <div class="dash-card">
-      <h3>Total Amount</h3>
-      <p id="statMoney">—</p>
-    </div>
-  </section>
-
-  <!-- ================= EVENT FILTER ================= -->
-  <section class="dashboard-section">
-    <h2>Event Registration Filter</h2>
-
+  <!-- =================================================
+      5️⃣ EVENT FILTER
+  ================================================= -->
+  <section class="dashboard-filter">
     <select id="eventDropdown">
       <option value="">All Events</option>
     </select>
 
-    <div class="dashboard-actions">
-      <button id="openEventRegSheet">
-        <i class="fa-solid fa-file-lines"></i> Registration Sheet
-      </button>
-      <button id="openEventEntrySheet">
-        <i class="fa-solid fa-door-open"></i> Entry Sheet
-      </button>
-    </div>
+    <button id="openEventSheetBtn" class="hidden">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      Open Event Sheet
+    </button>
   </section>
 
-  <!-- ================= SEARCH ================= -->
-  <section class="dashboard-section">
-    <h2>Search Participant / Pass</h2>
+  <!-- =================================================
+      6️⃣ SEARCH
+  ================================================= -->
+  <section class="role-section">
+    <h2><i class="fa-solid fa-magnifying-glass"></i> Search Participant</h2>
 
-    <input type="text" id="searchInput"
-      placeholder="Name / Email / Phone / Payment ID" />
-    <button id="searchBtn">
-      <i class="fa-solid fa-search"></i> Search
-    </button>
+    <div class="role-form">
+      <input type="text" id="searchInput"
+        placeholder="Name / Email / Phone / Payment ID" />
+      <button id="searchBtn">Search</button>
+    </div>
 
     <div id="searchResults"></div>
   </section>
 
-  <!-- ================= SCANNER ================= -->
-  <section class="dashboard-section">
-    <h2>Scanner</h2>
+  <!-- =================================================
+      7️⃣ SCANNER
+  ================================================= -->
+  <section class="dashboard-actions">
     <button onclick="openScanner()">
       <i class="fa-solid fa-qrcode"></i> Open Scanner
     </button>
   </section>
 
-  <!-- ================= OFFLINE ================= -->
-  <section class="dashboard-section">
+  <!-- =================================================
+      8️⃣ OFFLINE QUEUE
+  ================================================= -->
+  <section class="offline-section">
     <h2>Offline Scan Queue</h2>
     <p>Pending scans: <b id="offlineCount">0</b></p>
   </section>
 
-  <!-- ================= ROLE ================= -->
-  <section id="roleSection" class="dashboard-section hidden">
+  <!-- =================================================
+      9️⃣ ROLE MANAGEMENT
+  ================================================= -->
+  <section id="roleSection" class="role-section hidden">
     <h2>Role Management</h2>
 
-    <input type="email" id="roleEmail" placeholder="User Email" />
-    <select id="roleSelect"></select>
-    <button id="saveRoleBtn">Assign / Update Role</button>
+    <div class="role-form">
+      <input type="email" id="roleEmail" placeholder="User Email" />
+      <select id="roleSelect"></select>
+      <button id="saveRoleBtn">Assign / Update</button>
+    </div>
 
     <p id="primaryWarning" class="hidden">
-      ⚠️ Only one Primary SuperAccount exists at any time.
+      ⚠️ Only one Primary SuperAccount exists.
     </p>
   </section>
 
 </main>
 
-
-<!-- FOOTER -->
+<!-- ================= FOOTER ================= -->
 <footer>
   <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM</p>
 </footer>
 
-<!-- MENU LOGIC -->
+<!-- ================= MENU ================= -->
 <script>
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
@@ -254,10 +238,7 @@
   });
 
   function openScanner() {
-    const SCAN_URL =
-      "/api/pravaah";
-    window.location.href =
-      `${SCAN_URL}?mode=admin&page=scan&scanner=dashboard`;
+    location.href = "/api/pravaah?mode=admin&page=scan&scanner=dashboard";
   }
 </script>
 
