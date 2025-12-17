@@ -21,8 +21,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 /* ================= BACKEND ================= */
-const API =
-  "https://script.google.com/macros/s/AKfycbxA4kUMYAaDE-HP07EWZa5Nm8pWYqUvUO-WzxkUoR3jXRjqPOvJ9Rv91P8glYNLJfMjrw/exec";
+const API = "/api/pravaah";
+
 
 /* ================= DOM ================= */
 const adminEmailEl = document.getElementById("adminEmail");
