@@ -2,9 +2,7 @@
  *  PRAVAAH 2026 — FINAL SCRIPT.JS
  *  (Complete working version)
  *******************************/
-
-const scriptURL =
-  "https://script.google.com/macros/s/AKfycbxA4kUMYAaDE-HP07EWZa5Nm8pWYqUvUO-WzxkUoR3jXRjqPOvJ9Rv91P8glYNLJfMjrw/exec";
+const scriptURL = "/api/pravaah";
 
 
 /* =======================================
@@ -618,6 +616,7 @@ rzp.on("payment.failed", function () {
 rzp.open();
 
 });
+
 
 
 
