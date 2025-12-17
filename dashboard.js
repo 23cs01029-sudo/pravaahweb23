@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, ALIGNED)
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, FIXED)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -50,15 +50,14 @@ const eventDropdown = document.getElementById("eventDropdown");
 const eventCountEl = document.getElementById("eventCount");
 const openEventRegSheet = document.getElementById("openEventRegSheet");
 const openEventEntrySheet = document.getElementById("openEventEntrySheet");
+const openPassesSheet = document.getElementById("openPassesSheet");
 
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
 const searchResults = document.getElementById("searchResults");
 
 const roleSection = document.getElementById("roleSection");
-const roleEmail = document.getElementById("roleEmail");
 const roleSelect = document.getElementById("roleSelect");
-const roleSaveBtn = document.getElementById("saveRoleBtn");
 const primaryWarning = document.getElementById("primaryWarning");
 
 const offlineCountEl = document.getElementById("offlineCount");
@@ -96,6 +95,7 @@ onAuthStateChanged(auth, async (user) => {
   setupPrimaryWarning();
   setupDayFilter();
   setupEventFilter();
+  setupPassesSheet();
   loadDashboardStats();
   updateOfflineCount();
 });
@@ -187,7 +187,7 @@ async function loadDashboardStats() {
   eventCountEl.textContent =
     CURRENT_EVENT ? (d.eventRegistrations ?? 0) : "—";
 
-  /* ===== INSIDE CAMPUS ===== */
+  /* ================= INSIDE CAMPUS ================= */
   campusLive.textContent = d.insideCampus?.live ?? 0;
 
   if (CURRENT_DAY) {
@@ -198,7 +198,7 @@ async function loadDashboardStats() {
     campusMaxDay.textContent = "—";
   }
 
-  /* ===== ACCOMMODATION ===== */
+  /* ================= ACCOMMODATION ================= */
   accLive.textContent = d.accommodation?.live ?? 0;
 
   if (CURRENT_DAY) {
@@ -208,6 +208,17 @@ async function loadDashboardStats() {
     accMaxAll.textContent = d.accommodation?.max ?? 0;
     accMaxDay.textContent = "—";
   }
+}
+
+/* ================= PASSES SHEET ================= */
+function setupPassesSheet() {
+  if (!openPassesSheet) return;
+
+  openPassesSheet.onclick = async () => {
+    const res = await fetch(`${API}?type=openPassesSheet`);
+    const data = await res.json();
+    if (data.url) window.open(data.url, "_blank");
+  };
 }
 
 /* ================= SEARCH ================= */
