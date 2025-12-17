@@ -349,8 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
      🔐 DASHBOARD VISIBILITY — ADMINS ONLY
   =========================================================== */
 
-  const DASHBOARD_API =
-    "https://script.google.com/macros/s/AKfycbxA4kUMYAaDE-HP07EWZa5Nm8pWYqUvUO-WzxkUoR3jXRjqPOvJ9Rv91P8glYNLJfMjrw/exec";
+  const DASHBOARD_API = "/api/pravaah";
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
@@ -372,6 +371,7 @@ if (["Admin", "SuperAdmin", "SuperAccount"].includes(roleObj.role)) {
   });
 
 });
+
 
 
 
