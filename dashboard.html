@@ -10,10 +10,8 @@
   <link rel="stylesheet" href="dashboard.css" />
 
   <!-- ICONS -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <!-- QR -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -64,21 +62,28 @@
 
       <div class="dash-card">
         <h3>Event Registrations</h3>
-        <p id="statEventReg" style="font-size:1.9rem;">—</p>
+        <p id="statEventReg">—</p>
       </div>
 
       <div class="dash-card">
         <h3>Accommodation</h3>
-        <p id="statAccommodation" style="font-size:1.9rem;">—</p>
+        <p id="statAccommodation">—</p>
       </div>
 
       <div class="dash-card hidden" id="cardTotalReg">
         <h3>Total Registrations</h3>
-        <p id="statTotalReg" style="font-size:1.9rem;">—</p>
-        <button id="openPassesSheet">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        <p id="statTotalReg">—</p>
+
+        <!-- SAME BUTTON STYLE -->
+        <button class="dashboard-btn" id="openPassesSheet">
+          <i class="fa-solid fa-file-lines"></i>
           Passes Sheet
         </button>
+      </div>
+
+      <div class="dash-card hidden" id="cardMoney">
+        <h3>Total Amount</h3>
+        <p id="statMoney">—</p>
       </div>
 
     </div>
@@ -101,82 +106,66 @@
 
       <div class="dash-card">
         <h3>Inside Campus</h3>
-        <p style="font-size:1.3rem; line-height:1.8;">
+        <p>
           Live: <b id="campusLive">—</b><br>
-
-          <span class="day-only">
-            Max (Day): <b id="campusMaxDay">—</b>
-          </span>
-
-          <span class="all-only hidden">
-            Max (All Days): <b id="campusMaxAll">—</b>
-          </span>
+          Max: <b id="campusMaxDay">—</b><br>
+          Unique: <b id="campusMaxAll">—</b>
         </p>
       </div>
 
       <div class="dash-card">
         <h3>Accommodation</h3>
-        <p style="font-size:1.3rem; line-height:1.8;">
+        <p>
           Live: <b id="accLive">—</b><br>
-
-          <span class="day-only">
-            Max (Day): <b id="accMaxDay">—</b>
-          </span>
-
-          <span class="all-only hidden">
-            Max (All Days): <b id="accMaxAll">—</b>
-          </span>
+          Max: <b id="accMaxDay">—</b><br>
+          Unique: <b id="accMaxAll">—</b>
         </p>
       </div>
 
       <div class="dash-card">
         <h3>Scans Today</h3>
-        <p id="statScan" style="font-size:1.9rem;">—</p>
-      </div>
-
-      <div class="dash-card hidden" id="cardMoney">
-        <h3>Total Amount</h3>
-        <p id="statMoney" style="font-size:1.9rem;">—</p>
+        <p id="statScan">—</p>
       </div>
 
     </div>
   </section>
 
-  <!-- ================= EVENT FILTER ================= -->
   <!-- ================= EVENT REGISTRATION ================= -->
-<section class="dashboard-section">
-  <h2>Event Registrations</h2>
+  <section class="dashboard-section">
+    <h2>Event Registrations</h2>
 
-  <div class="dashboard-filter">
-    <select id="eventDropdown">
-      <option value="">All Events</option>
-    </select>
-  </div>
-
-  <div class="dashboard-cards">
-
-    <!-- EVENT REG COUNT -->
-    <div class="dash-card">
-      <h3>Registrations</h3>
-      <p id="eventCount">—</p>
+    <div class="dashboard-filter">
+      <select id="eventDropdown">
+        <option value="">All Events</option>
+      </select>
     </div>
 
-    <!-- EVENT ACTIONS -->
-    <div class="dash-card action-card">
-      <button id="openEventRegSheet" class="action-btn hidden">
-        <i class="fa-solid fa-file-lines"></i>
-        Registration Sheet
-      </button>
+    <!-- ONE CLEAN ROW -->
+    <div class="dashboard-cards">
 
-      <button id="openEventEntrySheet" class="action-btn hidden">
-        <i class="fa-solid fa-door-open"></i>
-        Entry Sheet
-      </button>
+      <!-- LEFT: COUNT -->
+      <div class="dash-card">
+        <h3>Total Registrations</h3>
+        <p id="eventCount">—</p>
+      </div>
+
+      <!-- RIGHT: ACTIONS -->
+      <div class="dash-card">
+        <button id="openEventRegSheet" class="dashboard-btn hidden">
+          <i class="fa-solid fa-file-lines"></i>
+          Registration Sheet
+        </button>
+
+        <br><br>
+
+        <button id="openEventEntrySheet" class="dashboard-btn hidden">
+          <i class="fa-solid fa-door-open"></i>
+          Entry Sheet
+        </button>
+      </div>
+
     </div>
-
-  </div>
-</section>
-
+  </section>
 
   <!-- ================= SEARCH ================= -->
   <section class="role-section">
@@ -187,9 +176,10 @@
         type="text"
         id="searchInput"
         placeholder="Name / Email / Phone / Payment ID"
-        style="min-width:360px;font-size:1rem;padding:14px 16px;"
       />
-      <button id="searchBtn" style="padding:14px 22px;">Search</button>
+      <button id="searchBtn" class="dashboard-btn">
+        Search
+      </button>
     </div>
 
     <div id="searchResults"></div>
@@ -197,7 +187,7 @@
 
   <!-- ================= SCANNER ================= -->
   <section class="dashboard-actions">
-    <button onclick="openScanner()">
+    <button class="dashboard-btn" onclick="openScanner()">
       <i class="fa-solid fa-qrcode"></i> Open Scanner
     </button>
   </section>
@@ -215,7 +205,9 @@
     <div class="role-form">
       <input type="email" id="roleEmail" placeholder="User Email" />
       <select id="roleSelect"></select>
-      <button id="saveRoleBtn">Assign / Update</button>
+      <button id="saveRoleBtn" class="dashboard-btn">
+        Assign / Update
+      </button>
     </div>
 
     <p id="primaryWarning" class="hidden">
