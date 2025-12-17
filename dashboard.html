@@ -143,27 +143,40 @@
   </section>
 
   <!-- ================= EVENT FILTER ================= -->
-  <section class="dashboard-filter" style="flex-direction:column;">
+  <!-- ================= EVENT REGISTRATION ================= -->
+<section class="dashboard-section">
+  <h2>Event Registrations</h2>
+
+  <div class="dashboard-filter">
     <select id="eventDropdown">
       <option value="">All Events</option>
     </select>
+  </div>
 
-    <div class="dashboard-actions">
-      <button id="openEventRegSheet" class="hidden">
+  <div class="dashboard-cards">
+
+    <!-- EVENT REG COUNT -->
+    <div class="dash-card">
+      <h3>Registrations</h3>
+      <p id="eventCount">—</p>
+    </div>
+
+    <!-- EVENT ACTIONS -->
+    <div class="dash-card action-card">
+      <button id="openEventRegSheet" class="action-btn hidden">
         <i class="fa-solid fa-file-lines"></i>
         Registration Sheet
       </button>
 
-      <button id="openEventEntrySheet" class="hidden">
+      <button id="openEventEntrySheet" class="action-btn hidden">
         <i class="fa-solid fa-door-open"></i>
         Entry Sheet
       </button>
     </div>
 
-    <p style="opacity:0.7;">
-      Registrations: <b id="eventCount">—</b>
-    </p>
-  </section>
+  </div>
+</section>
+
 
   <!-- ================= SEARCH ================= -->
   <section class="role-section">
