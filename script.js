@@ -360,18 +360,19 @@ document.addEventListener("DOMContentLoaded", () => {
         `${DASHBOARD_API}?type=role&email=${encodeURIComponent(user.email)}`
       );
       const roleObj = await res.json();
+console.log("ROLE FROM API:", roleObj);
 
-      // ✅ SHOW DASHBOARD ONLY FOR ADMINS+
-      if (["Admin", "SuperAdmin", "SuperAccount"].includes(roleObj.role)) {
-        document.getElementById("dashboardNav")
-          ?.classList.remove("hidden");
-      }
+if (["Admin", "SuperAdmin", "SuperAccount"].includes(roleObj.role)) {
+  document.getElementById("dashboardNav")?.classList.remove("hidden");
+}
+
     } catch (err) {
       console.error("Dashboard role check failed", err);
     }
   });
 
 });
+
 
 
 
