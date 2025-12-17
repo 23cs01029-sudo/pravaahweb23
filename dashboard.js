@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, CORRECTED)
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, STABLE)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -60,7 +60,7 @@ const offlineCountEl = document.getElementById("offlineCount");
 /* ================= STATE ================= */
 let CURRENT_ROLE = "";
 let IS_PRIMARY = false;
-let CURRENT_DAY = "";
+let CURRENT_DAY = "";     // "" = ALL DAYS
 let CURRENT_EVENT = "";
 
 /* ================= AUTH ================= */
@@ -98,20 +98,20 @@ onAuthStateChanged(auth, async (user) => {
 /* ================= ROLE VISIBILITY ================= */
 function applyRoleVisibility() {
   if (CURRENT_ROLE === "Admin") {
-    cardTotalReg.classList.add("hidden");
-    cardMoney.classList.add("hidden");
-    roleSection.classList.add("hidden");
+    cardTotalReg?.classList.add("hidden");
+    cardMoney?.classList.add("hidden");
+    roleSection?.classList.add("hidden");
   }
 
   if (CURRENT_ROLE === "SuperAdmin") {
-    cardMoney.classList.add("hidden");
-    roleSection.classList.add("hidden");
+    cardMoney?.classList.add("hidden");
+    roleSection?.classList.add("hidden");
   }
 
   if (CURRENT_ROLE === "SuperAccount" && IS_PRIMARY) {
-    cardTotalReg.classList.remove("hidden");
-    cardMoney.classList.remove("hidden");
-    roleSection.classList.remove("hidden");
+    cardTotalReg?.classList.remove("hidden");
+    cardMoney?.classList.remove("hidden");
+    roleSection?.classList.remove("hidden");
   }
 }
 
@@ -146,10 +146,10 @@ function setupPrimaryWarning() {
   });
 }
 
-/* ================= FILTERS ================= */
+/* ================= DAY FILTER ================= */
 function setupDayFilter() {
   if (CURRENT_ROLE === "Admin") {
-    document.getElementById("dayFilter").classList.add("hidden");
+    document.getElementById("dayFilter")?.classList.add("hidden");
     return;
   }
 
@@ -159,6 +159,7 @@ function setupDayFilter() {
   });
 }
 
+/* ================= EVENT FILTER ================= */
 async function setupEventFilter() {
   const res = await fetch(`${API}?type=eventList`);
   const events = await res.json();
@@ -185,31 +186,23 @@ async function loadDashboardStats() {
   const res = await fetch(`${API}?${qs}`);
   const d = await res.json();
 
-  // TOTAL REG
   statTotalReg.textContent = d.totalRegistrations ?? "--";
-
-  // EVENT REG
   statEventReg.textContent = d.eventRegistrations ?? "--";
   eventCountEl.textContent = d.eventRegistrations ?? "0";
 
-  // INSIDE CAMPUS
   statInCampus.innerHTML = `
     Live: <b>${d.insideCampus?.live ?? 0}</b><br>
     Max: <b>${d.insideCampus?.max ?? 0}</b><br>
     Unique: <b>${d.insideCampus?.unique ?? 0}</b>
   `;
 
-  // ACCOMMODATION
   statAccommodation.innerHTML = `
     Live: <b>${d.accommodation?.live ?? 0}</b><br>
     Max: <b>${d.accommodation?.max ?? 0}</b><br>
     Unique: <b>${d.accommodation?.unique ?? 0}</b>
   `;
 
-  // SCANS
   statScan.textContent = d.scansToday ?? "--";
-
-  // MONEY
   statMoney.textContent =
     d.totalAmount != null ? `₹${d.totalAmount}` : "--";
 }
@@ -322,8 +315,8 @@ function updateOfflineCount() {
 }
 
 /* ================= LOGOUT ================= */
-document.getElementById("logoutDesktop").addEventListener("click", logout);
-document.getElementById("logoutMobile").addEventListener("click", logout);
+document.getElementById("logoutDesktop")?.addEventListener("click", logout);
+document.getElementById("logoutMobile")?.addEventListener("click", logout);
 
 async function logout() {
   await signOut(auth);
