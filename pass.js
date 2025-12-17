@@ -4,7 +4,7 @@
  *******************************/
 
 const scriptURL =
-  "https://script.google.com/macros/s/AKfycbzI3I8uPwlUXo77FLslkAxSOsjeu66UNTTjYEnaCTf2X-sZAojQXUufwF-lWU9da40Unw/exec";
+  "https://script.google.com/macros/s/AKfycbxA4kUMYAaDE-HP07EWZa5Nm8pWYqUvUO-WzxkUoR3jXRjqPOvJ9Rv91P8glYNLJfMjrw/exec";
 
 
 /* =======================================
@@ -618,6 +618,7 @@ rzp.on("payment.failed", function () {
 rzp.open();
 
 });
+
 
 
 
