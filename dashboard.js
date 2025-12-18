@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, STABLE)
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, ROLE SAFE)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -31,6 +31,7 @@ const adminRoleEl = document.getElementById("adminRole");
 
 const cardTotalReg = document.getElementById("cardTotalReg");
 const cardMoney = document.getElementById("cardMoney");
+const passStatsSection = document.getElementById("passStatsSection");
 
 const statTotalReg = document.getElementById("statTotalReg");
 const statMoney = document.getElementById("statMoney");
@@ -39,7 +40,6 @@ const statScan = document.getElementById("statScan");
 const statInCampus = document.getElementById("statInCampus");
 const statAccommodation = document.getElementById("statAccommodation");
 
-/* ✅ PASS STATS */
 const passDay = document.getElementById("passDay");
 const passFest = document.getElementById("passFest");
 const passStar = document.getElementById("passStar");
@@ -53,13 +53,13 @@ const openEventRegSheet = document.getElementById("openEventRegSheet");
 const openEventEntrySheet = document.getElementById("openEventEntrySheet");
 const openPassesSheet = document.getElementById("openPassesSheet");
 
-const searchInput = document.getElementById("searchInput");
-const searchBtn = document.getElementById("searchBtn");
-const searchResults = document.getElementById("searchResults");
-
 const roleSection = document.getElementById("roleSection");
 const roleSelect = document.getElementById("roleSelect");
 const primaryWarning = document.getElementById("primaryWarning");
+
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+const searchResults = document.getElementById("searchResults");
 
 const offlineCountEl = document.getElementById("offlineCount");
 
@@ -68,10 +68,11 @@ let CURRENT_ROLE = "";
 let IS_PRIMARY = false;
 let CURRENT_DAY = "";
 let CURRENT_EVENT = "";
+let REFRESH_TIMER = null;
 
 /* ================= AUTH ================= */
 onAuthStateChanged(auth, async (user) => {
-  if (!user) return (location.href = "login.html");
+  if (!user) return location.href = "login.html";
 
   const roleRes = await fetch(
     `${API}?type=role&email=${encodeURIComponent(user.email)}`
@@ -83,7 +84,7 @@ onAuthStateChanged(auth, async (user) => {
 
   if (!["Admin", "SuperAdmin", "SuperAccount"].includes(CURRENT_ROLE)) {
     alert("Access denied");
-    return (location.href = "home.html");
+    return location.href = "home.html";
   }
 
   adminEmailEl.textContent = user.email;
@@ -93,12 +94,15 @@ onAuthStateChanged(auth, async (user) => {
       : CURRENT_ROLE;
 
   applyRoleVisibility();
+  setupRoleDropdown();
   setupPrimaryWarning();
   setupDayFilter();
   setupEventFilter();
   setupPassesSheet();
-  loadDashboardStats();
+
+  await loadDashboardStats();
   updateOfflineCount();
+  startAutoRefresh();
 });
 
 /* ================= ROLE VISIBILITY ================= */
@@ -106,8 +110,11 @@ function applyRoleVisibility() {
   cardTotalReg.classList.add("hidden");
   cardMoney.classList.add("hidden");
   roleSection.classList.add("hidden");
+  passStatsSection.classList.add("hidden");
 
   if (CURRENT_ROLE === "Admin") return;
+
+  passStatsSection.classList.remove("hidden");
 
   if (CURRENT_ROLE === "SuperAdmin") {
     cardTotalReg.classList.remove("hidden");
@@ -122,6 +129,26 @@ function applyRoleVisibility() {
   }
 }
 
+/* ================= ROLE DROPDOWN OPTIONS ================= */
+function setupRoleDropdown() {
+  if (!roleSelect) return;
+
+  roleSelect.innerHTML = "";
+
+  if (CURRENT_ROLE === "SuperAdmin") {
+    roleSelect.add(new Option("Admin", "Admin"));
+  }
+
+  if (CURRENT_ROLE === "SuperAccount") {
+    roleSelect.add(new Option("Admin", "Admin"));
+    roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
+
+    if (IS_PRIMARY) {
+      roleSelect.add(new Option("Transfer Primary", "TRANSFER_PRIMARY"));
+    }
+  }
+}
+
 /* ================= PRIMARY WARNING ================= */
 function setupPrimaryWarning() {
   roleSelect?.addEventListener("change", () => {
@@ -132,7 +159,7 @@ function setupPrimaryWarning() {
   });
 }
 
-/* ================= DAY FILTER ================= */
+/* ================= FILTERS ================= */
 function setupDayFilter() {
   dayDropdown.addEventListener("change", () => {
     CURRENT_DAY = dayDropdown.value || "";
@@ -140,7 +167,6 @@ function setupDayFilter() {
   });
 }
 
-/* ================= EVENT FILTER ================= */
 async function setupEventFilter() {
   const res = await fetch(`${API}?type=eventList`);
   const events = await res.json();
@@ -151,15 +177,9 @@ async function setupEventFilter() {
   eventDropdown.addEventListener("change", () => {
     CURRENT_EVENT = eventDropdown.value;
 
-    if (!CURRENT_EVENT) {
-      eventCountEl.textContent = "—";
-      openEventRegSheet.classList.add("hidden");
-      openEventEntrySheet.classList.add("hidden");
-      return;
-    }
+    openEventRegSheet.classList.toggle("hidden", !CURRENT_EVENT);
+    openEventEntrySheet.classList.toggle("hidden", !CURRENT_EVENT);
 
-    openEventRegSheet.classList.remove("hidden");
-    openEventEntrySheet.classList.remove("hidden");
     loadDashboardStats();
   });
 }
@@ -176,35 +196,27 @@ async function loadDashboardStats() {
   const res = await fetch(`${API}?${qs}`);
   const d = await res.json();
 
-  /* TOP STATS */
   statTotalReg.textContent = d.totalRegistrations ?? "—";
   statScan.textContent = d.scansToday ?? "—";
-  statMoney.textContent =
-    d.totalAmount != null ? `₹${d.totalAmount}` : "—";
+  statMoney.textContent = d.totalAmount != null ? `₹${d.totalAmount}` : "—";
 
-  /* EVENT */
-  eventCountEl.textContent =
-    CURRENT_EVENT ? (d.eventRegistrations ?? 0) : "—";
+  eventCountEl.textContent = CURRENT_EVENT ? (d.eventRegistrations ?? 0) : "—";
 
-  /* CAMPUS */
-  statInCampus.innerHTML = `
-    Live: <b>${d.insideCampus?.live ?? 0}</b><br>
-    Max: <b>${d.insideCampus?.max ?? 0}</b>
-  `;
+  statInCampus.innerHTML = `Live: <b>${d.insideCampus?.live ?? 0}</b><br>Max: <b>${d.insideCampus?.max ?? 0}</b>`;
+  statAccommodation.innerHTML = `Live: <b>${d.accommodation?.live ?? 0}</b><br>Max: <b>${d.accommodation?.max ?? 0}</b>`;
 
-  /* ACCOMMODATION */
-  statAccommodation.innerHTML = `
-    Live: <b>${d.accommodation?.live ?? 0}</b><br>
-    Max: <b>${d.accommodation?.max ?? 0}</b>
-  `;
-
-  /* ✅ PASS STATS */
-  if (d.passes) {
+  if (d.passes && CURRENT_ROLE !== "Admin") {
     passDay.textContent = d.passes.day ?? "—";
     passFest.textContent = d.passes.fest ?? "—";
     passStar.textContent = d.passes.starnite ?? "—";
     passVisitor.textContent = d.passes.visitor ?? "—";
   }
+}
+
+/* ================= AUTO REFRESH ================= */
+function startAutoRefresh() {
+  if (REFRESH_TIMER) clearInterval(REFRESH_TIMER);
+  REFRESH_TIMER = setInterval(loadDashboardStats, 30000);
 }
 
 /* ================= PASSES SHEET ================= */
@@ -216,29 +228,12 @@ function setupPassesSheet() {
   };
 }
 
-/* ================= EVENT SHEETS ================= */
-openEventRegSheet.onclick = () => {
-  window.open(
-    `${API}?type=openEventSheet&event=${encodeURIComponent(CURRENT_EVENT)}`,
-    "_blank"
-  );
-};
-
-openEventEntrySheet.onclick = () => {
-  window.open(
-    `${API}?type=openEventEntrySheet&event=${encodeURIComponent(CURRENT_EVENT)}`,
-    "_blank"
-  );
-};
-
 /* ================= SEARCH ================= */
 searchBtn.addEventListener("click", async () => {
   const q = searchInput.value.trim();
   if (!q) return;
 
-  const res = await fetch(
-    `${API}?type=searchPass&query=${encodeURIComponent(q)}`
-  );
+  const res = await fetch(`${API}?type=searchPass&query=${encodeURIComponent(q)}`);
   const rows = await res.json();
 
   if (!rows.length) {
@@ -246,24 +241,21 @@ searchBtn.addEventListener("click", async () => {
     return;
   }
 
-  let html = `
-    <table>
-      <tr>
-        <th>Name</th><th>Email</th><th>Phone</th>
-        <th>College</th><th>Payment ID</th><th>Pass</th><th>QR</th>
-      </tr>`;
+  let html = `<table><tr>
+    <th>Name</th><th>Email</th><th>Phone</th>
+    <th>College</th><th>Payment ID</th><th>Pass</th><th>QR</th>
+  </tr>`;
 
   rows.forEach((r, i) => {
-    html += `
-      <tr>
-        <td>${r.Name}</td>
-        <td>${r.Email}</td>
-        <td>${r.Phone}</td>
-        <td>${r.College}</td>
-        <td>${r["Payment ID"]}</td>
-        <td>${r["Pass Type"]}</td>
-        <td><div id="qr-${i}"></div></td>
-      </tr>`;
+    html += `<tr>
+      <td>${r.Name}</td>
+      <td>${r.Email}</td>
+      <td>${r.Phone}</td>
+      <td>${r.College}</td>
+      <td>${r["Payment ID"]}</td>
+      <td>${r["Pass Type"]}</td>
+      <td><div id="qr-${i}"></div></td>
+    </tr>`;
   });
 
   html += "</table>";
