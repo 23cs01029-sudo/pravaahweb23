@@ -1,9 +1,28 @@
 /* ============================================================
    PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL + ROLE CORRECT)
 ============================================================ */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 const GAS_PAGE =
   "https://script.google.com/macros/s/AKfycbwiLk2g-bLC-6tAtynkQw1GSuPcVzqzBoLah9LYMxL3kR1Wh9r6DK7R0UU_wizPdXcxaA/exec";
 
+/* ================= FIREBASE ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
+  authDomain: "pravaah-55b1d.firebaseapp.com",
+  projectId: "pravaah-55b1d.firebaseapp.com",
+  storageBucket: "pravaah-55b1d.appspot.com",
+  messagingSenderId: "287687647267",
+  appId: "1:287687647267:web:7aecd603ee202779b89196"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 /* ================= BACKEND ================= */
 const API = "/api/pravaah";
@@ -322,4 +341,13 @@ searchBtn.onclick = async () => {
 function updateOfflineCount() {
   const q = JSON.parse(localStorage.getItem("offlineScans") || "[]");
   offlineCountEl.textContent = q.length;
+}
+
+/* ================= LOGOUT ================= */
+document.getElementById("logoutDesktop").onclick = logout;
+document.getElementById("logoutMobile").onclick = logout;
+
+async function logout() {
+  await signOut(auth);
+  location.href = "login.html";
 }
