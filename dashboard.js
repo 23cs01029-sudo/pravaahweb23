@@ -272,6 +272,13 @@ function setupPassesSheet() {
     if (d.url) window.open(d.url, "_blank");
   };
 }
+openEventRegSheet.onclick = () => {
+  window.open(`${API}?type=openEventRegSheet&event=${CURRENT_EVENT}`, "_blank");
+};
+
+openEventEntrySheet.onclick = () => {
+  window.open(`${API}?type=openEventEntrySheet&event=${CURRENT_EVENT}`, "_blank");
+};
 
 /* ================= SEARCH ================= */
 searchBtn.onclick = async () => {
