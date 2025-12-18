@@ -2,6 +2,22 @@
    PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL + ROLE CORRECT)
 ============================================================ */
 /* ================= BACKEND ================= */
+/* ================= AUTH BRIDGE ================= */
+
+// Wait until auth.js sets role
+function waitForAuth() {
+  return new Promise((resolve) => {
+    if (window.PRAVAAH_AUTH?.role) return resolve();
+
+    const i = setInterval(() => {
+      if (window.PRAVAAH_AUTH?.role) {
+        clearInterval(i);
+        resolve();
+      }
+    }, 100);
+  });
+}
+
 const API = "/api/pravaah";
 
 /* ================= DOM ================= */
@@ -45,11 +61,47 @@ const searchResults = document.getElementById("searchResults");
 const offlineCountEl = document.getElementById("offlineCount");
 
 /* ================= STATE ================= */
+/* ================= STATE ================= */
 let CURRENT_ROLE = "USER";
 let IS_PRIMARY = false;
 let CURRENT_DAY = "";
 let CURRENT_EVENT = "";
 let REFRESH_TIMER = null;
+/* ================= BOOTSTRAP ================= */
+(async () => {
+  await waitForAuth();
+
+  CURRENT_ROLE = window.PRAVAAH_AUTH.role;
+  IS_PRIMARY = window.PRAVAAH_AUTH.isPrimary === true;
+
+  // 🚫 Hard block non-admin
+  if (!["Admin", "SuperAdmin", "SuperAccount"].includes(CURRENT_ROLE)) {
+    alert("Access denied");
+    location.href = "home.html";
+    return;
+  }
+
+  // Show admin info
+  document.getElementById("adminEmail").textContent =
+    window.PRAVAAH_AUTH.email;
+
+  document.getElementById("adminRole").textContent =
+    CURRENT_ROLE === "SuperAccount" && IS_PRIMARY
+      ? "SuperAccount (Primary)"
+      : CURRENT_ROLE;
+
+  applyRoleVisibility();
+  setupRoleDropdown();
+  setupPrimaryWarning();
+  setupDayFilter();
+  setupEventFilter();
+  setupPassesSheet();
+
+  await loadDashboardStats();
+  updateOfflineCount();
+  startAutoRefresh();
+})();
+
 
 
 /* ================= VISIBILITY ================= */
@@ -287,5 +339,24 @@ function updateOfflineCount() {
   const q = JSON.parse(localStorage.getItem("offlineScans") || "[]");
   offlineCountEl.textContent = q.length;
 }
+/* ================= LIVE ROLE MONITOR ================= */
+setInterval(() => {
+  const newRole = window.PRAVAAH_AUTH?.role;
+
+  if (!newRole) return;
+
+  if (newRole !== CURRENT_ROLE) {
+    // role changed while page open
+    if (!["Admin", "SuperAdmin", "SuperAccount"].includes(newRole)) {
+      alert("Your admin access has been revoked.");
+      location.href = "home.html";
+    } else {
+      CURRENT_ROLE = newRole;
+      IS_PRIMARY = window.PRAVAAH_AUTH.isPrimary === true;
+      applyRoleVisibility();
+      loadDashboardStats();
+    }
+  }
+}, 5000); // check every 5s
 
 
