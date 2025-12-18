@@ -380,18 +380,37 @@
 }
 /* ================= QR FIX ================= */
 
+/* ================= QR — FINAL RESPONSIVE FIX ================= */
+
 .qr-box {
   width: 96px;
   height: 96px;
-  background: #fff;          /* scanner contrast */
+  background: #ffffff;
   padding: 6px;
-  border-radius: 8px;
-  display: inline-block;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
+/* Prevent browser scaling (critical) */
 .qr-box canvas,
 .qr-box img {
-  width: auto !important;    /* ❗ DO NOT SCALE */
+  width: auto !important;
   height: auto !important;
+  max-width: 100%;
+  max-height: 100%;
   display: block;
 }
+
+/* ---------- MOBILE RESPONSIVE ---------- */
+@media (max-width: 600px) {
+  .qr-box {
+    width: 72px;
+    height: 72px;
+    padding: 4px;
+    border-radius: 8px;
+  }
+}
+
