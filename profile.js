@@ -2,6 +2,21 @@
    PRAVAAH — Profile Management System (Firebase + Apps Script)
 ========================================================== */
 
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+/* ---------- Firebase ---------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
+  authDomain: "pravaah-55b1d.firebaseapp.com",
+  projectId: "pravaah-55b1d",
+  storageBucket: "pravaah-55b1d.appspot.com",
+  messagingSenderId: "287687647267",
+  appId: "1:287687647267:web:7aecd603ee202779b89196"
+};
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const auth = getAuth(app);
+
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "/api/pravaah";
 
@@ -252,6 +267,14 @@ onAuthStateChanged(auth, async (user) => {
     showToast("Photo updated!", "success");
   };
 
+  /* Logout */
+  const logout = async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  };
+  logoutDesktop.onclick = logout;
+  logoutMobile.onclick = logout;
+});
 
 /* ---------- Toast CSS ---------- */
 const style = document.createElement("style");
@@ -270,4 +293,3 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
-
