@@ -9,7 +9,7 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 const GAS_PAGE =
-  "https://script.google.com/macros/s/AKfycbweZDnVTMhqkedLgg35FBJvUrrT0axiIXgcmp94OhGrsoegIiKsG-4DzHlRB6rO4ePTvw/exec";
+  "https://script.google.com/macros/s/AKfycbxZxic0RDCRi8VQNrAjRmm2FbztZPBosJB0ts-RKCHRuFlkDOvl6-PziZ8OUO6tPryvqg/exec";
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
@@ -66,6 +66,7 @@ const searchBtn = document.getElementById("searchBtn");
 const searchResults = document.getElementById("searchResults");
 
 const offlineCountEl = document.getElementById("offlineCount");
+const openGateLogsSheet = document.getElementById("openGateLogsSheet");
 
 /* ================= STATE ================= */
 let CURRENT_ROLE = "USER";
@@ -308,7 +309,16 @@ openEventEntrySheet.onclick = async () => {
   const d = await r.json();
   if (d.url) window.open(d.url, "_blank");
 };
+ openGateLogsSheet.onclick = async () => {
+    const r = await fetch(`${API}?type=openGateLogsSheet`);
+    const d = await r.json();
 
+    if (d.url) {
+      window.open(d.url, "_blank");
+    } else {
+      alert("Unable to open Gate Logs sheet");
+    }
+  };
 
 /* ================= SEARCH ================= */
 searchBtn.onclick = async () => {
