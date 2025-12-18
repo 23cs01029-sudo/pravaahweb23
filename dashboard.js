@@ -313,7 +313,12 @@ searchBtn.onclick = async () => {
       <td>${x.College}</td>
       <td>${x["Payment ID"]}</td>
       <td>${x["Pass Type"]}</td>
-      <td><div id="qr-${i}"></div></td>
+      <td>
+  <a href="${API}?mode=admin&page=scan&paymentId=${x["Payment ID"]}" target="_blank">
+    <div id="qr-${i}"></div>
+  </a>
+</td>
+
     </tr>`;
   });
 
