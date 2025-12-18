@@ -105,6 +105,19 @@ onAuthStateChanged(auth, async (user) => {
   await loadDashboardStats();
   updateOfflineCount();
   startAutoRefresh();
+   const openScannerBtn = document.getElementById("openScannerBtn");
+
+if (openScannerBtn) {
+  openScannerBtn.onclick = () => {
+    const scannerUrl =
+      `${GAS_PAGE}?mode=admin&page=scan&scanner=` +
+      encodeURIComponent(auth.currentUser.email);
+
+    // Same tab is better for camera permissions
+    window.location.href = scannerUrl;
+  };
+}
+
 });
 const menuToggle = document.getElementById("menuToggle");
 const menu = document.getElementById("menu");
