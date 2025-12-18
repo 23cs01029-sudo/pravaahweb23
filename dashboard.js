@@ -349,13 +349,19 @@ searchBtn.onclick = async () => {
   searchResults.innerHTML = html;
 
   rows.forEach((x, i) => {
-    new QRCode(document.getElementById(`qr-${i}`), {
-  text: `${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}`,
-  width: 64,
-  height: 64
+  const el = document.getElementById(`qr-${i}`);
+
+  // 🔥 REQUIRED: clear previous QR
+  el.innerHTML = "";
+
+  new QRCode(el, {
+    text: `${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}`,
+    width: 96,
+    height: 96,
+    correctLevel: QRCode.CorrectLevel.H
+  });
 });
 
-  });
 };
 
 /* ================= OFFLINE ================= */
