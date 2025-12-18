@@ -382,35 +382,34 @@
 
 /* ================= QR — FINAL RESPONSIVE FIX ================= */
 
+/* ================= QR — FINAL SAFE ================= */
+
 .qr-box {
-  width: 96px;
-  height: 96px;
-  background: #ffffff;
-  padding: 6px;
-  border-radius: 10px;
+  width: 120px;
+  height: 120px;
+  background: #ffffff;      /* REQUIRED for scanners */
+  padding: 10px;           /* QUIET ZONE */
+  border-radius: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
+  cursor: pointer;
 }
 
-/* Prevent browser scaling (critical) */
 .qr-box canvas,
 .qr-box img {
+  display: block;
   width: auto !important;
   height: auto !important;
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
 }
 
-/* ---------- MOBILE RESPONSIVE ---------- */
+/* Mobile */
 @media (max-width: 600px) {
   .qr-box {
-    width: 72px;
-    height: 72px;
-    padding: 4px;
-    border-radius: 8px;
+    width: 90px;
+    height: 90px;
+    padding: 8px;
   }
 }
+
 
