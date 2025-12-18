@@ -1,5 +1,5 @@
 /* ============================================================
-   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL, ROLE SAFE + PRIMARY)
+   PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL + ROLE CORRECT)
 ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -66,7 +66,7 @@ const searchResults = document.getElementById("searchResults");
 const offlineCountEl = document.getElementById("offlineCount");
 
 /* ================= STATE ================= */
-let CURRENT_ROLE = "";
+let CURRENT_ROLE = "USER";
 let IS_PRIMARY = false;
 let CURRENT_DAY = "";
 let CURRENT_EVENT = "";
@@ -79,8 +79,8 @@ onAuthStateChanged(auth, async (user) => {
   const roleRes = await fetch(`${API}?type=role&email=${encodeURIComponent(user.email)}`);
   const roleObj = await roleRes.json();
 
-  CURRENT_ROLE = roleObj.role;
-  IS_PRIMARY = roleObj.isPrimary === true;
+  CURRENT_ROLE = roleObj?.role || "USER";
+  IS_PRIMARY = roleObj?.isPrimary === true;
 
   if (!["Admin", "SuperAdmin", "SuperAccount"].includes(CURRENT_ROLE)) {
     alert("Access denied");
@@ -117,14 +117,16 @@ function applyRoleVisibility() {
 
   overallStatsSection.classList.remove("hidden");
   passStatsSection.classList.remove("hidden");
-
   cardTotalReg.classList.remove("hidden");
 
   if (CURRENT_ROLE === "SuperAccount") {
     cardMoney.classList.remove("hidden");
+    roleSection.classList.remove("hidden");
   }
 
-  roleSection.classList.remove("hidden");
+  if (CURRENT_ROLE === "SuperAdmin") {
+    roleSection.classList.remove("hidden");
+  }
 }
 
 /* ================= ROLE DROPDOWN ================= */
@@ -132,18 +134,26 @@ function setupRoleDropdown() {
   roleSelect.innerHTML = "";
   roleSelect.add(new Option("Select Role", ""));
 
+  // SuperAdmin: User ↔ Admin
   if (CURRENT_ROLE === "SuperAdmin") {
     roleSelect.add(new Option("Admin", "Admin"));
+    roleSelect.add(new Option("User", "USER"));
   }
 
-  if (CURRENT_ROLE === "SuperAccount") {
+  // SuperAccount (non primary)
+  if (CURRENT_ROLE === "SuperAccount" && !IS_PRIMARY) {
     roleSelect.add(new Option("Admin", "Admin"));
     roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
+    roleSelect.add(new Option("User", "USER"));
+  }
 
-    if (IS_PRIMARY) {
-      roleSelect.add(new Option("SuperAccount", "SuperAccount"));
-      roleSelect.add(new Option("Transfer Primary", "TRANSFER_PRIMARY"));
-    }
+  // Primary SuperAccount
+  if (CURRENT_ROLE === "SuperAccount" && IS_PRIMARY) {
+    roleSelect.add(new Option("User", "USER"));
+    roleSelect.add(new Option("Admin", "Admin"));
+    roleSelect.add(new Option("SuperAdmin", "SuperAdmin"));
+    roleSelect.add(new Option("SuperAccount", "SuperAccount"));
+    roleSelect.add(new Option("Transfer Primary", "TRANSFER_PRIMARY"));
   }
 }
 
@@ -159,23 +169,41 @@ function setupPrimaryWarning() {
 
 /* ================= ROLE ASSIGN ================= */
 saveRoleBtn.onclick = async () => {
-  const email = roleEmailInput.value.trim();
+  const targetEmail = roleEmailInput.value.trim().toLowerCase();
   const role = roleSelect.value;
 
-  if (!email || !role) return alert("Email and role required");
+  if (!targetEmail || !role) {
+    alert("Email and role required");
+    return;
+  }
 
-  const res = await fetch(`${API}?type=assignRole`, {
+  const payload =
+    role === "TRANSFER_PRIMARY"
+      ? {
+          type: "TRANSFER_PRIMARY",
+          requesterEmail: auth.currentUser.email,
+          targetEmail
+        }
+      : {
+          type: "ASSIGN_ROLE",
+          requesterEmail: auth.currentUser.email,
+          targetEmail,
+          newRole: role
+        };
+
+  const res = await fetch(API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email,
-      role,
-      transferPrimary: role === "TRANSFER_PRIMARY"
-    })
+    body: JSON.stringify(payload)
   });
 
   const r = await res.json();
-  alert(r.message || "Updated");
+  alert(r.message || r.error || "Updated");
+
+  // RESET UI
+  roleEmailInput.value = "";
+  roleSelect.value = "";
+  primaryWarning.classList.add("hidden");
 };
 
 /* ================= FILTERS ================= */
