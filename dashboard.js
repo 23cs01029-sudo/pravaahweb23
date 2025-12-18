@@ -39,6 +39,12 @@ const statScan = document.getElementById("statScan");
 const statInCampus = document.getElementById("statInCampus");
 const statAccommodation = document.getElementById("statAccommodation");
 
+/* ✅ PASS STATS */
+const passDay = document.getElementById("passDay");
+const passFest = document.getElementById("passFest");
+const passStar = document.getElementById("passStar");
+const passVisitor = document.getElementById("passVisitor");
+
 const dayDropdown = document.getElementById("dayDropdown");
 const eventDropdown = document.getElementById("eventDropdown");
 
@@ -97,30 +103,24 @@ onAuthStateChanged(auth, async (user) => {
 
 /* ================= ROLE VISIBILITY ================= */
 function applyRoleVisibility() {
+  cardTotalReg.classList.add("hidden");
+  cardMoney.classList.add("hidden");
+  roleSection.classList.add("hidden");
 
-  // Hide by default
-  cardTotalReg?.classList.add("hidden");
-  cardMoney?.classList.add("hidden");
-  roleSection?.classList.add("hidden");
-
-  if (CURRENT_ROLE === "Admin") {
-    return;
-  }
+  if (CURRENT_ROLE === "Admin") return;
 
   if (CURRENT_ROLE === "SuperAdmin") {
-    cardTotalReg?.classList.remove("hidden");
-     roleSection?.classList.remove("hidden");
+    cardTotalReg.classList.remove("hidden");
+    roleSection.classList.remove("hidden");
     return;
   }
 
-  // ✅ PRIMARY SUPERACCOUNT (YOUR CASE)
   if (CURRENT_ROLE === "SuperAccount") {
-    cardTotalReg?.classList.remove("hidden");
-    cardMoney?.classList.remove("hidden");
-    roleSection?.classList.remove("hidden");
+    cardTotalReg.classList.remove("hidden");
+    cardMoney.classList.remove("hidden");
+    roleSection.classList.remove("hidden");
   }
 }
-
 
 /* ================= PRIMARY WARNING ================= */
 function setupPrimaryWarning() {
@@ -160,7 +160,6 @@ async function setupEventFilter() {
 
     openEventRegSheet.classList.remove("hidden");
     openEventEntrySheet.classList.remove("hidden");
-
     loadDashboardStats();
   });
 }
@@ -177,23 +176,35 @@ async function loadDashboardStats() {
   const res = await fetch(`${API}?${qs}`);
   const d = await res.json();
 
+  /* TOP STATS */
   statTotalReg.textContent = d.totalRegistrations ?? "—";
   statScan.textContent = d.scansToday ?? "—";
   statMoney.textContent =
     d.totalAmount != null ? `₹${d.totalAmount}` : "—";
 
+  /* EVENT */
   eventCountEl.textContent =
     CURRENT_EVENT ? (d.eventRegistrations ?? 0) : "—";
 
+  /* CAMPUS */
   statInCampus.innerHTML = `
     Live: <b>${d.insideCampus?.live ?? 0}</b><br>
     Max: <b>${d.insideCampus?.max ?? 0}</b>
   `;
 
+  /* ACCOMMODATION */
   statAccommodation.innerHTML = `
     Live: <b>${d.accommodation?.live ?? 0}</b><br>
     Max: <b>${d.accommodation?.max ?? 0}</b>
   `;
+
+  /* ✅ PASS STATS */
+  if (d.passes) {
+    passDay.textContent = d.passes.day ?? "—";
+    passFest.textContent = d.passes.fest ?? "—";
+    passStar.textContent = d.passes.starnite ?? "—";
+    passVisitor.textContent = d.passes.visitor ?? "—";
+  }
 }
 
 /* ================= PASSES SHEET ================= */
@@ -207,11 +218,17 @@ function setupPassesSheet() {
 
 /* ================= EVENT SHEETS ================= */
 openEventRegSheet.onclick = () => {
-  window.open(`${API}?type=openEventSheet&event=${encodeURIComponent(CURRENT_EVENT)}`, "_blank");
+  window.open(
+    `${API}?type=openEventSheet&event=${encodeURIComponent(CURRENT_EVENT)}`,
+    "_blank"
+  );
 };
 
 openEventEntrySheet.onclick = () => {
-  window.open(`${API}?type=openEventEntrySheet&event=${encodeURIComponent(CURRENT_EVENT)}`, "_blank");
+  window.open(
+    `${API}?type=openEventEntrySheet&event=${encodeURIComponent(CURRENT_EVENT)}`,
+    "_blank"
+  );
 };
 
 /* ================= SEARCH ================= */
