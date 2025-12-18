@@ -105,19 +105,6 @@ onAuthStateChanged(auth, async (user) => {
   await loadDashboardStats();
   updateOfflineCount();
   startAutoRefresh();
-   const openScannerBtn = document.getElementById("openScannerBtn");
-
-if (openScannerBtn) {
-  openScannerBtn.onclick = () => {
-    const scannerUrl =
-      `${GAS_PAGE}?mode=admin&page=scan&scanner=` +
-      encodeURIComponent(auth.currentUser.email);
-
-    // Same tab is better for camera permissions
-    window.location.href = scannerUrl;
-  };
-}
-
 });
 const menuToggle = document.getElementById("menuToggle");
 const menu = document.getElementById("menu");
@@ -394,6 +381,32 @@ function updateOfflineCount() {
   const q = JSON.parse(localStorage.getItem("offlineScans") || "[]");
   offlineCountEl.textContent = q.length;
 }
+/* ================= SCANNER BUTTON ================= */
+document.addEventListener("DOMContentLoaded", () => {
+  const openScannerBtn = document.getElementById("openScannerBtn");
+
+  if (!openScannerBtn) {
+    console.error("Open Scanner button not found in DOM");
+    return;
+  }
+
+  openScannerBtn.addEventListener("click", async () => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      alert("Please login again");
+      location.href = "login.html";
+      return;
+    }
+
+    const scannerUrl =
+      `${GAS_PAGE}?mode=admin&page=scan&scanner=` +
+      encodeURIComponent(user.email);
+
+    // Same tab = no repeated camera permission issues
+    window.location.href = scannerUrl;
+  });
+});
 
 /* ================= LOGOUT ================= */
 document.getElementById("logoutDesktop").onclick = logout;
