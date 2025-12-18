@@ -2,27 +2,29 @@
    PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL + ROLE CORRECT)
 ============================================================ */
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+
+const app = getApps().length === 0
+  ? initializeApp(firebaseConfig)
+  : getApps()[0];
+
 const GAS_PAGE =
   "https://script.google.com/macros/s/AKfycbwiLk2g-bLC-6tAtynkQw1GSuPcVzqzBoLah9LYMxL3kR1Wh9r6DK7R0UU_wizPdXcxaA/exec";
 
-/* ================= FIREBASE ================= */
-const firebaseConfig = {
-  apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-  authDomain: "pravaah-55b1d.firebaseapp.com",
-  projectId: "pravaah-55b1d.firebaseapp.com",
-  storageBucket: "pravaah-55b1d.appspot.com",
-  messagingSenderId: "287687647267",
-  appId: "1:287687647267:web:7aecd603ee202779b89196"
-};
-
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+function getCachedRole(email) {
+  const r = sessionStorage.getItem("PRAVAAH_ROLE");
+  if (!r) return null;
+  const o = JSON.parse(r);
+  return o.email === email ? o : null;
+}
+
+function setCachedRole(email, role, isPrimary) {
+  sessionStorage.setItem(
+    "PRAVAAH_ROLE",
+    JSON.stringify({ email, role, isPrimary, ts: Date.now() })
+  );
+}
 
 /* ================= BACKEND ================= */
 const API = "/api/pravaah";
@@ -78,11 +80,19 @@ let REFRESH_TIMER = null;
 onAuthStateChanged(auth, async (user) => {
   if (!user) return location.href = "login.html";
 
-  const roleRes = await fetch(`${API}?type=role&email=${encodeURIComponent(user.email)}`);
-  const roleObj = await roleRes.json();
+  const cached = getCachedRole(user.email);
 
+if (cached) {
+  CURRENT_ROLE = cached.role;
+  IS_PRIMARY = cached.isPrimary;
+} else {
+  const r = await fetch(`${API}?type=role&email=${encodeURIComponent(user.email)}`);
+  const roleObj = await r.json();
   CURRENT_ROLE = roleObj?.role || "USER";
   IS_PRIMARY = roleObj?.isPrimary === true;
+  setCachedRole(user.email, CURRENT_ROLE, IS_PRIMARY);
+}
+
 
   if (!["Admin", "SuperAdmin", "SuperAccount"].includes(CURRENT_ROLE)) {
     alert("Access denied");
@@ -351,3 +361,28 @@ async function logout() {
   await signOut(auth);
   location.href = "login.html";
 }
+setInterval(async () => {
+  if (!auth.currentUser) return;
+
+  const r = await fetch(
+    `${API}?type=role&email=${encodeURIComponent(auth.currentUser.email)}`
+  );
+  const roleObj = await r.json();
+
+  if (!roleObj?.role) return;
+
+  if (roleObj.role !== CURRENT_ROLE || roleObj.isPrimary !== IS_PRIMARY) {
+    setCachedRole(auth.currentUser.email, roleObj.role, roleObj.isPrimary);
+
+    if (!["Admin", "SuperAdmin", "SuperAccount"].includes(roleObj.role)) {
+      alert("Your admin access has been revoked.");
+      location.href = "home.html";
+      return;
+    }
+
+    CURRENT_ROLE = roleObj.role;
+    IS_PRIMARY = roleObj.isPrimary === true;
+    applyRoleVisibility();
+    loadDashboardStats();
+  }
+}, 60000); // every 60s
