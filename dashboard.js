@@ -1,8 +1,6 @@
 /* ============================================================
    PRAVAAH — ADMIN DASHBOARD LOGIC (FINAL + ROLE CORRECT)
 ============================================================ */
-
-
 const GAS_PAGE =
   "https://script.google.com/macros/s/AKfycbwiLk2g-bLC-6tAtynkQw1GSuPcVzqzBoLah9LYMxL3kR1Wh9r6DK7R0UU_wizPdXcxaA/exec";
 
@@ -325,5 +323,3 @@ function updateOfflineCount() {
   const q = JSON.parse(localStorage.getItem("offlineScans") || "[]");
   offlineCountEl.textContent = q.length;
 }
-
-
