@@ -357,8 +357,13 @@
 ============================================================ */
 
 #roleSelect {
+   display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 16px;
   min-width: 260px;
-  padding: 12px 42px 12px 16px;
+  padding: 12px 42px 12px 16px; /* extra right padding for arrow */
   border-radius: 14px;
   border: 1px solid var(--primary-soft);
   background-color: rgba(0,0,0,0.65);
@@ -375,6 +380,6 @@
 
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='cyan' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 18px center;
+  background-position: right 18px center; /* ⬅️ arrow moved left */
   background-size: 14px;
 }
