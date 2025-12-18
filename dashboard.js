@@ -8,6 +8,8 @@ import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+const GAS_PAGE =
+  "https://script.google.com/macros/s/AKfycbzauZjXDiCzsqOf8T3ILy3BxwBKnkwuB79UXt_5RXvEp0RrXpcFPpoRcCCh_BtS1VYA-A/exec";
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
@@ -314,7 +316,7 @@ searchBtn.onclick = async () => {
       <td>${x["Payment ID"]}</td>
       <td>${x["Pass Type"]}</td>
       <td>
-  <a href="${API}?mode=admin&page=scan&paymentId=${x["Payment ID"]}" target="_blank">
+  <a href="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}" target="_blank">
     <div id="qr-${i}"></div>
   </a>
 </td>
@@ -327,10 +329,11 @@ searchBtn.onclick = async () => {
 
   rows.forEach((x, i) => {
     new QRCode(document.getElementById(`qr-${i}`), {
-      text: `${API}?mode=admin&page=scan&paymentId=${x["Payment ID"]}`,
-      width: 64,
-      height: 64
-    });
+  text: `${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}`,
+  width: 64,
+  height: 64
+});
+
   });
 };
 
