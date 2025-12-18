@@ -350,15 +350,23 @@ searchBtn.onclick = async () => {
 
   rows.forEach((x, i) => {
   const el = document.getElementById(`qr-${i}`);
+  const url = el.dataset.url;
 
-  // 🔥 REQUIRED: clear previous QR
+  // Clear container completely
   el.innerHTML = "";
 
-  new QRCode(el, {
-    text: `${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}`,
-    width: 96,
-    height: 96,
+  // Create isolated QR instance
+  const qr = new QRCode(el, {
+    width: 110,
+    height: 110,
     correctLevel: QRCode.CorrectLevel.H
+  });
+
+  qr.makeCode(url);
+
+  // Click handler (replaces <a>)
+  el.addEventListener("click", () => {
+    window.open(url, "_blank");
   });
 });
 
