@@ -106,7 +106,28 @@ onAuthStateChanged(auth, async (user) => {
   updateOfflineCount();
   startAutoRefresh();
 });
+const menuToggle = document.getElementById("menuToggle");
+const menu = document.getElementById("menu");
 
+if (menuToggle && menu) {
+  // Open / Close menu
+  menuToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menu.classList.toggle("active");
+  });
+
+  // Close when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
+      menu.classList.remove("active");
+    }
+  });
+
+  // Close on clicking a link
+  menu.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => menu.classList.remove("active"));
+  });
+}
 /* ================= VISIBILITY ================= */
 function applyRoleVisibility() {
   overallStatsSection.classList.add("hidden");
