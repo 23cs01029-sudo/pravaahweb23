@@ -272,13 +272,20 @@ function setupPassesSheet() {
     if (d.url) window.open(d.url, "_blank");
   };
 }
-openEventRegSheet.onclick = () => {
-  window.open(`${API}?type=openEventRegSheet&event=${CURRENT_EVENT}`, "_blank");
+openEventRegSheet.onclick = async () => {
+  if (!CURRENT_EVENT) return;
+  const r = await fetch(`${API}?type=openEventRegSheet&event=${CURRENT_EVENT}`);
+  const d = await r.json();
+  if (d.url) window.open(d.url, "_blank");
 };
 
-openEventEntrySheet.onclick = () => {
-  window.open(`${API}?type=openEventEntrySheet&event=${CURRENT_EVENT}`, "_blank");
+openEventEntrySheet.onclick = async () => {
+  if (!CURRENT_EVENT) return;
+  const r = await fetch(`${API}?type=openEventEntrySheet&event=${CURRENT_EVENT}`);
+  const d = await r.json();
+  if (d.url) window.open(d.url, "_blank");
 };
+
 
 /* ================= SEARCH ================= */
 searchBtn.onclick = async () => {
