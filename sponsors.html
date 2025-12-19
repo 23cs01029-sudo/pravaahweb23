@@ -7,7 +7,6 @@
 
   <!-- GLOBAL STYLES (SAME AS HOME) -->
   <link rel="stylesheet" href="style.css" />
-<script type="module" src="auth.js"></script>
 
   <!-- PAGE STYLES -->
   <link rel="stylesheet" href="sponsors.css" />
@@ -15,12 +14,14 @@
   <!-- ICONS -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- AUTH -->
+  <script type="module" src="auth.js"></script>
 </head>
 
 <body>
 
-<!-- ================= AUTH CHECK ================= -->
-<!-- ================= NAVBAR (COPY FROM HOME) ================= -->
+<!-- ================= NAVBAR (SAME AS HOME) ================= -->
 <nav>
   <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
     <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
@@ -41,14 +42,15 @@
     <li><a href="sponsors.html" class="active">Sponsors</a></li>
     <li><a href="contact_us.html">Contact Us</a></li>
     <li><a href="profile.html">Profile</a></li>
-    <li id="dashboardNav" class="hidden">
-  <a href="dashboard.html">Dashboard</a>
-</li>
 
-    <li class="mobile-only"><a href="index.html">Logout</a></li>
+    <li id="dashboardNav" class="hidden">
+      <a href="dashboard.html">Dashboard</a>
+    </li>
+
+    <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
   </ul>
 
-  <button class="logout-btn" onclick="location.href='index.html'">Logout</button>
+  <button class="logout-btn" id="logoutDesktop">Logout</button>
 </nav>
 
 <!-- ================= PAGE HEADER ================= -->
@@ -65,40 +67,30 @@
 
   <div class="sponsor-grid">
 
-    <!-- SPONSOR CARD -->
     <div class="sponsor-card">
       <img src="Duramix.png" alt="Duramix">
-
       <div class="sponsor-overlay">
-        <span class="sponsor-tier gold">Gold Sponsor</span>
+        <span class="sponsor-tier">Sponsor</span>
         <h3>Duramix</h3>
-        <a href="https://example.com" target="_blank" class="visit-btn">
-          Visit Website
-        </a>
+        <a href="https://example.com" target="_blank" class="visit-btn">Visit Website</a>
       </div>
     </div>
 
     <div class="sponsor-card">
       <img src="Duramix.png" alt="Acrerise">
-
       <div class="sponsor-overlay">
-        <span class="sponsor-tier title">Title Sponsor</span>
+        <span class="sponsor-tier">Sponsor</span>
         <h3>Acrerise</h3>
-        <a href="https://example.com" target="_blank" class="visit-btn">
-          Visit Website
-        </a>
+        <a href="https://example.com" target="_blank" class="visit-btn">Visit Website</a>
       </div>
     </div>
 
     <div class="sponsor-card">
       <img src="Duramix.png" alt="Jindal Steel">
-
       <div class="sponsor-overlay">
-        <span class="sponsor-tier silver">Silver Sponsor</span>
+        <span class="sponsor-tier">Sponsor</span>
         <h3>Jindal Steel</h3>
-        <a href="https://example.com" target="_blank" class="visit-btn">
-          Visit Website
-        </a>
+        <a href="https://example.com" target="_blank" class="visit-btn">Visit Website</a>
       </div>
     </div>
 
@@ -117,7 +109,43 @@
   </div>
 </section>
 
-<!-- ================= FOOTER (COPY FROM HOME) ================= -->
+<!-- ================= PAST SPONSORS ================= -->
+<section class="sponsor-section">
+  <h2 class="section-title">Past Sponsors</h2>
+
+  <div class="sponsor-grid">
+
+    <div class="sponsor-card">
+      <img src="Duramix.png" alt="Indian Oil">
+      <div class="sponsor-overlay">
+        <span class="sponsor-tier">Sponsor</span>
+        <h3>Indian Oil</h3>
+        <a href="https://iocl.com" target="_blank" class="visit-btn">Visit Website</a>
+      </div>
+    </div>
+
+    <div class="sponsor-card">
+      <img src="Duramix.png" alt="SBI">
+      <div class="sponsor-overlay">
+        <span class="sponsor-tier">Sponsor</span>
+        <h3>State Bank of India</h3>
+        <a href="https://sbi.co.in" target="_blank" class="visit-btn">Visit Website</a>
+      </div>
+    </div>
+
+    <div class="sponsor-card">
+      <img src="Duramix.png" alt="Vedanta">
+      <div class="sponsor-overlay">
+        <span class="sponsor-tier">Sponsor</span>
+        <h3>Vedanta</h3>
+        <a href="https://vedantalimited.com" target="_blank" class="visit-btn">Visit Website</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= FOOTER (SAME AS HOME) ================= -->
 <footer>
   <div class="footer-container">
 
@@ -162,37 +190,29 @@
   <div class="footer-line"></div>
 
   <div class="footer-bottom">
-    <p>
-      <span>@PRAVAAH'26 IIT BHUBANESWAR</span> |
-      MADE WITH 💜 BY WEB TEAM | All Rights Reserved
-    </p>
+    <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM</p>
   </div>
 </footer>
+
+<!-- ================= AUTH + LOGOUT ================= -->
 <script type="module">
   import { auth, initAuth } from "./auth.js";
   import { signOut } from
     "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-  /* 🔐 AUTH + ROLE CHECK */
   initAuth({
     requireAuth: true,
     redirectTo: "index.html",
     showDashboard: true
   });
 
-  /* 🚪 LOGOUT */
-  document.addEventListener("DOMContentLoaded", () => {
-    const logoutBtn = document.querySelector(".logout-btn");
-    const logoutMobile = document.querySelector("#menu .mobile-only a");
+  const logout = async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  };
 
-    const logout = async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
-    };
-
-    logoutBtn?.addEventListener("click", logout);
-    logoutMobile?.addEventListener("click", logout);
-  });
+  document.getElementById("logoutDesktop")?.addEventListener("click", logout);
+  document.getElementById("logoutMobile")?.addEventListener("click", logout);
 </script>
 
 <!-- ================= MOBILE MENU ================= -->
@@ -207,5 +227,3 @@
 
 </body>
 </html>
-
-
