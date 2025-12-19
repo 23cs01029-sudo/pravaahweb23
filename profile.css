@@ -467,28 +467,28 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   opacity: 0.7;
   margin-top: 4px;
 }
-
-
-/* 🔥 QR CLICK FIX */
-.qr-box {
-  position: relative;
-}
-
-.qr-box canvas,
-.qr-box img {
-  pointer-events: none; /* ✅ allow click to pass through */
-}
-
-.qr-clickable {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: cyan;
-}
 .pass-item {
   width: 100%;
   max-width: 420px;   /* safe desktop size */
   box-sizing: border-box;
+}
+
+.qr-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: cyan;
+  cursor: pointer;
+}
+
+.qr-link canvas {
+  pointer-events: none; /* 🔥 allow click to go to <a> */
+}
+
+.qr-hint {
+  font-size: 0.65rem;
+  margin-top: 4px;
+  opacity: 0.7;
 }
 
