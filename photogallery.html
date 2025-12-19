@@ -148,26 +148,53 @@
   import { signOut } from
     "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
+  /* 🔐 AUTH */
   initAuth({
     requireAuth: true,
     redirectTo: "index.html",
     showDashboard: true
   });
 
+  /* 🚪 LOGOUT */
   const logout = async () => {
     await signOut(auth);
-    location.href = "index.html";
+    window.location.href = "index.html";
   };
 
-  logoutDesktop.onclick = logout;
-  logoutMobile.onclick = logout;
+  document.getElementById("logoutDesktop")?.addEventListener("click", logout);
+  document.getElementById("logoutMobile")?.addEventListener("click", logout);
 
-  menuToggle.onclick = () => menu.classList.toggle("open");
+  /* 📱 NAVBAR TOGGLE (FINAL & SAFE) */
+  const menuToggle = document.getElementById("menuToggle");
+  const menu = document.getElementById("menu");
+
+  if (menuToggle && menu) {
+    menuToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.classList.toggle("open");
+    });
+
+    // Close when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
+        menu.classList.remove("open");
+      }
+    });
+
+    // Close when clicking a menu link
+    menu.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        menu.classList.remove("open");
+      });
+    });
+  }
 </script>
+
 
 <!-- ✅ GALLERY ONLY -->
 <script src="gallery.js"></script>
 
 </body>
 </html>
+
 
