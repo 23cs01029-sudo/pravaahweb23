@@ -4,16 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thank You | PRAVAAH</title>
-<script type="module" src="auth.js"></script>
 
   <!-- FONTS -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css" />
+
   <!-- ICONS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+  <!-- GLOBAL STYLES -->
+  <link rel="stylesheet" href="style.css" />
+
   <style>
-    /* ---------- BASE ---------- */
     body {
       font-family: 'Exo 2', sans-serif;
       color: white;
@@ -24,8 +25,6 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
       overflow-x: hidden;
     }
 
@@ -35,20 +34,15 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* ---------- CONTAINER ---------- */
     .main-container {
       flex: 1;
-      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 3rem 1rem;
-      box-sizing: border-box;
     }
 
-    /* ---------- THANK YOU BOX ---------- */
     .thankyou-box {
-      width: 90%;
       max-width: 600px;
       background: rgba(0, 0, 0, 0.72);
       border: 1.4px solid rgba(36,224,236,0.5);
@@ -76,7 +70,6 @@
       font-size: 2rem;
       color: #24E0EC;
       margin-bottom: 1rem;
-      letter-spacing: 1px;
     }
 
     .thankyou-box p {
@@ -95,184 +88,100 @@
       padding: 14px 36px;
       cursor: pointer;
       transition: 0.25s ease;
-      font-size: 1rem;
     }
 
     .back-btn:hover {
       transform: scale(1.05);
     }
-
-    /* ---------- FOOTER ---------- */
-    footer {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.25);
-      padding: 1.6rem 1rem;
-      border-top: 1px solid rgba(36,224,236,0.3);
-      text-align: center;
-      color: #bbb;
-      font-size: 0.9rem;
-      backdrop-filter: blur(6px);
-    }
-
-    footer .footer-social {
-      margin: 1rem 0;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    footer .footer-social a {
-      color: #24E0EC;
-      font-size: 1.35rem;
-      transition: transform 0.25s ease;
-    }
-
-    footer .footer-social a:hover {
-      transform: scale(1.15);
-    }
-
-    .footer-line {
-      border: none;
-      height: 1px;
-      background: rgba(36,224,236,0.3);
-      margin: 1rem auto;
-      width: 80%;
-    }
-
-    /* ---------- MOBILE ---------- */
-    @media (max-width: 768px) {
-      .thankyou-box {
-        padding: 2.2rem 1.5rem;
-      }
-
-      .thankyou-box i {
-        font-size: 2.5rem;
-      }
-
-      .thankyou-box h1 {
-        font-size: 1.7rem;
-      }
-
-      .thankyou-box p {
-        font-size: 0.9rem;
-      }
-
-      .back-btn {
-        width: 100%;
-        padding: 12px;
-      }
-    }
   </style>
 </head>
 
 <body>
+
+<!-- NAVBAR -->
 <nav>
-    <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
-      <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
-    </a>
+  <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
+    <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
+  </a>
 
-    <div class="logo">PRAVAAH</div>
+  <div class="logo">PRAVAAH</div>
 
-    <div class="menu-toggle" id="menuToggle">
-      <i class="fa-solid fa-bars"></i>
-    </div>
-
-    <ul id="menu">
-      <li><a href="home.html">Home</a></li>
-      <li><a href="events.html">Events</a></li>
-      <li><a href="registrationPravaah.html">Register</a></li>
-      <li><a href="accommodation.html">Accommodation</a></li>
-      <li><a href="photogallery.html">Gallery</a></li>
-      <li><a href="sponsors.html">Sponsors</a></li>
-      <li><a href="contact_us.html">Contact Us</a></li>
-      <li><a href="profile.html" class="active">Profile</a></li>
-      <li id="dashboardNav" class="hidden">
-  <a href="dashboard.html">Dashboard</a>
-</li>
-
-      <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
-    </ul>
-
-    <button id="logoutDesktop" class="logout-btn">Logout</button>
-  </nav>
-  <!-- CENTERED CONTENT -->
-  <div class="main-container">
-    <div class="thankyou-box">
-      <i class="fa-solid fa-circle-check"></i>
-      <h1>Thank You!</h1>
-      <p>
-        Thank you for showing interest in <strong>Pravaah 2026</strong>.<br>
-        Our team will contact you within two business days.
-      </p>
-      <button class="back-btn" onclick="window.location.href='home.html'">
-        Back to Home
-      </button>
-    </div>
+  <div class="menu-toggle" id="menuToggle">
+    <i class="fa-solid fa-bars"></i>
   </div>
 
-  <!-- FOOTER -->
-  <footer>
-  <div class="footer-container">
+  <ul id="menu">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="registrationPravaah.html">Register</a></li>
+    <li><a href="accommodation.html">Accommodation</a></li>
+    <li><a href="photogallery.html">Gallery</a></li>
+    <li><a href="sponsors.html">Sponsors</a></li>
+    <li><a href="contact_us.html">Contact Us</a></li>
+    <li><a href="profile.html">Profile</a></li>
+    <li id="dashboardNav" class="hidden">
+      <a href="dashboard.html">Dashboard</a>
+    </li>
+    <li class="mobile-only"><a id="logoutMobile">Logout</a></li>
+  </ul>
 
-    <div class="footer-left">
-      <img src="pravah-logo.png" class="footer-logo">
-      <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-    </div>
+  <button id="logoutDesktop" class="logout-btn">Logout</button>
+</nav>
 
-    <div class="footer-column">
-      <h3>Quick Links</h3>
-      <ul>
-        <li><a href="#">Events Portal</a></li>
-        <li><a href="#">CA Portal</a></li>
-        <li><a href="#">Join the Community</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Explore More</h3>
-      <ul>
-        <li><a href="#">Star Attractions</a></li>
-        <li><a href="#">Hall of Fame</a></li>
-        <li><a href="#">Brochure</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-column">
-      <h3>Reach Out to Us</h3>
-      <ul>
-        <li><a href="contact_us.html">Contact Us</a></li>
-      </ul>
-
-      <div class="footer-social-icons">
-        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-      </div>
-    </div>
-
+<!-- MAIN CONTENT -->
+<div class="main-container">
+  <div class="thankyou-box">
+    <i class="fa-solid fa-circle-check"></i>
+    <h1>Thank You!</h1>
+    <p>
+      Thank you for showing interest in <strong>Pravaah 2026</strong>.<br>
+      Our team will contact you within two business days.
+    </p>
+    <button class="back-btn" onclick="location.href='home.html'">
+      Back to Home
+    </button>
   </div>
+</div>
 
-  <div class="footer-line"></div>
-
+<!-- FOOTER -->
+<footer>
   <div class="footer-bottom">
-    <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM</p>
+    <p>
+      <span>@PRAVAAH'26 IIT BHUBANESWAR</span> |
+      MADE WITH 💜 BY WEB TEAM
+    </p>
   </div>
 </footer>
 
+<!-- ✅ AUTH + LOGOUT + MENU SCRIPT -->
 <script type="module">
   import { auth, initAuth } from "./auth.js";
+  import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
+  /* 🔐 Auth protection */
   initAuth({
     requireAuth: true,
     redirectTo: "index.html",
     showDashboard: false
   });
+
+  /* 🚪 Logout */
+  const logout = async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  };
+
+  document.getElementById("logoutDesktop")?.addEventListener("click", logout);
+  document.getElementById("logoutMobile")?.addEventListener("click", logout);
+
+  /* 📱 Mobile menu toggle */
+  const menuToggle = document.getElementById("menuToggle");
+  const menu = document.getElementById("menu");
+
+  menuToggle?.addEventListener("click", () => {
+    menu.classList.toggle("show");
+  });
 </script>
 
 </body>
 </html>
-
-
-
-
-
