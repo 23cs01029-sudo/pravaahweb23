@@ -6,8 +6,8 @@ import { auth } from "./auth.js";
 import { onAuthStateChanged, signOut, updateProfile } from
   "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbyOUaWbQgD1nx2MyB1RRfY9R3lbOlRg1jDDcAhTajOTve44yJef_3LIuQqGVim8N4T0nA/exec";
+const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
+
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "/api/pravaah";
 
@@ -119,7 +119,9 @@ function renderPasses(passes, container, userEmail) {
     container.appendChild(card);
 
     const qrBox = document.getElementById(qrId);
-const qrUrl = `${GAS_URL}?paymentId=${encodeURIComponent(paymentId)}`;
+const qrUrl =
+  `${FRONTEND_BASE}/public.html?paymentId=${encodeURIComponent(paymentId)}`;
+
 
 new QRCode(qrBox, {
   text: qrUrl,
@@ -298,6 +300,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
