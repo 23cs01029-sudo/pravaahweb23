@@ -7,7 +7,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
   "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbx2Qe9eNWiAG-yIQbgaFqcL7c-Y2TzvvG6ftbgvpgCA6hWuf_fUgHWz-zUgTyjeMS7KKg/exec";
+  "https://script.google.com/macros/s/AKfycbxfQSKhKKyuV5Jk9e3MChtUTVVFL1onq51iByv5MqGuTPjsIWeOh9JOzvqCU7-tz3ZyYQ/exec";
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "/api/pravaah";
 
@@ -298,6 +298,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
