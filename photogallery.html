@@ -190,38 +190,13 @@
     logoutMobile?.addEventListener("click", logout);
   });
 </script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const menuToggle = document.getElementById("menuToggle");
-    const menu = document.getElementById("menu");
 
-    if (!menuToggle || !menu) return;
-
-    /* ☰ Toggle menu */
-    menuToggle.addEventListener("click", () => {
-      menu.classList.toggle("open");
-    });
-
-    /* Close menu on link click (mobile UX) */
-    menu.querySelectorAll("a").forEach(link => {
-      link.addEventListener("click", () => {
-        menu.classList.remove("open");
-      });
-    });
-
-    /* Close menu on outside click */
-    document.addEventListener("click", (e) => {
-      if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
-        menu.classList.remove("open");
-      }
-    });
-  });
-</script>
 
 <!-- ================= GALLERY JS ================= -->
 <script src="gallery.js"></script>
 
 </body>
 </html>
+
 
 
