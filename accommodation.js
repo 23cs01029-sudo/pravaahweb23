@@ -1,3 +1,26 @@
+import { auth } from "./auth.js";
+import { signOut } from
+  "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+/* ---------- LOGOUT ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutDesktop = document.getElementById("logoutDesktop");
+  const logoutMobile = document.getElementById("logoutMobile");
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "index.html";
+    } catch (e) {
+      alert("Logout failed");
+      console.error(e);
+    }
+  };
+
+  logoutDesktop?.addEventListener("click", logout);
+  logoutMobile?.addEventListener("click", logout);
+});
+
 // 🌐 Toggle mobile menu
 const menuToggle = document.querySelector(".menu-toggle");
 const menu = document.querySelector("#menu");
@@ -47,3 +70,4 @@ document.querySelectorAll(".card").forEach(card => {
     card.style.boxShadow = "0 0 20px rgba(0,255,255,0.3)";
   });
 });
+
