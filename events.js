@@ -4,7 +4,9 @@
    ✔ Mobile Navbar Toggle
    ✔ Category Switching (Tech / Cultural / Workshop)
 ============================================================ */
-
+import { auth } from "./auth.js";
+import { onAuthStateChanged, signOut } 
+  from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 // ------------------------------------------------------------
 // 🌐 MOBILE NAVBAR TOGGLE
 // ------------------------------------------------------------
@@ -123,4 +125,5 @@ document.head.insertAdjacentHTML(
     }
   </style>`
 );
+
 
