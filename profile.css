@@ -205,14 +205,26 @@ body {
 }
 
 .save-btn {
-  background: linear-gradient(90deg, #7A00FF, var(--primary));
-  color: #fff;
+  background: cyan;
+  color: black;
   border: none;
   border-radius: 8px;
   padding: 10px 18px;
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 0 12px var(--primary-soft);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  font-family: 'Orbitron', sans-serif;
+
+  /* 🔽 softer glow */
+  box-shadow: 0 0 6px rgba(0,255,255,0.35);
+}
+
+.save-btn:hover {
+  background: #00ffcc;
+  transform: scale(1.04);
+
+  /* 🔽 softer hover glow */
+  box-shadow: 0 0 12px rgba(0,255,255,0.55);
 }
 
 .save-btn.secondary {
@@ -320,3 +332,32 @@ body {
     margin-top: 12px;
   }
 }
+/* ===============================
+   🔽 GLOBAL GLOW REDUCTION PATCH
+   (NO layout changes)
+   =============================== */
+
+/* Softer text glow */
+.profile-container h2,
+.pass-item h3,
+.profile-info p {
+  text-shadow: 0 0 4px rgba(0,255,255,0.35) !important;
+}
+
+/* Softer card glow */
+.profile-container,
+.pass-item {
+  box-shadow: 0 0 14px rgba(0,255,255,0.22) !important;
+}
+
+/* Softer hover glow */
+.pass-item:hover {
+  box-shadow: 0 0 20px rgba(0,255,255,0.35) !important;
+}
+
+/* Softer avatar ring */
+.photo-wrapper::before {
+  box-shadow: 0 0 12px rgba(0,255,255,0.35) !important;
+}
+
+
