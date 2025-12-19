@@ -446,6 +446,71 @@ body {
 .passes-grid {
   margin-top: 35px; /* Increase space between subtitle and pass cards */
 }
+/* =========================================================
+   MOBILE FIX — EVENT & PARTICIPANT LAYOUT
+========================================================= */
+@media (max-width: 600px) {
+
+  /* ---------- EVENT ROW FIX ---------- */
+  .event-row {
+    flex-direction: column;          /* stack content */
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .event-left {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .event-label {
+    font-size: 1rem;
+    line-height: 1.3rem;
+    word-break: break-word;
+  }
+
+  .pdf-icon {
+    align-self: flex-end;             /* move PDF icon to right */
+    font-size: 1.15rem;
+    margin-top: 4px;
+  }
+
+  /* ---------- PARTICIPANT CARD FIX ---------- */
+  .participant-card {
+    width: 100%;
+    max-width: none;
+    padding: 18px 14px;
+  }
+
+  .participant-card input {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 12px;
+  }
+
+  /* ---------- COUNTER FIX ---------- */
+  .custom-number-box {
+    width: max-content;
+    margin: 12px auto;
+  }
+
+  /* ---------- DAY BUTTONS ---------- */
+  .day-card,
+  .visitor-day-card {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
+
+  /* ---------- PASSES GRID ---------- */
+  .passes-grid {
+    gap: 22px;
+  }
+}
+
 
 
 
