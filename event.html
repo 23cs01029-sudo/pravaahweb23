@@ -133,7 +133,7 @@ button {
   <div class="logo">PRAVAAH 2026</div>
   <div class="subtitle">Event Scanner</div>
 
-  <div class="status valid" id="statusBox">Checking pass…</div>
+  <div id="statusBox" class="status">Checking pass…</div>
 
   <select id="eventSelect">
     <option value="">Select Event</option>
@@ -151,16 +151,16 @@ button {
 
 <script>
 /* ================= CONFIG ================= */
-const API_BASE = "https://script.google.com/macros/s/XXXXXXXXXXXX/exec";
+const API_BASE = "/api/pravaah";
 
 /* ================= PARAMS ================= */
 const params = new URLSearchParams(location.search);
 const paymentId = params.get("paymentId");
-const scanner = params.get("scanner");
+const scanner = params.get("scanner") || "WEB_ADMIN";
 
-if (!paymentId || !scanner) {
-  alert("Invalid QR or Scanner");
-  throw new Error("Missing params");
+if (!paymentId) {
+  alert("Invalid QR");
+  location.href = "scan.html";
 }
 
 /* ================= DOM ================= */
@@ -168,27 +168,32 @@ const eventSelect = document.getElementById("eventSelect");
 const list = document.getElementById("list");
 const statusBox = document.getElementById("statusBox");
 
-/* ================= EVENTS (STATIC OR API) ================= */
+/* ================= EVENTS (EDIT AS REQUIRED) ================= */
 const DAY_EVENTS = {
   day1: ["DAY1: Event 1", "DAY1: Event 2"],
   day2: ["DAY2: Event 1", "DAY2: Event 2"],
   day3: ["DAY3: Event 1", "DAY3: Event 2"]
 };
 
-/* ================= FETCH PASS ================= */
-fetch(`${API_BASE}?type=searchPass&query=${paymentId}`)
-.then(r => r.json())
-.then(passes => {
-  if (!passes.length) throw new Error("Invalid pass");
+let passData = null;
+let participants = [];
 
-  const pass = passes[0];
-  validatePass(pass);
-  populateParticipants(pass);
-})
-.catch(err => {
-  statusBox.className = "status invalid";
-  statusBox.innerText = err.message;
-});
+/* ================= FETCH PASS ================= */
+fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
+  .then(r => r.json())
+  .then(rows => {
+    if (!rows || !rows.length) throw new Error("Invalid pass");
+
+    passData = rows[0];
+    participants = rows;
+
+    validatePass(passData);
+    renderParticipants();
+  })
+  .catch(err => {
+    statusBox.className = "status invalid";
+    statusBox.innerText = err.message;
+  });
 
 /* ================= VALIDATION ================= */
 function validatePass(pass) {
@@ -199,7 +204,9 @@ function validatePass(pass) {
     "2026-02-08": "day3"
   };
 
-  const todayKey = DAY_MAP[new Date().toISOString().slice(0,10)];
+  const today = new Date().toISOString().slice(0, 10);
+  const todayKey = DAY_MAP[today];
+
   const selected = (pass["Selected Days"] || "").toLowerCase();
   const starnite = pass["Starnite"] === "YES";
 
@@ -211,7 +218,8 @@ function validatePass(pass) {
   else if (selected.includes(todayKey)) valid = true, reason = "Valid for today";
 
   statusBox.className = "status " + (valid ? "valid" : "invalid");
-  statusBox.innerHTML = (valid ? "✔ VALID FOR TODAY" : "✖ NOT VALID TODAY") +
+  statusBox.innerHTML =
+    (valid ? "✔ VALID FOR TODAY" : "✖ NOT VALID TODAY") +
     `<br><small>${reason}</small>`;
 
   if (valid && DAY_EVENTS[todayKey]) {
@@ -225,24 +233,20 @@ function validatePass(pass) {
 }
 
 /* ================= PARTICIPANTS ================= */
-function populateParticipants(pass) {
-  fetch(`${API_BASE}?type=searchPass&query=${paymentId}`)
-  .then(r => r.json())
-  .then(rows => {
-    list.innerHTML = "";
-    rows.forEach(p => {
-      const row = document.createElement("div");
-      row.className = "row";
-      row.innerHTML = `
-        <input type="checkbox" checked
-          data-name="${p.Name}"
-          data-email="${p.Email}"
-          data-phone="${p.Phone}"
-          data-college="${p.College}">
-        <span>${p.Name}</span>
-      `;
-      list.appendChild(row);
-    });
+function renderParticipants() {
+  list.innerHTML = "";
+  participants.forEach(p => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <input type="checkbox" checked
+        data-name="${p.Name}"
+        data-email="${p.Email}"
+        data-phone="${p.Phone}"
+        data-college="${p.College}">
+      <span>${p.Name}</span>
+    `;
+    list.appendChild(row);
   });
 }
 
@@ -253,12 +257,13 @@ function submitEntry() {
   const checked = [...document.querySelectorAll("input[type=checkbox]:checked")];
   if (!checked.length) return alert("Select participants");
 
-  const participants = checked.map(cb => ({
+  const payloadParticipants = checked.map(cb => ({
     paymentId,
     name: cb.dataset.name,
     email: cb.dataset.email,
     phone: cb.dataset.phone,
     college: cb.dataset.college,
+    passType: passData["Pass Type"],
     registered: false
   }));
 
@@ -269,7 +274,7 @@ function submitEntry() {
       type: "EVENT_SCAN",
       eventName: eventSelect.value,
       scanner,
-      participants
+      participants: payloadParticipants
     })
   })
   .then(r => r.json())
@@ -284,4 +289,3 @@ function submitEntry() {
 
 </body>
 </html>
-
