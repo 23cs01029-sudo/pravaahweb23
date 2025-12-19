@@ -273,3 +273,82 @@ body {
     padding: 12px 16px;
   }
 }
+
+/* ===============================
+   GALLERY IMAGE TITLE HIGHLIGHT
+   =============================== */
+
+.gallery-item {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Title strip */
+.gallery-item::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  padding: 10px 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+
+  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
+  color: cyan;
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+
+  border-radius: 0 0 15px 15px;
+}
+
+/* Show on hover */
+.gallery-item:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Zoom icon hover sync */
+.gallery-item:hover .zoom-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.zoom-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: cyan;
+  font-size: 2rem;
+
+  background: rgba(0,0,0,0.45);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.3s ease;
+}
+/* ===============================
+   🔽 REDUCE GLOW: CLOSE & DOWNLOAD
+   =============================== */
+
+/* Close (X) & Download icons */
+.close-lightbox i,
+.download-icon i {
+  color: cyan;
+  text-shadow: 0 0 4px rgba(0, 255, 255, 0.4); /* 🔽 reduced glow */
+  transition: transform 0.25s ease, text-shadow 0.25s ease, color 0.25s ease;
+}
+
+/* Hover — subtle, clean */
+.close-lightbox:hover i,
+.download-icon:hover i {
+  color: #eaffff;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.6); /* 🔽 controlled glow */
+  transform: scale(1.1);
+}
