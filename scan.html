@@ -60,11 +60,14 @@ body {
 
 #cameraBox {
   position: relative;
-  width: min(92vw, 380px);
+  width: 100%;
+  max-width: 360px;
   aspect-ratio: 1 / 1;
   margin: 12px auto;
-  min-height: 280px;
+  overflow: hidden;        /* 🔥 CRITICAL */
+  border-radius: 14px;     /* match video */
 }
+
 
 video {
   position: absolute;
@@ -137,6 +140,10 @@ video {
   opacity: 0.6;
   text-align: center;
 }
+  .scan-box {
+  inset: 20%;
+}
+
 </style>
 </head>
 
