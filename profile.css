@@ -494,7 +494,7 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   }
 }
 /* ===============================
-   QR HOVER BUTTON — EDIT PROFILE STYLE
+   QR OPEN BUTTON — SAME AS EDIT PROFILE
    =============================== */
 
 .qr-box {
@@ -502,18 +502,18 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 }
 
 /* Button hidden by default */
-.qr-hover-box {
+.qr-open-btn {
   position: absolute;
-  bottom: -36px;          /* place below QR */
+  bottom: -38px;
   left: 50%;
   transform: translateX(-50%);
 
   padding: 6px 14px;
-  font-size: 0.7rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-family: 'Exo 2', sans-serif;
 
-  color: white;
   background: transparent;
+  color: white;
 
   border: 1.5px solid white;
   border-radius: 2px;
@@ -524,11 +524,10 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   white-space: nowrap;
 }
 
-/* Show button only on hover */
-.qr-box:hover .qr-hover-box {
+/* Show on hover */
+.qr-box:hover .qr-open-btn {
   opacity: 1;
   transform: translateX(-50%) translateY(2px);
 }
-
 
 
