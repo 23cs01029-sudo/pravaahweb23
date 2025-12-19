@@ -5,148 +5,156 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Payment Failed — PRAVAAH</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
+  <!-- ⭐ SAME FONT AS HOME -->
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --primary: #24E0EC;
+      --primary-soft: rgba(36,224,236,0.25);
+
+      --error: #ff6b6b;
+      --error-soft: rgba(255,107,107,0.35);
+
+      --text: #F4F9FC;
+      --muted: #C9D3E0;
+
+      --surface: rgba(0,0,0,0.55);
+      --surface-border: rgba(255,255,255,0.08);
+    }
+
     body {
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(120deg, #2c1a55, #3e2e54, #420b23, #5b2a86);
+      font-family: 'Exo 2', sans-serif;
+      background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
       background-size: 400% 400%;
-      animation: gradient 14s ease infinite;
+      animation: gradientMove 15s ease infinite;
+
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-      color: white;
-      text-align: center;
       padding: 20px;
+      color: var(--text);
+      text-align: center;
     }
 
-    @keyframes gradient {
+    @keyframes gradientMove {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
     .fail-box {
-      background: rgba(255, 0, 0, 0.05);
-      border: 1.5px solid #ff6b6b;
-      border-radius: 18px;
-      padding: 40px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 0 18px rgba(255, 80, 80, 0.3);
-      backdrop-filter: blur(6px);
-      transition: all 0.3s ease;
+      background: var(--surface);
+      border: 2px solid var(--surface-border);
+      border-left: 4px solid var(--error);
+      border-radius: 22px;
+      padding: 42px 38px;
+      max-width: 620px;
+      width: 100%;
+      box-shadow: 0 0 24px var(--error-soft);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    h1 {
-      color: #ff6b6b;
-      text-shadow: 0 0 8px #ff6b6b;
-      font-size: 1.9rem;
-      margin-bottom: 12px;
-    }
-
-    p {
-      color: #ffdede;
-      margin-bottom: 22px;
-      font-size: 1rem;
-      line-height: 1.5;
+    .fail-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 32px var(--error-soft);
     }
 
     .cross {
-      font-size: 70px;
-      color: #ff6b6b;
-      text-shadow: 0 0 15px #ff6b6b;
-      margin-bottom: 15px;
-      animation: crossPulse 2s infinite alternate;
+      font-size: 72px;
+      color: var(--error);
+      text-shadow: 0 0 18px var(--error-soft);
+      margin-bottom: 18px;
+      animation: crossPulse 1.6s ease-in-out infinite alternate;
     }
 
     @keyframes crossPulse {
-      from { transform: scale(1); opacity: 0.9; }
-      to { transform: scale(1.05); opacity: 1; }
+      from { transform: scale(1); opacity: 0.85; }
+      to   { transform: scale(1.08); opacity: 1; }
     }
 
-    .btn {
-      display: inline-block;
-      background: #ff6b6b;
-      color: white;
-      font-weight: 700;
-      text-decoration: none;
-      padding: 12px 28px;
-      border-radius: 10px;
-      transition: 0.3s ease;
-      font-size: 0.95rem;
+    h1 {
+      font-size: 2rem;
+      color: var(--error);
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px var(--error-soft);
     }
 
-    .btn:hover {
-      background: #ff7a7a;
-      box-shadow: 0 0 15px #ff6b6b;
-      transform: scale(1.04);
+    p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 22px;
     }
 
     .reason {
       font-size: 0.9rem;
       color: #ffbfbf;
-      margin-top: 10px;
+      margin-bottom: 26px;
       word-wrap: break-word;
     }
 
-    /* ✅ Responsive adjustments */
+    .btn {
+      display: inline-block;
+      padding: 12px 34px;
+      border-radius: 26px;
+      background: linear-gradient(90deg, #7A00FF, var(--primary));
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 1px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 22px var(--primary-soft);
+    }
+
+    /* 📱 RESPONSIVE */
     @media (max-width: 768px) {
       .fail-box {
-        padding: 30px 20px;
+        padding: 34px 24px;
       }
 
       .cross {
-        font-size: 55px;
+        font-size: 56px;
       }
 
       h1 {
-        font-size: 1.6rem;
+        font-size: 1.65rem;
       }
 
       p {
         font-size: 0.95rem;
       }
-
-      .btn {
-        padding: 10px 25px;
-        font-size: 0.9rem;
-      }
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 15px;
-      }
-
       .fail-box {
-        width: 100%;
-        padding: 25px 18px;
-        border-radius: 12px;
-        box-shadow: 0 0 12px rgba(255, 80, 80, 0.25);
+        padding: 26px 18px;
+        border-radius: 18px;
       }
 
       .cross {
-        font-size: 45px;
+        font-size: 46px;
       }
 
       h1 {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
       }
 
       p {
         font-size: 0.9rem;
-        line-height: 1.4;
       }
 
       .btn {
-        padding: 10px 20px;
-        font-size: 0.85rem;
-        border-radius: 8px;
+        padding: 10px 26px;
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -154,19 +162,24 @@
 
 <body>
   <div class="fail-box">
-    <div class="cross">❌</div>
+    <div class="cross">✕</div>
     <h1>Payment Failed</h1>
-    <p>Unfortunately, your payment could not be completed.<br>Please try again or contact our support team.</p>
+    <p>
+      Unfortunately, your payment could not be completed.<br>
+      Please try again or contact our support team.
+    </p>
+
     <p id="failureReason" class="reason"></p>
+
     <a href="registrationPravaah.html" class="btn">Try Again</a>
   </div>
 
   <script>
-    // Display failure reason if passed in the query string
     const params = new URLSearchParams(window.location.search);
     const reason = params.get("reason");
     if (reason) {
-      document.getElementById("failureReason").innerText = "Reason: " + decodeURIComponent(reason);
+      document.getElementById("failureReason").innerText =
+        "Reason: " + decodeURIComponent(reason);
     }
   </script>
 </body>
