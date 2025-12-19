@@ -16,8 +16,7 @@ const firebaseConfig = {
 };
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
-const GAS_PAGE =
-  "https://script.google.com/macros/s/AKfycbwzLAeF0v-RvIrNzd8mymns8RM-K0Qz2j8QL2g9UyVsPGNR5fYy_wczpwuk1TWxllJpdQ/exec";
+
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "/api/pravaah";
 
@@ -114,7 +113,7 @@ function renderPasses(passes, container, userEmail) {
 
     const card = document.createElement("div");
     card.className = "pass-item";
-card.innerHTML = `
+    card.innerHTML = `
   <div class="pass-details">
     <h3>${passType}</h3>
     <p><strong>Payment ID:</strong> ${paymentId}</p>
@@ -122,31 +121,29 @@ card.innerHTML = `
     <p><strong>StarNite:</strong> ${starnite}</p>
     <p><strong>Events:</strong> ${events}</p>
   </div>
+  <div id="${qrId}" class="qr-box qr-click">
+  <div class="qr-hover-box">Tap to open pass</div>
+</div>
 
-  <div id="${qrId}" class="qr-box">
-    <a class="qr-link" target="_blank">
-      <div class="qr-inner"></div>
-      <div class="qr-hint">Tap to open pass</div>
-    </a>
-  </div>
 `;
 
-
     container.appendChild(card);
-const qrBox = document.getElementById(qrId);
-const qrLink = qrBox.querySelector(".qr-link");
-const qrInner = qrBox.querySelector(".qr-inner");
 
-const qrUrl = `${GAS_PAGE}?paymentId=${encodeURIComponent(paymentId)}`;
+   const qrBox = document.getElementById(qrId);
+const qrUrl = `${GAS_URL}?paymentId=${encodeURIComponent(paymentId)}`;
 
-qrLink.href = qrUrl;
-
-new QRCode(qrInner, {
+new QRCode(qrBox, {
   text: qrUrl,
-  width: 120,
-  height: 120,
-  correctLevel: QRCode.CorrectLevel.H
+  width: 130,
+  height: 130
 });
+
+/* Make QR clickable */
+qrBox.style.cursor = "pointer";
+qrBox.onclick = () => {
+  window.open(qrUrl, "_blank");
+};
+
 
 
   });
@@ -309,22 +306,3 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
