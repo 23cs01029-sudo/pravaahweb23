@@ -106,6 +106,31 @@ video {
   font-weight: 600;
 }
 
+/* ACTION BUTTONS */
+#actionButtons {
+  display: none;
+  width: 100%;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+#actionButtons button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid cyan;
+  background: black;
+  color: cyan;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(0,255,255,0.4);
+}
+
+#actionButtons button:hover {
+  background: cyan;
+  color: black;
+}
+
 .footer {
   margin-top: 10px;
   font-size: 0.65rem;
@@ -128,20 +153,34 @@ video {
     </div>
   </div>
 
-  <div class="helper">Align QR inside the square</div>
+  <div class="helper" id="helperText">Align QR inside the square</div>
+
+  <!-- ACTION BUTTONS -->
+  <div id="actionButtons">
+    <button id="adminBtn">Admin Gate</button>
+    <button id="eventBtn">Event Entry</button>
+  </div>
+
   <div class="footer">Authorized Scanners Only • PRAVAAH ’26</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 <script>
-/* ================= CONFIG ================= */
-const API_BASE = "/api/pravaah"; // for future use
+/* ================= STATE ================= */
 const video = document.getElementById("video");
+const helperText = document.getElementById("helperText");
+const actionButtons = document.getElementById("actionButtons");
+const adminBtn = document.getElementById("adminBtn");
+const eventBtn = document.getElementById("eventBtn");
+
+const params = new URLSearchParams(window.location.search);
+const prefilledPaymentId = params.get("paymentId");
 
 let stream = null;
 let scanning = false;
 let locked = false;
+let detectedPaymentId = null;
 
 /* ================= CAMERA ================= */
 async function startCamera() {
@@ -185,29 +224,44 @@ function scanLoop() {
   const code = jsQR(img.data, img.width, img.height);
 
   if (code) {
-    let paymentId = null;
     try {
-      paymentId = new URL(code.data).searchParams.get("paymentId");
+      const pid = new URL(code.data).searchParams.get("paymentId");
+      if (pid) {
+        locked = true;
+        detectedPaymentId = pid;
+        stopCamera();
+        showActions();
+        return;
+      }
     } catch {}
-
-    if (paymentId) {
-      locked = true;
-      stopCamera();
-
-      setTimeout(() => {
-        if (confirm("QR detected successfully.\n\nProceed to Admin Panel?")) {
-          window.location.href =
-            `admin.html?paymentId=${encodeURIComponent(paymentId)}`;
-        } else {
-          locked = false;
-          startCamera();
-        }
-      }, 150);
-      return;
-    }
   }
 
   requestAnimationFrame(scanLoop);
+}
+
+/* ================= ACTIONS ================= */
+function showActions() {
+  helperText.textContent = "Select scan type";
+  actionButtons.style.display = "flex";
+
+  adminBtn.onclick = () => {
+    window.location.href =
+      `admin.html?paymentId=${encodeURIComponent(detectedPaymentId)}`;
+  };
+
+  eventBtn.onclick = () => {
+    window.location.href =
+      `event.html?paymentId=${encodeURIComponent(detectedPaymentId)}`;
+  };
+}
+
+/* ================= INIT ================= */
+if (prefilledPaymentId) {
+  locked = true;
+  detectedPaymentId = prefilledPaymentId;
+  showActions();
+} else {
+  startCamera();
 }
 
 /* ================= SAFETY ================= */
@@ -217,9 +271,6 @@ document.addEventListener("visibilitychange", () => {
 });
 
 window.addEventListener("beforeunload", stopCamera);
-
-/* ================= INIT ================= */
-startCamera();
 </script>
 
 </body>
