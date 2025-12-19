@@ -409,7 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    cconst scannerUrl =
+    const scannerUrl =
   `${FRONTEND_BASE}/scan.html?scanner=` +
   encodeURIComponent(user.email);
 
