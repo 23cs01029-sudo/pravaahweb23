@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRAVAAH — Gallery</title>
+<script type="module" src="auth.js"></script>
 
   <!-- Fonts + Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -16,48 +17,7 @@
 <body>
 
 <!-- 🔒 FIREBASE AUTH + DASHBOARD + LOGOUT -->
-<script type="module">
-  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut, getIdTokenResult } 
-    from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-    authDomain: "pravaah-55b1d.firebaseapp.com",
-    projectId: "pravaah-55b1d",
-    storageBucket: "pravaah-55b1d.appspot.com",
-    messagingSenderId: "287687647267",
-    appId: "1:287687647267:web:7aecd603ee202779b89196"
-  };
-
-  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-  const auth = getAuth(app);
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = "index.html";
-      return;
-    }
-
-    const token = await getIdTokenResult(user);
-    if (token.claims.admin) {
-      document.getElementById("dashboardNav")?.classList.remove("hidden");
-    }
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const logoutDesktop = document.getElementById("logoutDesktop");
-    const logoutMobile = document.getElementById("logoutMobile");
-
-    const logout = async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
-    };
-
-    logoutDesktop?.addEventListener("click", logout);
-    logoutMobile?.addEventListener("click", logout);
-  });
-</script>
 
 <!-- ================= NAVBAR (SAME AS HOME) ================= -->
 <nav>
@@ -204,9 +164,36 @@
     <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM</p>
   </div>
 </footer>
+<script type="module">
+  import { auth, initAuth } from "./auth.js";
+  import { signOut } from
+    "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  /* 🔐 AUTH + ROLE CHECK */
+  initAuth({
+    requireAuth: true,
+    redirectTo: "index.html",
+    showDashboard: true
+  });
+
+  /* 🚪 LOGOUT */
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoutDesktop = document.getElementById("logoutDesktop");
+    const logoutMobile = document.getElementById("logoutMobile");
+
+    const logout = async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    };
+
+    logoutDesktop?.addEventListener("click", logout);
+    logoutMobile?.addEventListener("click", logout);
+  });
+</script>
 
 <!-- ================= GALLERY JS ================= -->
 <script src="gallery.js"></script>
 
 </body>
 </html>
+
