@@ -2,19 +2,10 @@
    PRAVAAH — Profile Management System (Firebase + Apps Script)
 ========================================================== */
 
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { auth } from "./auth.js";
+import { onAuthStateChanged, signOut, updateProfile } from
+  "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-/* ---------- Firebase ---------- */
-const firebaseConfig = {
-  apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-  authDomain: "pravaah-55b1d.firebaseapp.com",
-  projectId: "pravaah-55b1d",
-  storageBucket: "pravaah-55b1d.appspot.com",
-  messagingSenderId: "287687647267",
-  appId: "1:287687647267:web:7aecd603ee202779b89196"
-};
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 const GAS_URL =
   "https://script.google.com/macros/s/AKfycbwNaNQCCKyF8vY5msWSBP2ssx2_FX1jdHAgVBWvgIU2wsZRZULmM-90Cudvr8IPSdvTIw/exec";
@@ -308,6 +299,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
