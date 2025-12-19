@@ -511,6 +511,41 @@ body {
   }
 }
 
+@media (max-width: 600px) {
+
+  /* ---------- EVENT ROW: KEEP PDF ON RIGHT ---------- */
+  .event-row {
+    display: flex;
+    flex-direction: row;          /* 🔥 stay horizontal */
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .event-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;                      /* 🔥 take remaining space */
+    min-width: 0;                 /* prevents overflow */
+  }
+
+  .event-label {
+    font-size: 1rem;
+    line-height: 1.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;      /* clean truncation if long */
+  }
+
+  .pdf-icon {
+    flex-shrink: 0;               /* 🔥 NEVER wrap or move down */
+    font-size: 1.15rem;
+    margin-left: 10px;
+  }
+}
+
 
 
 
