@@ -186,10 +186,23 @@ function renderPass() {
     <p><strong>StarNite:</strong> ${passData["Starnite"] || "—"}</p>
   `;
 
-  const status = document.getElementById("statusBox");
-  status.className = "status valid";
-  status.textContent = "✔ PASS VERIFIED";
+  // 🔍 VALIDATE GATE ACCESS
+  fetch(`${API_BASE}?type=validateGate&paymentId=${encodeURIComponent(paymentId)}`)
+    .then(r => r.json())
+    .then(v => {
+      const status = document.getElementById("statusBox");
+
+      if (!v.valid) {
+        status.className = "status invalid";
+        status.innerHTML = `✖ ACCESS DENIED<br><small>${v.reason}</small>`;
+        disableActions();
+      } else {
+        status.className = "status valid";
+        status.innerHTML = `✔ ACCESS GRANTED<br><small>${v.reason}</small>`;
+      }
+    });
 }
+
 
 function renderParticipants() {
   document.getElementById("participantsBox").innerHTML =
