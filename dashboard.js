@@ -350,7 +350,7 @@ searchBtn.onclick = async () => {
   <div
     class="qr-box"
     id="qr-${i}"
-    data-url="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}&scanner=${encodeURIComponent(auth.currentUser.email)}"
+    data-url="${GAS_PAGE}?mode=admin&page=scan&paymentId=${x["Payment ID"]}"
   </div>
 </td>
 
