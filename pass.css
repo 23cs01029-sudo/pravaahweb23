@@ -516,6 +516,43 @@ body {
   }
 }
 
+/* ===== FIX STAR NITE CENTERING (ALL DEVICES) ===== */
+.starnite-toggle-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 18px 0;
+}
+
+.starnite-toggle-row label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px 22px;
+  gap: 10px;
+
+  background: rgba(0, 255, 255, 0.10);
+  border: 1.5px solid cyan;
+  border-radius: 14px;
+
+  box-shadow: 0 0 12px rgba(0,255,255,0.35);
+
+  width: fit-content;     /* 🔥 KEY FIX */
+  max-width: 90%;         /* mobile safety */
+  box-sizing: border-box; /* 🔥 PREVENT SHIFT */
+
+  cursor: pointer;
+}
+.starnite-toggle-row input[type="checkbox"] {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  height: auto;
+}
+
 
 
 
