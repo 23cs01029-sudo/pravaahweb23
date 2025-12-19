@@ -16,6 +16,8 @@ const firebaseConfig = {
 };
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
+const GAS_URL =
+  "https://script.google.com/macros/s/AKfycbwzLAeF0v-RvIrNzd8mymns8RM-K0Qz2j8QL2g9UyVsPGNR5fYy_wczpwuk1TWxllJpdQ/exec";
 
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "/api/pravaah";
@@ -306,3 +308,4 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
