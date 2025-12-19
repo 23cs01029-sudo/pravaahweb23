@@ -234,4 +234,69 @@ footer {
     height: 260px;
   }
 }
+/* =========================================================
+   PDF BOX — SUBTLE HOVER
+========================================================= */
+.pdf-box {
+  margin: 45px auto;
+  padding: 16px 22px;
+  width: fit-content;
+  max-width: 90%;
+
+  border: 1.5px dashed rgba(36,224,236,0.6);
+  border-radius: 14px;
+  color: #24E0EC;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+
+  transition: 
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.pdf-box i {
+  font-size: 1.4rem;
+}
+
+/* ✨ Hover effect */
+.pdf-box:hover {
+  background: rgba(36,224,236,0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 0 14px rgba(36,224,236,0.35);
+}
+/* =========================================================
+   BECOME SPONSOR BUTTON — HOVER ADDED
+========================================================= */
+.become-sponsor-btn {
+  background: linear-gradient(90deg, #24E0EC, #00ffff);
+  color: #001c20;
+  padding: 12px 32px;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+/* ✨ Hover */
+.become-sponsor-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 0 18px rgba(36,224,236,0.55);
+  filter: brightness(1.05);
+}
+
+/* ✨ Click feedback */
+.become-sponsor-btn:active {
+  transform: scale(0.98);
+}
+
 
