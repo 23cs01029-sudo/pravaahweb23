@@ -130,16 +130,18 @@ const qrUrl = `${scriptURL}?paymentId=${encodeURIComponent(paymentId)}`;
 
 qrContainer.innerHTML = `
   <a href="${qrUrl}" target="_blank" class="qr-clickable">
-    <div id="${qrId}_inner"></div>
+    <div class="qr-inner"></div>
     <div class="qr-hint">Tap to open pass</div>
   </a>
 `;
 
-new QRCode(document.getElementById(`${qrId}_inner`), {
+new QRCode(qrContainer.querySelector(".qr-inner"), {
   text: qrUrl,
   width: 130,
-  height: 130
+  height: 130,
+  correctLevel: QRCode.CorrectLevel.H
 });
+
 
 
 
@@ -303,6 +305,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
