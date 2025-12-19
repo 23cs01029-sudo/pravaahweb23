@@ -1,5 +1,5 @@
 /* =========================================================
-   FONTS (SAME AS OTHER PAGES)
+   FONTS (SAME AS EVENTS / HOME)
 ========================================================= */
 @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700&display=swap');
 
@@ -8,7 +8,7 @@
 ========================================================= */
 body {
   font-family: 'Exo 2', sans-serif;
-  padding-top: 100px; /* navbar spacing (same as home) */
+  padding-top: 100px; /* navbar spacing */
   color: #fff;
 }
 
@@ -17,13 +17,13 @@ body {
 ========================================================= */
 .sponsors-hero {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
 }
 
 .page-title {
   font-size: 2.6rem;
-  color: cyan;
-  text-shadow: 0 0 10px rgba(0,255,255,0.6);
+  color: #24E0EC;
+  text-shadow: 0 0 10px rgba(36,224,236,0.45);
 }
 
 .page-subtitle {
@@ -36,16 +36,16 @@ body {
    SECTIONS
 ========================================================= */
 .sponsor-section {
-  margin: 60px auto;
+  margin: 70px auto;
   max-width: 1200px;
 }
 
 .section-title {
   text-align: center;
   font-size: 2rem;
-  color: cyan;
-  margin-bottom: 30px;
-  text-shadow: 0 0 8px rgba(0,255,255,0.5);
+  color: #24E0EC;
+  margin-bottom: 35px;
+  text-shadow: 0 0 8px rgba(36,224,236,0.45);
 }
 
 .section-subtitle {
@@ -60,70 +60,82 @@ body {
 .sponsor-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 32px;
+  gap: 36px;
   padding: 0 20px;
   justify-items: center;
 }
 
 /* =========================================================
-   SPONSOR CARD
+   SPONSOR CARD (EVENTS-LIKE)
 ========================================================= */
 .sponsor-card {
   position: relative;
   width: 240px;
   height: 180px;
   border-radius: 18px;
-  background: rgba(0, 255, 255, 0.08);
-  border: 1.4px solid rgba(0,255,255,0.6);
-  box-shadow: 0 0 12px rgba(0,255,255,0.25);
+  overflow: hidden;
+
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(36,224,236,0.55);
+  box-shadow: 0 0 14px rgba(36,224,236,0.25);
+
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+
+  cursor: pointer;
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
-/* Hover lift */
+/* Lift on hover */
 .sponsor-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 0 20px rgba(0,255,255,0.45);
-}
-
-/* LOGO */
-.sponsor-card img {
-  max-width: 85%;
-  max-height: 85%;
-  object-fit: contain;
-  filter: brightness(1.1) contrast(1.1);
-  transition: filter 0.3s ease, transform 0.3s ease;
-}
-
-/* Blur logo on hover */
-.sponsor-card:hover img {
-  filter: blur(3px) brightness(0.8);
-  transform: scale(1.05);
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 0 26px rgba(36,224,236,0.45);
 }
 
 /* =========================================================
-   OVERLAY (EVENTS-LIKE EFFECT)
+   LOGO
+========================================================= */
+.sponsor-card img {
+  max-width: 82%;
+  max-height: 82%;
+  object-fit: contain;
+  filter: brightness(1) contrast(1);
+  transition: filter 0.35s ease, transform 0.35s ease;
+}
+
+/* Blur like Events cards */
+.sponsor-card:hover img {
+  filter: blur(3px) brightness(0.75);
+  transform: scale(1.08);
+}
+
+/* =========================================================
+   OVERLAY (MATCHES EVENTS)
 ========================================================= */
 .sponsor-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
+
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transform: translateY(12px) scale(0.96);
+  transition: all 0.35s ease;
+
   text-align: center;
-  padding: 16px;
+  padding: 18px;
 }
 
 .sponsor-card:hover .sponsor-overlay {
   opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 /* =========================================================
@@ -132,79 +144,75 @@ body {
 .sponsor-overlay h3 {
   margin: 8px 0;
   font-size: 1.2rem;
-  color: #fff;
+  color: #24E0EC;
   font-weight: 600;
 }
 
-/* Tier badge */
+/* =========================================================
+   NEUTRAL SPONSOR TIER (ALL LEVELS)
+========================================================= */
 .sponsor-tier {
   font-size: 0.75rem;
   letter-spacing: 1px;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
   margin-bottom: 8px;
   font-weight: 600;
   text-transform: uppercase;
-}
 
-/* ===============================
-   NEUTRAL SPONSOR TIER (ALL LEVELS)
-   =============================== */
-
-.sponsor-tier {
   background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
   border: 1px solid rgba(255,255,255,0.35);
-  text-shadow: none;
-  font-weight: 600;
 }
 
-
 /* =========================================================
-   VISIT BUTTON
+   VISIT BUTTON (EVENTS STYLE)
 ========================================================= */
 .visit-btn {
-  margin-top: 10px;
-  padding: 6px 14px;
-  font-size: 0.8rem;
-  border-radius: 20px;
-  border: 1px solid cyan;
-  color: cyan;
+  margin-top: 12px;
+  padding: 7px 18px;
+  font-size: 0.78rem;
+  border-radius: 24px;
+  border: 1.5px solid #24E0EC;
+  color: #24E0EC;
   text-decoration: none;
   transition: all 0.25s ease;
 }
 
 .visit-btn:hover {
-  background: cyan;
-  color: #000;
+  background: #24E0EC;
+  color: #001c20;
+  transform: scale(1.05);
 }
 
 /* =========================================================
-   PDF BOX
+   PDF BOX (REDUCED GLOW)
 ========================================================= */
 .pdf-box {
-  margin: 40px auto;
-  padding: 16px 20px;
+  margin: 45px auto;
+  padding: 16px 22px;
   width: fit-content;
   max-width: 90%;
-  border: 1.5px dashed rgba(0,255,255,0.6);
+
+  border: 1.5px dashed rgba(36,224,236,0.6);
   border-radius: 14px;
-  color: cyan;
+  color: #24E0EC;
+
   display: flex;
   align-items: center;
   gap: 12px;
   cursor: pointer;
+
   transition: all 0.3s ease;
 }
 
 .pdf-box i {
   font-size: 1.4rem;
-  text-shadow: 0 0 6px rgba(0,255,255,0.6);
 }
 
 .pdf-box:hover {
-  background: rgba(0,255,255,0.08);
-  box-shadow: 0 0 14px rgba(0,255,255,0.35);
+  background: rgba(36,224,236,0.08);
+  box-shadow: 0 0 14px rgba(36,224,236,0.35);
 }
 
 /* =========================================================
@@ -212,27 +220,29 @@ body {
 ========================================================= */
 .become-sponsor {
   text-align: center;
-  margin: 50px 0 80px;
+  margin: 55px 0 90px;
 }
 
 .become-sponsor-btn {
-  background: linear-gradient(90deg, cyan, #00ffff);
-  color: #000;
-  padding: 12px 30px;
-  border-radius: 14px;
+  background: linear-gradient(90deg, #24E0EC, #00ffff);
+  color: #001c20;
+  padding: 12px 32px;
+  border-radius: 16px;
   border: none;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
+
   display: inline-flex;
   align-items: center;
   gap: 10px;
+
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .become-sponsor-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(0,255,255,0.6);
+  transform: scale(1.06);
+  box-shadow: 0 0 18px rgba(36,224,236,0.5);
 }
 
 /* =========================================================
@@ -244,7 +254,7 @@ body {
   }
 
   .page-title {
-    font-size: 2.1rem;
+    font-size: 2.2rem;
   }
 
   .sponsor-card {
