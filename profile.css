@@ -580,5 +580,24 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
     margin-top: 12px;
   }
 }
+/* ===============================
+   DESKTOP: 2 PASSES PER ROW
+   =============================== */
+
+/* Use grid instead of flex on large screens */
+@media (min-width: 992px) {
+  .passes-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 🔥 2 per row */
+    gap: 22px;
+    justify-items: center;
+  }
+
+  .pass-item {
+    width: 100%;
+    max-width: 420px; /* keeps card size clean */
+  }
+}
+
 
 
