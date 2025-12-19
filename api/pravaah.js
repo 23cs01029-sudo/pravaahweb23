@@ -1,3 +1,4 @@
+// /api/pravaah.js
 export default async function handler(req, res) {
   const GAS_URL =
     "https://script.google.com/macros/s/AKfycbyOUaWbQgD1nx2MyB1RRfY9R3lbOlRg1jDDcAhTajOTve44yJef_3LIuQqGVim8N4T0nA/exec";
@@ -5,20 +6,20 @@ export default async function handler(req, res) {
   try {
     // ✅ Allow only GET & POST
     if (!["GET", "POST"].includes(req.method)) {
-      return res.status(405).json({ error: "Method not allowed" });
+      return res.status(405).json({ ok: false, error: "Method not allowed" });
     }
 
     let url = GAS_URL;
 
-    // ✅ Forward query params
+    // ✅ Forward query params for GET
     if (req.method === "GET" && Object.keys(req.query).length) {
       const qs = new URLSearchParams(req.query).toString();
       url += "?" + qs;
     }
 
-    // ✅ Timeout protection
+    // ✅ Abort if GAS is slow
     const controller = new AbortController();
-    setTimeout(() => controller.abort(), 15000);
+    const timeout = setTimeout(() => controller.abort(), 15000);
 
     const gasRes = await fetch(url, {
       method: req.method,
@@ -29,14 +30,17 @@ export default async function handler(req, res) {
       signal: controller.signal,
     });
 
+    clearTimeout(timeout);
+
     const text = await gasRes.text();
 
-    // ✅ Forward correct content type
+    // ✅ Forward response as-is
     res.setHeader("Content-Type", "application/json");
     return res.status(200).send(text);
 
   } catch (err) {
-    console.error("Proxy error:", err);
+    console.error("PRAVAAH Proxy Error:", err);
+
     return res.status(500).json({
       ok: false,
       error: "Proxy failed",
