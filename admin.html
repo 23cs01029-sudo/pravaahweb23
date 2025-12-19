@@ -1,1 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PRAVAAH — Main Gate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; font-family: 'Exo 2', sans-serif; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
+  background-size: 400% 400%;
+  animation: bgMove 15s ease infinite;
+  color: #e6fbff;
+  padding: 14px;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: rgba(0,0,0,0.75);
+  border: 2px solid cyan;
+  border-radius: 22px;
+  box-shadow: 0 0 35px rgba(0,255,255,0.45);
+  padding: 20px;
+}
+
+.title {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: cyan;
+  text-shadow: 0 0 15px cyan;
+}
+
+.meta {
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.75;
+  margin-bottom: 14px;
+}
+
+.status {
+  padding: 12px;
+  border-radius: 14px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.valid {
+  color: #00ffcc;
+  border: 1.5px solid #00ffcc;
+  box-shadow: 0 0 18px rgba(0,255,200,0.6);
+}
+
+.invalid {
+  color: #ff6b6b;
+  border: 1.5px solid #ff6b6b;
+  box-shadow: 0 0 18px rgba(255,107,107,0.6);
+}
+
+.box {
+  border: 1px solid rgba(0,255,255,0.4);
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(0,0,0,0.6);
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.participant {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(0,255,255,0.3);
+}
+
+.participant input { transform: scale(1.3); }
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.entry { background: #00ffcc; }
+.exit  { background: #ff5c5c; }
+
+@media (max-width: 600px) {
+  .actions { flex-direction: column; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="title">PRAVAAH 2026 — Main Gate</div>
+  <div class="meta">
+    ⏰ <span id="nowTime"></span>
+  </div>
+
+  <div id="statusBox" class="status">Loading...</div>
+
+  <div class="box" id="passInfo"></div>
+
+  <div class="box" id="participantsBox"></div>
+
+  <div class="actions">
+    <button class="btn entry" onclick="submitAction('ENTRY')">ALLOW ENTRY</button>
+    <button class="btn exit" onclick="submitAction('EXIT')">MARK EXIT</button>
+  </div>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const API_BASE = "https://script.google.com/macros/s/XXXXXXXXXXXX/exec";
+
+/* ================= URL PARAMS ================= */
+const params = new URLSearchParams(window.location.search);
+const paymentId = params.get("paymentId");
+
+if (!paymentId) {
+  alert("Missing Payment ID");
+  location.href = "scan.html";
+}
+
+/* ================= CLOCK ================= */
+function updateTime() {
+  document.getElementById("nowTime").textContent =
+    new Date().toLocaleString("en-IN", { hour12: true });
+}
+updateTime();
+setInterval(updateTime, 1000);
+
+/* ================= LOAD PASS ================= */
+let passData = null;
+let participants = [];
+
+fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
+  .then(r => r.json())
+  .then(res => {
+    if (!res.length) throw new Error("Invalid pass");
+
+    passData = res[0];
+    participants = res;
+
+    renderPass();
+    renderParticipants();
+  })
+  .catch(err => {
+    alert(err.message);
+    location.href = "scan.html";
+  });
+
+function renderPass() {
+  document.getElementById("passInfo").innerHTML = `
+    <p><strong>Payment ID:</strong> ${passData["Payment ID"]}</p>
+    <p><strong>Pass Type:</strong> ${passData["Pass Type"]}</p>
+    <p><strong>Selected Days:</strong> ${passData["Selected Days"]}</p>
+    <p><strong>StarNite:</strong> ${passData["Starnite"]}</p>
+  `;
+
+  document.getElementById("statusBox").className = "status valid";
+  document.getElementById("statusBox").innerText = "✔ PASS FOUND";
+}
+
+function renderParticipants() {
+  document.getElementById("participantsBox").innerHTML =
+    "<h4>Select Participants</h4>" +
+    participants.map(p => `
+      <div class="participant">
+        <input type="checkbox" checked
+          data-name="${p.Name}"
+          data-email="${p.Email}"
+          data-phone="${p.Phone}"
+          data-college="${p.College}">
+        <span><strong>${p.Name}</strong><br>${p.Email}</span>
+      </div>
+    `).join("");
+}
+
+/* ================= SUBMIT ================= */
+function submitAction(action) {
+  const selected = [...document.querySelectorAll("input[type=checkbox]:checked")];
+  if (!selected.length) return alert("Select at least one participant");
+
+  Promise.all(selected.map(cb =>
+    fetch(API_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        logType: action === "ENTRY" ? "GATE_ENTRY" : "GATE_EXIT",
+        paymentId,
+        name: cb.dataset.name,
+        email: cb.dataset.email,
+        phone: cb.dataset.phone,
+        college: cb.dataset.college,
+        passType: passData["Pass Type"],
+        action,
+        scanner: "WEB_ADMIN",
+        scanMode: "GATE"
+      })
+    })
+  ))
+  .then(() => {
+    alert("Gate log updated");
+    location.href = "scan.html";
+  })
+  .catch(() => alert("Failed to update gate logs"));
+}
+</script>
+
+</body>
+</html>
 
