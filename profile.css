@@ -491,4 +491,94 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   margin-top: 4px;
   opacity: 0.7;
 }
+/* ===============================
+   FINAL QR SIDE-BY-SIDE + HOVER HINT
+   =============================== */
+
+/* Ensure pass + QR stay side-by-side */
+.pass-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+}
+
+/* Left text block */
+.pass-details {
+  flex: 1;
+  min-width: 0; /* 🔥 prevents flex overflow */
+}
+
+/* QR container (right side) */
+.qr-box {
+  flex-shrink: 0;
+  width: 132px;
+  height: 132px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Clickable QR wrapper */
+.qr-link {
+  position: relative;
+  width: 120px;
+  height: 120px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* QR canvas should not block clicks */
+.qr-link canvas {
+  pointer-events: none;
+}
+
+/* HINT OVERLAY — hidden by default */
+.qr-hint {
+  position: absolute;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.75);
+  color: cyan;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 0.7rem;
+  text-align: center;
+
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+/* Show hint ONLY on hover */
+.qr-link:hover .qr-hint {
+  opacity: 1;
+}
+
+/* MOBILE: stack QR below pass */
+@media (max-width: 600px) {
+  .pass-item {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .qr-box {
+    margin-top: 12px;
+  }
+}
+
 
