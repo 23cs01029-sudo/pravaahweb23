@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
+/* ===============================
+   BASE
+=============================== */
 body {
   font-family: 'Orbitron', sans-serif;
   background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
@@ -16,7 +19,9 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* ---------- PAGE TITLE ---------- */
+/* ===============================
+   PAGE TITLE
+=============================== */
 .pg-heading {
   text-align: center;
   margin-top: 110px;
@@ -33,83 +38,96 @@ body {
   font-size: 1rem;
 }
 
-/* ---------- TEAM GRID ---------- */
+/* ===============================
+   TEAM GRID (WIDER LAYOUT)
+=============================== */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 70px 60px;
+  gap: 55px 70px;               /* 🔥 wider horizontal spacing */
   padding: 0 8% 100px;
   justify-items: center;
 }
 
-/* ---------- TEAM CARD ---------- */
+/* ===============================
+   TEAM CARD (WIDER + SHORTER)
+=============================== */
 .team-card {
   background: rgba(0, 0, 0, 0.65);
   border: 1.5px solid cyan;
   border-radius: 20px;
+
   width: 100%;
-  max-width: 460px;
+  max-width: 560px;             /* 🔥 wider card */
+
   text-align: center;
-  padding: 45px 35px;
+  padding: 30px 40px;           /* 🔽 reduced height */
+
   box-shadow: 0 0 25px rgba(0,255,255,0.15);
-  transition: all 0.4s ease;
+  transition: all 0.35s ease;
 }
 
 .team-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
   box-shadow: 0 0 40px rgba(0,255,255,0.6);
 }
 
-/* ---------- IMAGE ---------- */
+/* ===============================
+   IMAGE
+=============================== */
 .team-card img {
-  width: 150px;
-  height: 150px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid cyan;
-  margin-bottom: 18px;
+  margin-bottom: 12px;          /* 🔽 tighter spacing */
   transition: all 0.3s ease;
 }
 
 .team-card:hover img {
-  box-shadow: 0 0 18px cyan;
+  box-shadow: 0 0 16px cyan;
 }
 
-/* ---------- TEXT ---------- */
+/* ===============================
+   TEXT
+=============================== */
 .team-card h3 {
   color: cyan;
-  font-size: 1.5rem;
-  margin-bottom: 8px;
+  font-size: 1.45rem;
+  margin-bottom: 6px;
 }
 
 .team-card p {
   color: #ccc;
-  font-size: 1rem;
-  margin: 5px 0;
-  text-align: justify;
+  font-size: 0.95rem;
+  margin: 3px 0;                /* 🔽 reduced vertical height */
+  text-align: center;
 }
 
-/* ---------- BUTTONS (FIXED SIDE BY SIDE) ---------- */
+/* ===============================
+   ACTION BUTTON (EMAIL ONLY)
+=============================== */
 .card-actions {
-  margin-top: 25px;
+  margin-top: 16px;             /* 🔽 shorter bottom */
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 20px; /* spacing between Email & Call */
-  flex-wrap: nowrap; /* prevents wrapping to next line */
 }
 
 .card-actions a {
   display: inline-block;
-  min-width: 100px; /* keeps both buttons same width */
+  min-width: 140px;
   text-align: center;
-  padding: 10px 20px;
+  padding: 10px 24px;
+
   border: 1.5px solid cyan;
-  border-radius: 25px;
+  border-radius: 28px;
   color: cyan;
   text-decoration: none;
+
   font-size: 1rem;
   font-weight: 500;
+
   transition: all 0.3s ease;
 }
 
@@ -119,20 +137,24 @@ body {
   transform: scale(1.08);
 }
 
-/* ---------- TABLET VIEW ---------- */
+/* ===============================
+   TABLET VIEW
+=============================== */
 @media (max-width: 1200px) {
   .team-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 60px;
+    gap: 50px 60px;
     padding: 0 8% 80px;
   }
 
   .team-card {
-    max-width: 420px;
+    max-width: 520px;           /* 🔥 stays wide on tablet */
   }
 }
 
-/* ---------- 📱 MOBILE VIEW ---------- */
+/* ===============================
+   MOBILE VIEW
+=============================== */
 @media (max-width: 650px) {
   .pg-heading {
     font-size: 2.2rem;
@@ -144,7 +166,6 @@ body {
     margin-bottom: 25px;
   }
 
-  /* Stack all team cards vertically */
   .team-grid {
     display: flex;
     flex-direction: column;
@@ -155,33 +176,26 @@ body {
 
   .team-card {
     width: 95%;
-    max-width: 480px;
-    padding: 35px 25px;
+    max-width: 520px;
+    padding: 28px 22px;         /* 🔽 compact but wide */
     box-shadow: 0 0 30px rgba(0,255,255,0.25);
   }
 
   .team-card img {
-    width: 130px;
-    height: 130px;
+    width: 125px;
+    height: 125px;
   }
 
   .team-card h3 {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
   }
 
   .team-card p {
-    font-size: 0.95rem;
-    text-align: center;
-  }
-
-  .card-actions {
-    gap: 15px;
-    flex-wrap: nowrap; /* ensures buttons stay side by side */
+    font-size: 0.9rem;
   }
 
   .card-actions a {
     font-size: 0.9rem;
     padding: 8px 22px;
-    min-width: 90px;
   }
 }
