@@ -127,7 +127,7 @@ function renderPasses(passes, container, userEmail) {
 
     container.appendChild(card);
 const qrContainer = document.getElementById(qrId);
-const qrUrl = `${scriptURL}?paymentId=${encodeURIComponent(paymentId)}`;
+const qrUrl = `${GAS_PAGE}?paymentId=${encodeURIComponent(paymentId)}`;
 
 qrContainer.innerHTML = `
   <a href="${qrUrl}" target="_blank" class="qr-clickable">
@@ -306,6 +306,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
