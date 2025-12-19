@@ -5,207 +5,211 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRAVAAH — Accommodation</title>
 
-  <!-- Styles -->
+  <!-- ⭐ PRAVAAH Fonts (SAME AS HOME) -->
+  <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;600&family=Goldman:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- ⭐ Font Awesome -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Global Styles -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="accommodation.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-  <!-- Scripts -->
-  <script src="accommodation.js" defer></script>
-</head>
-
-<body>
-  <!-- 🔒 FIREBASE AUTH CHECK + LOGOUT -->
+  <!-- ✅ AUTH (SAME AS HOME) -->
   <script type="module">
-    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-      authDomain: "pravaah-55b1d.firebaseapp.com",
-      projectId: "pravaah-55b1d",
-      storageBucket: "pravaah-55b1d.appspot.com",
-      messagingSenderId: "287687647267",
-      appId: "1:287687647267:web:7aecd603ee202779b89196"
-    };
-
-    // ✅ Prevent multiple Firebase initializations
-    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    const auth = getAuth(app);
-
-    // 🔒 Redirect if not logged in
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "index.html";
-      }
-    });
-
-    // 🚪 Logout functionality
-    document.addEventListener("DOMContentLoaded", () => {
-      const logoutDesktop = document.getElementById("logoutDesktop");
-      const logoutMobile = document.getElementById("logoutMobile");
-
-      async function handleLogout() {
-        try {
-          await signOut(auth);
-          console.log("User signed out successfully");
-          window.location.href = "index.html";
-        } catch (error) {
-          console.error("Logout failed:", error);
-          alert("Error logging out: " + error.message);
-        }
-      }
-
-      if (logoutDesktop) logoutDesktop.addEventListener("click", handleLogout);
-      if (logoutMobile) logoutMobile.addEventListener("click", handleLogout);
-    });
+    import { initAuth } from "./auth.js";
+    initAuth();
   </script>
 
-  <!-- 🔹 NAVBAR -->
-  <nav>
-    <a href="https://www.iitbbs.ac.in/" target="_blank" class="iitbbs-logo">
-    <img src="iitbbs-logo.png" alt="IIT Bhubaneswar Logo">
+  <script type="module" src="script.js" defer></script>
+  <script type="module" src="accommodation.js" defer></script>
+</head>
+
+<body style="color:#F5F8FA; font-family:'Exo 2', sans-serif;">
+
+<!-- 🔹 NAVBAR (IDENTICAL TO HOME) -->
+<nav>
+  <a href="https://www.iitbbs.ac.in/" class="iitbbs-logo" target="_blank">
+    <img src="iitbbs-logo.png">
   </a>
-    <div class="logo">PRAVAAH</div>
-    <div class="menu-toggle" id="menuToggle">&#9776;</div>
-    <ul id="menu">
-      <li><a href="home.html">Home</a></li>
-      <li><a href="events.html">Events</a></li>
-      <li><a href="registrationPravaah.html">Register</a></li>
-      <li><a href="accommodation.html" class="active">Accommodation</a></li>
-      <li><a href="photogallery.html">Gallery</a></li>
-      <li><a href="sponsors.html">Sponsors</a></li>
-      <li><a href="contact_us.html">Contact Us</a></li>
-      <li><a href="profile.html" >Profile</a></li>
-      <li id="dashboardNav" class="hidden">
-  <a href="dashboard.html">Dashboard</a>
-</li>
 
-      <!-- 🔹 Logout link for mobile -->
-      <li class="mobile-only"><a href="index.html" id="logoutMobile">Logout</a></li>
-    </ul>
+  <div class="logo" style="font-family:'Goldman'; color:#00F6FF;">PRAVAAH</div>
 
-    <!-- 🔹 Logout button for desktop -->
-    <button id="logoutDesktop" class="logout-btn">Logout</button>
-  </nav>
+  <div class="menu-toggle" id="menuToggle">
+    <i class="fa-solid fa-bars"></i>
+  </div>
 
-  <!-- 🏨 HERO SECTION -->
-  <section class="accommodation-hero">
-    <div class="accommodation-content">
-      <div class="text">
-        <h1>Accommodation</h1>
-        <p>Experience comfort and convenience while you enjoy PRAVAAH!</p>
-        <div class="hero-buttons">
-          <button id="registerBtn">Register Now</button>
-          <button id="myAccBtn">My Accommodation</button>
-        </div>
-      </div>
-      <div class="image">
-        <img src="WhatsApp Image 2025-10-03 at 16.55.21_580c7d29.jpg" alt="Accommodation">
-      </div>
-    </div>
-  </section>
+  <ul id="menu" style="font-family:'Rajdhani';">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="registrationPravaah.html">Register</a></li>
+    <li><a href="accommodation.html" class="active">Accommodation</a></li>
+    <li><a href="photogallery.html">Gallery</a></li>
+    <li><a href="sponsors.html">Sponsors</a></li>
+    <li><a href="contact_us.html">Contact Us</a></li>
+    <li><a href="profile.html">Profile</a></li>
 
-  <!-- 🧾 PRICING & POLICY -->
-  <section class="accommodation-cards">
-    <div class="card">
-      <h2>Pricing</h2>
-      <p><strong>Single Night:</strong><br>Shared Room — ₹500<br>Individual — ₹900</p>
-      <p><strong>1 Day & 2 Nights:</strong><br>Shared Room — ₹900<br>Individual — ₹1500</p>
-      <p><strong>2 Days & 3 Nights:</strong><br>Shared Room — ₹1200<br>Individual — ₹2200</p>
-      <p><strong>3 Days & 4 Nights:</strong><br>Shared Room — ₹2500<br>Individual — ₹3400</p>
-    </div>
+    <li id="dashboardNav" class="hidden">
+      <a href="dashboard.html">Dashboard</a>
+    </li>
 
-    <div class="card">
-      <h2>Mass Registration Discounts</h2>
-      <p>Registrations of 45+ people — <strong>5% discount</strong></p>
-      <p>Registrations of 100+ people — <strong>10% discount</strong></p>
-    </div>
+    <li class="mobile-only">
+      <a id="logoutMobile">Logout</a>
+    </li>
+  </ul>
 
-    <div class="card">
-      <h2>Cancellation Policy</h2>
-      <p>70% refund for cancellations made within 5 days after booking.</p>
-      <p>No refunds for cancellations after this date.</p>
-    </div>
-  </section>
+  <button class="logout-btn" id="logoutDesktop">Logout</button>
+</nav>
 
-  <!-- 📋 GUIDELINES -->
-  <section class="accommodation-guidelines">
-    <h2>Accommodation Guidelines</h2>
+<!-- 🏨 ACCOMMODATION HERO -->
+<section class="intro-section">
+  <h2 class="section-title" style="font-family:'Oranienbaum'; color:#00F6FF;">
+    ACCOMMODATION
+  </h2>
+
+  <p class="intro-text">
+    Experience comfortable and secure accommodation inside the IIT Bhubaneswar
+    campus while you enjoy PRAVAAH — Chronicles of Time.
+    Our accommodation facilities are designed to ensure safety, convenience,
+    and a memorable stay for all participants.
+  </p>
+
+  <div style="margin-top:2rem; display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+    <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+    <a href="profile.html" class="register-btn" style="background:#1e2a38;">My Accommodation</a>
+  </div>
+</section>
+
+<!-- 💰 PRICING -->
+<section class="highlights">
+  <h2 class="section-title">💰 ACCOMMODATION PRICING</h2>
+
+  <div class="highlights-carousel" style="max-width:1100px;">
     <div class="rules-container">
+
       <div class="rule-card">
         <i class="fa-solid fa-bed"></i>
-        <h3>Do’s</h3>
-        <ul>
-          <li>Carry your college ID and registration confirmation.</li>
-          <li>Maintain cleanliness in rooms and surroundings.</li>
-          <li>Respect hostel and campus rules.</li>
-          <li>Use facilities responsibly.</li>
-        </ul>
+        <h3>Single Night</h3>
+        <p>Shared Room — ₹500</p>
+        <p>Individual Room — ₹900</p>
       </div>
 
       <div class="rule-card">
-        <i class="fa-solid fa-ban"></i>
-        <h3>Don'ts</h3>
-        <ul>
-          <li>No loud music or parties in hostel premises.</li>
-          <li>No damage to property or furniture.</li>
-          <li>Alcohol or prohibited substances are strictly banned.</li>
-          <li>Visitors are not allowed without prior permission.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ⚫ FOOTER -->
-  <footer>
-    <div class="footer-container">
-      <div class="footer-left">
-        <img src="pravah-logo.png" alt="PRAVAAH Logo" class="footer-logo">
-        <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+        <i class="fa-solid fa-moon"></i>
+        <h3>1 Day & 2 Nights</h3>
+        <p>Shared Room — ₹900</p>
+        <p>Individual Room — ₹1500</p>
       </div>
 
-      <div class="footer-links">
-        <div class="footer-column">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="#">Events Portal</a></li>
-            <li><a href="#">CA Portal</a></li>
-            <li><a href="#">Join the Community</a></li>
-          </ul>
-        </div>
+      <div class="rule-card">
+        <i class="fa-solid fa-calendar-days"></i>
+        <h3>2 Days & 3 Nights</h3>
+        <p>Shared Room — ₹1200</p>
+        <p>Individual Room — ₹2200</p>
+      </div>
 
-        <div class="footer-column">
-          <h3>Explore More</h3>
-          <ul>
-            <li><a href="#">Star Attractions</a></li>
-            <li><a href="#">Hall of Fame</a></li>
-            <li><a href="#">Brochure</a></li>
-          </ul>
-        </div>
+      <div class="rule-card">
+        <i class="fa-solid fa-hotel"></i>
+        <h3>3 Days & 4 Nights</h3>
+        <p>Shared Room — ₹2500</p>
+        <p>Individual Room — ₹3400</p>
+      </div>
 
-        <div class="footer-column">
-          <h3>Reach Out to Us</h3>
-          <ul>
-            <li><a href="contact_us.html">Contact Us</a></li>
-          </ul>
-        </div>
+    </div>
+  </div>
+</section>
+
+<!-- 📋 GUIDELINES -->
+<section class="highlights">
+  <h2 class="section-title">📋 ACCOMMODATION GUIDELINES</h2>
+
+  <div class="rules-container">
+
+    <div class="rule-card">
+      <i class="fa-solid fa-check"></i>
+      <h3>Do’s</h3>
+      <ul>
+        <li>Carry college ID & PRAVAAH registration proof</li>
+        <li>Maintain cleanliness</li>
+        <li>Follow hostel & campus rules</li>
+        <li>Use facilities responsibly</li>
+      </ul>
+    </div>
+
+    <div class="rule-card">
+      <i class="fa-solid fa-ban"></i>
+      <h3>Don'ts</h3>
+      <ul>
+        <li>No alcohol or prohibited substances</li>
+        <li>No damage to property</li>
+        <li>No loud music or disturbances</li>
+        <li>No unauthorized visitors</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- 🏷️ DISCOUNTS -->
+<section class="intro-section">
+  <h2 class="section-title" style="font-family:'Oranienbaum'; color:#00F6FF;">
+    MASS REGISTRATION DISCOUNTS
+  </h2>
+
+  <p class="intro-text">
+    • 45+ participants — <strong>5% discount</strong><br>
+    • 100+ participants — <strong>10% discount</strong>
+  </p>
+</section>
+
+<!-- ⚫ FOOTER (SAME AS HOME) -->
+<footer>
+  <div class="footer-container">
+
+    <div class="footer-left">
+      <img src="pravah-logo.png" class="footer-logo">
+      <a href="registrationPravaah.html" class="register-btn">Register Now</a>
+    </div>
+
+    <div class="footer-column">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#">Events Portal</a></li>
+        <li><a href="#">CA Portal</a></li>
+        <li><a href="#">Join the Community</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Explore More</h3>
+      <ul>
+        <li><a href="#">Star Attractions</a></li>
+        <li><a href="#">Hall of Fame</a></li>
+        <li><a href="#">Brochure</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Reach Out to Us</h3>
+      <ul>
+        <li><a href="contact_us.html">Contact Us</a></li>
+      </ul>
+
+      <div class="footer-social-icons">
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
       </div>
     </div>
+  </div>
 
-    <div class="footer-social">
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-linkedin-in"></i></a>
-      <a href="#"><i class="fab fa-youtube"></i></a>
-    </div>
+  <div class="footer-line"></div>
 
-    <hr class="footer-line">
-    <div class="footer-bottom">
-      <p>@PRAVAAH'26 IIT BHUBANESWAR | MADE WITH 💜 BY WEB TEAM | All Rights Reserved</p>
-    </div>
-  </footer>
+  <div class="footer-bottom">
+    <p><span>@PRAVAAH'26 IIT BHUBANESWAR</span> | MADE WITH 💜 BY WEB TEAM | All Rights Reserved</p>
+  </div>
+</footer>
+
 </body>
 </html>
-
-
-
