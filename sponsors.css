@@ -17,7 +17,7 @@ body {
 ========================================================= */
 .sponsors-hero {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 32px; /* ⬇️ reduced */
 }
 
 .page-title {
@@ -28,21 +28,16 @@ body {
 
 .page-subtitle {
   color: #cfd9e0;
-  margin-top: 10px;
+  margin-top: 8px;
   font-size: 1.05rem;
 }
 
 /* =========================================================
-   SECTIONS (CONTROL ALL VERTICAL SPACING HERE)
+   SECTIONS — MAIN SPACING CONTROL
 ========================================================= */
 .sponsor-section {
-  margin: 40px auto; /* 🔥 reduced */
+  margin: 32px auto; /* ⬇️ tighter overall */
   max-width: 1200px;
-}
-
-/* Reduce gap ONLY before Become Sponsor */
-.sponsor-section + .become-sponsor {
-  margin-top: 30px;
 }
 
 /* =========================================================
@@ -52,7 +47,7 @@ body {
   text-align: center;
   font-size: 2rem;
   color: #24E0EC;
-  margin-bottom: 28px;
+  margin-bottom: 22px; /* ⬇️ reduced */
   text-shadow: 0 0 8px rgba(36,224,236,0.45);
 }
 
@@ -101,7 +96,6 @@ body {
   max-width: 92%;
   max-height: 92%;
   object-fit: contain;
-
   filter: brightness(1.1) contrast(1.15);
   transition: filter 0.35s ease, transform 0.35s ease;
 }
@@ -148,7 +142,7 @@ body {
   font-size: 0.75rem;
   padding: 4px 12px;
   border-radius: 20px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   background: rgba(255,255,255,0.12);
   border: 1px solid rgba(255,255,255,0.35);
 }
@@ -157,7 +151,7 @@ body {
    VISIT BUTTON
 ========================================================= */
 .visit-btn {
-  margin-top: 12px;
+  margin-top: 10px;
   padding: 7px 18px;
   font-size: 0.8rem;
   border-radius: 24px;
@@ -173,30 +167,29 @@ body {
 }
 
 /* =========================================================
-   PDF BOX (NO GAP ABOVE)
+   PDF BOX — KEEP SIZE, REDUCE GAP
 ========================================================= */
 .pdf-box {
-  margin: 40px auto 40px; /* 🔥 tight spacing */
-  padding: 18px 32px;
+  margin: 24px auto 24px; /* ⬇️ FIXED GAP */
+  padding: 18px 32px;     /* ✅ same size as earlier */
   border: 2px dashed rgba(36,224,236,0.7);
   border-radius: 16px;
+
   font-size: 1.05rem;
   font-weight: 600;
+
   display: flex;
   align-items: center;
   gap: 14px;
+
   color: #24E0EC;
 }
 
-.pdf-box i {
-  font-size: 1.7rem;
-}
-
 /* =========================================================
-   BECOME SPONSOR (NO EXTRA GAP)
+   BECOME SPONSOR — NO EXTRA GAP
 ========================================================= */
 .become-sponsor {
-  margin: 30px 0 50px; /* 🔥 reduced */
+  margin: 20px 0 60px; /* ⬇️ tight above, space before footer */
   text-align: center;
 }
 
@@ -208,6 +201,13 @@ body {
   font-size: 1rem;
   font-weight: 700;
   border: none;
+}
+
+/* =========================================================
+   GAP ABOVE FOOTER (CONTROLLED)
+========================================================= */
+footer {
+  margin-top: 60px; /* ✅ clean intentional gap */
 }
 
 /* =========================================================
@@ -228,4 +228,3 @@ body {
     height: 260px;
   }
 }
-
