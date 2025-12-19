@@ -135,26 +135,42 @@ video {
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
 <script>
+/* ================= CONFIG ================= */
+const API_BASE = "/api/pravaah"; // for future use
 const video = document.getElementById("video");
+
 let stream = null;
-let scanning = true;
+let scanning = false;
 let locked = false;
 
-/* ================= START CAMERA ================= */
-navigator.mediaDevices.getUserMedia({
-  video: { facingMode: "environment" }
-})
-.then(s => {
-  stream = s;
-  video.srcObject = stream;
-  scanLoop();
-})
-.catch(() => alert("Camera permission required"));
+/* ================= CAMERA ================= */
+async function startCamera() {
+  if (stream) return;
 
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" }
+    });
+    video.srcObject = stream;
+    scanning = true;
+    scanLoop();
+  } catch {
+    alert("Camera permission required");
+  }
+}
+
+function stopCamera() {
+  scanning = false;
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+}
+
+/* ================= SCAN LOOP ================= */
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
-/* ================= SCAN LOOP ================= */
 function scanLoop() {
   if (!scanning || locked || !video.videoWidth) {
     requestAnimationFrame(scanLoop);
@@ -176,7 +192,6 @@ function scanLoop() {
 
     if (paymentId) {
       locked = true;
-      scanning = false;
       stopCamera();
 
       setTimeout(() => {
@@ -185,7 +200,6 @@ function scanLoop() {
             `admin.html?paymentId=${encodeURIComponent(paymentId)}`;
         } else {
           locked = false;
-          scanning = true;
           startCamera();
         }
       }, 150);
@@ -196,27 +210,16 @@ function scanLoop() {
   requestAnimationFrame(scanLoop);
 }
 
-/* ================= CAMERA CONTROL ================= */
-function stopCamera() {
-  if (stream) {
-    stream.getTracks().forEach(t => t.stop());
-    stream = null;
-  }
-}
-
-function startCamera() {
-  navigator.mediaDevices.getUserMedia({
-    video: { facingMode: "environment" }
-  }).then(s => {
-    stream = s;
-    video.srcObject = stream;
-  });
-}
-
 /* ================= SAFETY ================= */
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) stopCamera();
+  else if (!locked) startCamera();
 });
+
+window.addEventListener("beforeunload", stopCamera);
+
+/* ================= INIT ================= */
+startCamera();
 </script>
 
 </body>
