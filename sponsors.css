@@ -288,3 +288,66 @@ body {
   }
 }
 
+
+.sponsor-card {
+  position: relative;
+  width: 320px;          /* ⬆️ increased */
+  height: 220px;         /* ⬆️ increased */
+  border-radius: 20px;
+  overflow: hidden;
+
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(36,224,236,0.6);
+  box-shadow: 0 0 18px rgba(36,224,236,0.3);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.sponsor-card img {
+  max-width: 92%;        /* ⬆️ larger */
+  max-height: 92%;
+  object-fit: contain;
+
+  filter: brightness(1.1) contrast(1.15); /* ✅ clarity */
+  image-rendering: auto;
+
+  transition: filter 0.35s ease, transform 0.35s ease;
+}
+.sponsor-card:hover img {
+  filter: blur(2px) brightness(0.85); /* ⬇️ reduced blur */
+  transform: scale(1.05);
+}
+.pdf-box {
+  margin: 30px auto;              /* ⬇️ reduced gap */
+  padding: 18px 32px;             /* ⬆️ bigger */
+  border: 2px dashed rgba(36,224,236,0.7);
+  border-radius: 16px;
+
+  font-size: 1.05rem;             /* ⬆️ text size */
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  color: #24E0EC;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.pdf-box i {
+  font-size: 1.7rem; /* ⬆️ bigger icon */
+}
+.sponsor-section {
+  margin: 50px auto; /* ⬇️ reduced from 70+ */
+  max-width: 1200px;
+}
+@media (max-width: 900px) {
+  .sponsor-card {
+    width: 90%;
+    max-width: 380px;
+    height: 260px; /* ⬆️ taller on mobile */
+  }
+}
