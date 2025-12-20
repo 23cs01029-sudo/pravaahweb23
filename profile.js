@@ -223,33 +223,68 @@ onAuthStateChanged(auth, async (user) => {
   };
 
   uploadPhotoInput.onchange = async (e) => {
-    if (!e.target.files.length) return;
+  log("Device upload triggered");
 
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = async () => {
-      userPhoto.src = reader.result;
-      const base64 = reader.result.split(",")[1];
+  if (!e.target.files.length) {
+    log("No file selected");
+    return;
+  }
 
+  const file = e.target.files[0];
+  log("File selected:", {
+    name: file.name,
+    size: file.size,
+    type: file.type
+  });
+
+  const reader = new FileReader();
+
+  reader.onload = async () => {
+    log("Base64 generated (first 80 chars):", reader.result.slice(0, 80));
+
+    userPhoto.src = reader.result;
+
+    const payload = {
+      type: "photoUpload",
+      email: user.email,
+      mimetype: file.type,
+      file: reader.result   // 🔥 FULL dataURL, backend strips it
+    };
+
+    log("Upload payload summary:", {
+      email: payload.email,
+      mimetype: payload.mimetype,
+      base64Length: payload.file.length
+    });
+
+    try {
       const r = await fetch(scriptURL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          type: "photoUpload",
-          email: user.email,
-          mimetype: file.type,
-          file: base64
-        })
+        body: JSON.stringify(payload)
       });
 
+      log("Upload response status:", r.status);
+
       const out = await r.json();
+      log("Upload response JSON:", out);
+
       if (out.ok) {
         userPhoto.src = out.photo;
+        log("Photo URL set from backend:", out.photo);
         showToast("Photo updated!", "success");
+      } else {
+        showToast("Upload failed", "error");
       }
-    };
-    reader.readAsDataURL(file);
+
+    } catch (err) {
+      console.error("UPLOAD ERROR:", err);
+      showToast("Upload error", "error");
+    }
   };
+
+  reader.readAsDataURL(file);
+};
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
@@ -300,6 +335,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
