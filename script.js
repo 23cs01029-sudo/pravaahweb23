@@ -306,5 +306,35 @@ document.addEventListener("DOMContentLoaded", () => {
     if (startX - endX > 60) rightArrow.click();
     if (endX - startX > 60) leftArrow.click();
   });
+  /* ===========================================================
+   🔁 HIGHLIGHTS — INFINITE AUTO SCROLL (FINAL FIX)
+=========================================================== */
+
+const track = document.querySelector(".slider-track");
+if (track) {
+
+  const slides = Array.from(track.children);
+
+  /* 1️⃣ Clone slides for seamless loop */
+  slides.forEach(slide => {
+    track.appendChild(slide.cloneNode(true));
+  });
+
+  /* 2️⃣ Calculate total scroll distance */
+  let totalWidth = 0;
+  const gap = 30; // must match CSS gap
+
+  slides.forEach(slide => {
+    totalWidth += slide.offsetWidth + gap;
+  });
+
+  /* 3️⃣ Set CSS variables used by animation */
+  track.style.setProperty("--distance", `-${totalWidth}px`);
+
+  /* Speed logic: bigger content = slower & smoother */
+  track.style.setProperty("--duration", `${totalWidth / 40}s`);
+}
+
 });
+
 
