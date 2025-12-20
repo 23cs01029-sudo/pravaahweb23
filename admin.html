@@ -1,82 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>PRAVAAH — Main Gate</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-*{box-sizing:border-box;font-family:'Exo 2',sans-serif}
-body{
-  margin:0;min-height:100vh;
-  background:linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
-  background-size:400% 400%;
-  animation:bgMove 15s ease infinite;
-  color:#e6fbff;padding:14px
-}
-@keyframes bgMove{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-.container{
-  max-width:900px;margin:auto;
-  background:rgba(0,0,0,.75);
-  border:2px solid cyan;border-radius:22px;
-  box-shadow:0 0 35px rgba(0,255,255,.45);
-  padding:20px
-}
-.title{text-align:center;font-size:1.6rem;font-weight:800;color:cyan}
-.meta{text-align:center;font-size:.8rem;opacity:.75;margin-bottom:14px}
-.status{
-  padding:12px;border-radius:14px;
-  font-weight:800;text-align:center;margin-bottom:16px
-}
-.valid{color:#00ffcc;border:1.5px solid #00ffcc}
-.invalid{color:#ff6b6b;border:1.5px solid #ff6b6b}
-.box{
-  border:1px solid rgba(0,255,255,.4);
-  padding:14px;border-radius:16px;
-  background:rgba(0,0,0,.6);margin-bottom:16px
-}
-.participant{
-  display:flex;gap:10px;padding:10px 0;
-  border-bottom:1px dashed rgba(0,255,255,.3)
-}
-.participant input{transform:scale(1.3)}
-.actions{display:flex;gap:12px}
-.btn{
-  flex:1;padding:14px;border-radius:16px;
-  font-weight:800;border:none;font-size:1rem;cursor:pointer
-}
-.entry{background:#00ffcc}
-.exit{background:#ff5c5c}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-</style>
-</head>
-
-<body>
-<div class="container">
-  <div class="title">PRAVAAH 2026 — Main Gate</div>
-  <div class="meta">⏰ <span id="nowTime"></span></div>
-
-  <div id="statusBox" class="status">Loading pass…</div>
-  <div class="box" id="passInfo"></div>
-  <div class="box" id="participantsBox"></div>
-
-  <div class="actions">
-    <button class="btn entry" disabled onclick="submitAction('ENTRY')">ALLOW ENTRY</button>
-    <button class="btn exit" disabled onclick="submitAction('EXIT')">MARK EXIT</button>
-  </div>
-
-  <div style="margin-top:14px;text-align:center">
-    <button class="btn"
-      style="background:#111;color:cyan;border:1px solid cyan"
-      onclick="goBack()">← Back to Admin Dashboard</button>
-  </div>
-</div>
-
 <script>
 const API="/api/pravaah";
 const params = new URLSearchParams(location.search);
@@ -84,11 +5,18 @@ const params = new URLSearchParams(location.search);
 const paymentId = params.get("paymentId");
 const scannerEmail = params.get("scanner");
 
-if(!paymentId){ alert("Missing Payment ID"); location.href="scan.html"; }
-if(!scannerEmail){ alert("Scanner identity missing"); location.href="admin.html"; }
+if(!paymentId){
+  alert("Missing Payment ID");
+  location.href="scan.html";
+}
+if(!scannerEmail){
+  alert("Scanner identity missing");
+  location.href="admin.html";
+}
 
 const entryBtn=document.querySelector(".entry");
 const exitBtn=document.querySelector(".exit");
+const statusBox=document.getElementById("statusBox");
 
 let passData,participants=[],logs=[],state={};
 
@@ -99,17 +27,43 @@ function now(){
 now(); setInterval(now,1000);
 
 /* ---------- LOAD DATA ---------- */
-function loadData(){
-  Promise.all([
-    fetch(`${API}?type=searchPass&query=${paymentId}`).then(r=>r.json()),
-    fetch(`${API}?type=gatelogs&paymentId=${paymentId}`).then(r=>r.json())
-  ]).then(([p,l])=>{
-    passData=p[0];
-    participants=p;
-    logs=l||[];
+async function loadData(){
+  statusBox.className="status";
+  statusBox.innerHTML="Loading pass…";
+
+  try{
+    const [pRes,lRes] = await Promise.all([
+      fetch(`${API}?type=searchPass&query=${paymentId}`),
+      fetch(`${API}?type=gatelogs&paymentId=${paymentId}`)
+    ]);
+
+    if(!pRes.ok || !lRes.ok){
+      throw new Error("Failed to fetch pass data");
+    }
+
+    const p = await pRes.json();
+    const l = await lRes.json();
+
+    if(!Array.isArray(p) || !p.length){
+      throw new Error("Invalid or unknown pass");
+    }
+
+    passData = p[0];
+    participants = p;
+    logs = l || [];
+
     resolveState();
     render();
-  });
+
+    statusBox.className="status valid";
+    statusBox.innerHTML="✔ Pass loaded successfully";
+
+  }catch(err){
+    statusBox.className="status invalid";
+    statusBox.innerHTML="❌ "+err.message;
+    entryBtn.disabled=true;
+    exitBtn.disabled=true;
+  }
 }
 loadData();
 
@@ -171,41 +125,47 @@ function updateButtons(){
 }
 
 /* ---------- SUBMIT ---------- */
-function submitAction(action){
+async function submitAction(action){
   const sel=[...document.querySelectorAll("input:checked")];
   if(!sel.length) return;
 
-  Promise.all(sel.map(c=>
-    fetch(API,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        logType: action==="ENTRY"?"GATE_ENTRY":"GATE_EXIT",
-        action,
-        paymentId,
-        name:c.dataset.name,
-        email:c.dataset.email,
-        phone:c.dataset.phone,
-        college:c.dataset.college,
-        passType:passData["Pass Type"],
-        scanner: scannerEmail,
-        scanMode:"GATE"
-      })
-    }).then(r=>r.json())
-  ))
-  .then(()=>{
-    const sb=document.getElementById("statusBox");
-    sb.className="status valid";
-    sb.innerHTML=`✅ Gate logs updated — ${action==="ENTRY"?"Entry allowed":"Exit marked"}`;
+  statusBox.className="status";
+  statusBox.innerHTML="⏳ Updating gate logs…";
+
+  try{
+    await Promise.all(sel.map(c=>
+      fetch(API,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          logType: action==="ENTRY"?"GATE_ENTRY":"GATE_EXIT",
+          action,
+          paymentId,
+          name:c.dataset.name,
+          email:c.dataset.email,
+          phone:c.dataset.phone,
+          college:c.dataset.college,
+          passType:passData["Pass Type"],
+          scanner: scannerEmail,
+          scanMode:"GATE"
+        })
+      }).then(r=>r.json())
+    ));
+
+    statusBox.className="status valid";
+    statusBox.innerHTML =
+      `✅ Gate logs updated — ${action==="ENTRY"?"Entry allowed":"Exit marked"}`;
+
     loadData();
-  });
+
+  }catch(err){
+    statusBox.className="status invalid";
+    statusBox.innerHTML="❌ Failed to update gate logs";
+  }
 }
 
 /* ---------- BACK ---------- */
 function goBack(){
-  location.href =
-    "dashboard.html";
+  location.href="dashboard.html";
 }
 </script>
-</body>
-</html>
