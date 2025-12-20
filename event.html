@@ -12,12 +12,20 @@
 <style>
 *{box-sizing:border-box;font-family:'Exo 2',sans-serif}
 body{
-  margin:0;min-height:100vh;
+  margin:0;
+  min-height:100vh;
   background:linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
   background-size:400% 400%;
   animation:bgMove 15s ease infinite;
-  color:#e6fbff;padding:14px
+  color:#e6fbff;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
 }
+
 @keyframes bgMove{
   0%{background-position:0% 50%}
   50%{background-position:100% 50%}
@@ -102,6 +110,12 @@ body{
 .btn.half{
   flex:1;
 }
+#eventSelect{
+  margin-bottom:16px;
+}
+#participantsBox {
+  display: none;
+}
 
 </style>
 </head>
@@ -161,7 +175,7 @@ now();setInterval(now,1000);
 
 const DAY_MAP={
   "2026-02-05":"day0",
-  "2026-02-06":"day1",
+  "2026-12-20":"day1",
   "2026-02-07":"day2",
   "2026-02-08":"day3"
 };
@@ -205,36 +219,30 @@ function validate(){
 
 /* ===== CORE LOGIC ===== */
 async function renderParticipants(){
-  participantsBox.innerHTML="";
-  submitBtn.disabled=true;
-  if(!eventSelect.value) return;
+  participantsBox.innerHTML = "";
+  participantsBox.style.display = "none"; // 🔴 hide initially
+  submitBtn.disabled = true;
+
+  if (!eventSelect.value) return;
 
   const eventName = eventSelect.value;
 
-  // 🔹 FETCH EVENT REGISTRATIONS (Passes Spreadsheet)  
-
   const regRes = await fetch(
-  `${API}?type=eventRegistrations&event=${encodeURIComponent(eventName)}&paymentId=${encodeURIComponent(paymentId)}`
-);
-const registrations = await regRes.json();
-const entryRes = await fetch(
-  `${API}?type=eventEntries&event=${encodeURIComponent(eventName)}&paymentId=${encodeURIComponent(paymentId)}`
-);
-;
+    `${API}?type=eventRegistrations&event=${encodeURIComponent(eventName)}&paymentId=${encodeURIComponent(paymentId)}`
+  );
+  const registrations = await regRes.json();
+
+  const entryRes = await fetch(
+    `${API}?type=eventEntries&event=${encodeURIComponent(eventName)}&paymentId=${encodeURIComponent(paymentId)}`
+  );
   const entries = await entryRes.json();
 
-  // 🔹 REGISTERED (by Payment ID)
   const registeredSet = new Set(
-    registrations
-      .filter(r => r["Payment ID"] === paymentId)
-      .map(r => r.Name)
+    registrations.map(r => r.Name)
   );
 
-  // 🔹 ENTERED (by Payment ID)
   const enteredSet = new Set(
-    entries
-      .filter(e => e["Payment ID"] === paymentId)
-      .map(e => e.Name)
+    entries.map(e => e.Name)
   );
 
   drawSection(
@@ -250,6 +258,11 @@ const entryRes = await fetch(
     enteredSet,
     "#ff6b6b"
   );
+
+  // ✅ SHOW ONLY IF CONTENT EXISTS
+  if (participantsBox.children.length > 0) {
+    participantsBox.style.display = "block";
+  }
 
   toggleBtn();
 }
