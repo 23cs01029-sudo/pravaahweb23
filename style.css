@@ -1457,4 +1457,55 @@ video:-webkit-full-screen {
 .hidden {
   display: none !important;
 }
+/* =========================================================
+   🎬 AFTERMOVIE / THEME VIDEO — BOX MATCH VIDEO EXACTLY
+   ========================================================= */
+
+/* Let the outer box size itself by video */
+.aftermovie {
+  height: auto !important;
+  aspect-ratio: 16 / 9;   /* 🔑 match video ratio */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Video wrapper should NOT force height */
+.video-wrapper {
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+}
+
+/* Video fills wrapper exactly */
+.video-wrapper video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: black;
+}
+
+/* ===============================
+   📱 MOBILE FIX — SAME BEHAVIOR
+================================ */
+@media (max-width: 650px) {
+  .aftermovie {
+    width: 95%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-wrapper {
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-wrapper video {
+    aspect-ratio: 16 / 9;
+  }
+}
+
 
