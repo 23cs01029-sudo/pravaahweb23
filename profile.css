@@ -566,4 +566,10 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 .photo-wrapper::before {
   box-shadow: 0 0 12px rgba(0,255,255,0.35) !important;
 }
+/* Hide placeholder text once image exists */
+.has-photo + .profile-photo-text,
+.has-photo ~ .profile-photo-text {
+  display: none !important;
+}
+
 
