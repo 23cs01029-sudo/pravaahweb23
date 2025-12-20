@@ -171,7 +171,21 @@ onAuthStateChanged(auth, async (user) => {
   /* Prefill */
   userNameEl.textContent = user.displayName || "PRAVAAH User";
   userEmailEl.textContent = user.email;
-  userPhoto.src = user.photoURL || "default-avatar.png";
+  // Default first
+userPhoto.src = "default-avatar.png";
+
+// Priority: Sheet photo > Firebase photo
+if (p?.photo) {
+  userPhoto.src = p.photo;
+} else if (user.photoURL) {
+  userPhoto.src = user.photoURL;
+}
+
+// Hide placeholder once loaded
+userPhoto.onload = () => {
+  userPhoto.classList.add("has-photo");
+};
+
 
   /* Load profile */
   const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
@@ -275,11 +289,26 @@ onAuthStateChanged(auth, async (user) => {
 
     const out = await r.json();
     log("Upload response JSON:", out);
+if (out.ok) {
+  // 🔥 Cache-busted URL so browser reloads image
+  const finalPhoto = out.photo + "&t=" + Date.now();
 
-    if (out.ok) {
-      userPhoto.src = out.photo;
-      showToast("Photo updated!", "success");
-    } else {
+  // 1️⃣ Update image immediately
+  userPhoto.src = finalPhoto;
+
+  // 2️⃣ Persist in Firebase (CRITICAL FIX)
+  await updateProfile(user, {
+    photoURL: finalPhoto
+  });
+
+  // 3️⃣ Hide placeholder text once image loads
+  userPhoto.onload = () => {
+    userPhoto.classList.add("has-photo");
+  };
+
+  showToast("Photo updated!", "success");
+}
+else {
       showToast("Upload failed", "error");
     }
   } catch (err) {
@@ -341,6 +370,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
