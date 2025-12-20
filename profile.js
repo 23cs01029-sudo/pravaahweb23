@@ -169,32 +169,38 @@ onAuthStateChanged(auth, async (user) => {
   const logoutMobile = document.getElementById("logoutMobile");
 
   /* Prefill */
-  userNameEl.textContent = user.displayName || "PRAVAAH User";
-  userEmailEl.textContent = user.email;
-  // Default first
+  /* Prefill basic info */
+userNameEl.textContent = user.displayName || "PRAVAAH User";
+userEmailEl.textContent = user.email;
+
+/* Default photo first */
 userPhoto.src = "default-avatar.png";
 
-// Priority: Sheet photo > Firebase photo
-if (p?.photo) {
-  userPhoto.src = p.photo;
-} else if (user.photoURL) {
+/* Load profile from Sheet */
+const res = await fetch(
+  `${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`
+);
+const p = await res.json();
+
+if (p?.email) {
+  userPhoneInput.value = p.phone || "";
+  userCollegeInput.value = p.college || "";
+
+  // ✅ Priority 1: Sheet photo (Drive)
+  if (p.photo) {
+    userPhoto.src = p.photo;
+  }
+}
+// ✅ Priority 2: Firebase photo
+else if (user.photoURL) {
   userPhoto.src = user.photoURL;
 }
 
-// Hide placeholder once loaded
+// Hide placeholder once image loads
 userPhoto.onload = () => {
   userPhoto.classList.add("has-photo");
 };
 
-
-  /* Load profile */
-  const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
-  const p = await res.json();
-  if (p?.email) {
-    userPhoneInput.value = p.phone || "";
-    userCollegeInput.value = p.college || "";
-    if (p.photo) userPhoto.src = p.photo;
-  }
 
   const phoneSpan = ensureFieldSpan(userPhoneInput, "userPhoneText");
   const collegeSpan = ensureFieldSpan(userCollegeInput, "userCollegeText");
@@ -370,6 +376,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
