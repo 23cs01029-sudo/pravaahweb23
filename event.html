@@ -179,23 +179,52 @@ function validate(){
 }
 
 /* ===== CORE LOGIC ===== */
-function renderParticipants(){
+async function renderParticipants(){
   participantsBox.innerHTML="";
   submitBtn.disabled=true;
   if(!eventSelect.value) return;
 
-  const eventName=eventSelect.value;
+  const eventName = eventSelect.value;
 
-  const registered=new Set(
-    JSON.parse(passData.Events||"{}")[eventName]||[]
+  // 🔹 FETCH EVENT REGISTRATIONS (Passes Spreadsheet)
+  const regRes = await fetch(
+    `${API}?type=eventRegistrations&event=${encodeURIComponent(eventName)}`
+  );
+  const registrations = await regRes.json();
+
+  // 🔹 FETCH EVENT ENTRIES (GateLogs Spreadsheet)
+  const entryRes = await fetch(
+    `${API}?type=eventEntries&event=${encodeURIComponent(eventName)}`
+  );
+  const entries = await entryRes.json();
+
+  // 🔹 REGISTERED (by Payment ID)
+  const registeredSet = new Set(
+    registrations
+      .filter(r => r["Payment ID"] === paymentId)
+      .map(r => r.Name)
   );
 
-  const enteredSet=new Set(
-    JSON.parse(passData.EventEntries||"{}")[eventName]||[]
+  // 🔹 ENTERED (by Payment ID)
+  const enteredSet = new Set(
+    entries
+      .filter(e => e["Payment ID"] === paymentId)
+      .map(e => e.Name)
   );
 
-  drawSection("REGISTERED", participants.filter(p=>registered.has(p.Name)), enteredSet, "#00ffcc");
-  drawSection("UNREGISTERED", participants.filter(p=>!registered.has(p.Name)), enteredSet, "#ff6b6b");
+  drawSection(
+    "REGISTERED",
+    participants.filter(p => registeredSet.has(p.Name)),
+    enteredSet,
+    "#00ffcc"
+  );
+
+  drawSection(
+    "UNREGISTERED",
+    participants.filter(p => !registeredSet.has(p.Name)),
+    enteredSet,
+    "#ff6b6b"
+  );
 
   toggleBtn();
 }
@@ -221,6 +250,7 @@ function drawSection(title,list,enteredSet,color){
 
   participantsBox.appendChild(box);
 }
+
 
 function buildRow(p,disabled){
   const row=document.createElement("div");
