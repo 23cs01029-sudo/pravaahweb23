@@ -10,6 +10,11 @@ const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "/api/pravaah";
+/* ---------- DEBUG ---------- */
+const DEBUG_PROFILE = true;
+const log = (...args) => {
+  if (DEBUG_PROFILE) console.log("[PROFILE]", ...args);
+};
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -240,48 +245,49 @@ onAuthStateChanged(auth, async (user) => {
   const reader = new FileReader();
 
   reader.onload = async () => {
-    log("Base64 generated (first 80 chars):", reader.result.slice(0, 80));
+  log("Base64 generated");
 
-    userPhoto.src = reader.result;
+  userPhoto.src = reader.result;
 
-    const payload = {
-      type: "photoUpload",
-      email: user.email,
-      mimetype: file.type,
-      file: reader.result   // 🔥 FULL dataURL, backend strips it
-    };
+  const base64 = reader.result.split(",")[1];
 
-    log("Upload payload summary:", {
-      email: payload.email,
-      mimetype: payload.mimetype,
-      base64Length: payload.file.length
+  const payload = {
+    type: "photoUpload",
+    email: user.email,
+    mimetype: file.type,
+    file: base64
+  };
+
+  log("Upload payload summary:", {
+    email: payload.email,
+    mimetype: payload.mimetype,
+    base64Length: base64.length
+  });
+
+  try {
+    const r = await fetch(scriptURL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
     });
 
-    try {
-      const r = await fetch(scriptURL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
-      });
+    log("Upload response status:", r.status);
 
-      log("Upload response status:", r.status);
+    const out = await r.json();
+    log("Upload response JSON:", out);
 
-      const out = await r.json();
-      log("Upload response JSON:", out);
-
-      if (out.ok) {
-        userPhoto.src = out.photo;
-        log("Photo URL set from backend:", out.photo);
-        showToast("Photo updated!", "success");
-      } else {
-        showToast("Upload failed", "error");
-      }
-
-    } catch (err) {
-      console.error("UPLOAD ERROR:", err);
-      showToast("Upload error", "error");
+    if (out.ok) {
+      userPhoto.src = out.photo;
+      showToast("Photo updated!", "success");
+    } else {
+      showToast("Upload failed", "error");
     }
-  };
+  } catch (err) {
+    console.error("UPLOAD ERROR:", err);
+    showToast("Upload error", "error");
+  }
+};
+
 
   reader.readAsDataURL(file);
 };
@@ -335,6 +341,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
