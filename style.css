@@ -1583,6 +1583,19 @@ video:-webkit-full-screen {
     width: 300px;
   }
 }
+.slider-track {
+  display: flex;
+  gap: 30px;
+  width: max-content;
+  animation: marquee linear infinite;
+  animation-duration: var(--duration);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(var(--distance)); }
+}
+
 
 
 
