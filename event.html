@@ -2,299 +2,271 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PRAVAAH — Event Scan</title>
+<title>PRAVAAH — Event Entry</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
 <style>
-* { box-sizing: border-box; font-family: 'Exo 2', sans-serif; }
+*{box-sizing:border-box;font-family:'Exo 2',sans-serif}
+body{
+  margin:0;min-height:100vh;
+  background:linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
+  background-size:400% 400%;
+  animation:bgMove 15s ease infinite;
+  color:#e6fbff;padding:14px
+}
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+.container{
+  max-width:900px;margin:auto;
+  background:rgba(0,0,0,.75);
+  border:2px solid cyan;border-radius:22px;
+  box-shadow:0 0 35px rgba(0,255,255,.45);
+  padding:20px
+}
+.title{text-align:center;font-size:1.6rem;font-weight:800;color:cyan}
+.meta{text-align:center;font-size:.85rem;opacity:.8;margin-bottom:14px}
+.status{
+  padding:12px;border-radius:14px;
+  font-weight:800;text-align:center;margin-bottom:16px
+}
+.valid{color:#00ffcc;border:1.5px solid #00ffcc}
+.invalid{color:#ff6b6b;border:1.5px solid #ff6b6b}
 
-body {
-  margin: 0;
-  min-height: 100svh;
-  background: linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
-  background-size: 400% 400%;
-  animation: bgMove 15s ease infinite;
-  color: #e6fbff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
+.box{
+  border:1px solid rgba(0,255,255,.4);
+  padding:14px;border-radius:16px;
+  background:rgba(0,0,0,.6);margin-bottom:16px
 }
 
-@keyframes bgMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.filter-select{
+  width:100%;
+  padding:12px 42px 12px 16px;
+  border-radius:14px;
+  border:1px solid rgba(36,224,236,.5);
+  background:rgba(0,0,0,.65);
+  color:cyan;font-weight:700;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='cyan' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 18px center;
 }
 
-.card {
-  width: 100%;
-  max-width: 520px;
-  background: rgba(0,0,0,0.78);
-  border: 2px solid cyan;
-  border-radius: 20px;
-  box-shadow: 0 0 30px rgba(0,255,255,0.45);
-  padding: 18px;
+.section-title{
+  margin:14px 0 6px;
+  font-weight:800;
+  letter-spacing:1px
 }
 
-.logo {
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: cyan;
-  text-shadow: 0 0 12px cyan;
+.participant{
+  display:flex;gap:10px;
+  padding:10px 0;
+  border-bottom:1px dashed rgba(0,255,255,.3)
 }
+.participant input{transform:scale(1.3)}
+.participant.disabled{opacity:.45}
 
-.subtitle {
-  text-align: center;
-  font-size: 0.85rem;
-  opacity: 0.8;
-  margin-bottom: 10px;
+.btn{
+  padding:14px;border-radius:16px;
+  font-weight:800;border:none;
+  font-size:1rem;cursor:pointer
 }
-
-.status {
-  margin: 12px 0;
-  padding: 10px;
-  border-radius: 14px;
-  text-align: center;
-  font-weight: 800;
-  font-size: 0.85rem;
+.btn.primary{background:#00ffcc;color:black}
+.btn.secondary{
+  background:black;color:cyan;border:1px solid cyan
 }
-
-.valid {
-  color: #00ffcc;
-  border: 1.5px solid #00ffcc;
-  box-shadow: 0 0 15px rgba(0,255,200,0.6);
-}
-
-.invalid {
-  color: #ff6b6b;
-  border: 1.5px solid #ff6b6b;
-  box-shadow: 0 0 15px rgba(255,107,107,0.6);
-}
-
-select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 14px;
-  border: 1.5px solid cyan;
-  background: black;
-  color: cyan;
-  font-weight: 700;
-  margin-bottom: 14px;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px dashed rgba(0,255,255,0.3);
-}
-
-.row input {
-  transform: scale(1.35);
-  accent-color: cyan;
-}
-
-.row.disabled {
-  opacity: 0.45;
-}
-
-button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 18px;
-  border: none;
-  background: cyan;
-  color: black;
-  font-weight: 800;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 0 22px cyan;
-  margin-top: 16px;
-}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
 </style>
 </head>
 
 <body>
+<div class="container">
+  <div class="title">PRAVAAH 2026 — Event Entry</div>
+  <div class="meta">⏰ <span id="nowTime"></span></div>
 
-<div class="card">
-  <div class="logo">PRAVAAH 2026</div>
-  <div class="subtitle">Event Scanner</div>
+  <div id="statusBox" class="status">Loading pass…</div>
 
-  <div id="statusBox" class="status">Checking pass…</div>
+  <div class="box" id="passInfo"></div>
 
-  <select id="eventSelect">
+  <select id="eventSelect" class="filter-select">
     <option value="">Select Event</option>
   </select>
 
-  <div id="list"></div>
+  <div class="box" id="participantsBox"></div>
 
-  <button onclick="submitEntry()">Confirm Entry</button>
+  <button id="submitBtn" class="btn primary" disabled>
+    CONFIRM EVENT ENTRY
+  </button>
+
+  <div class="actions">
+    <button class="btn secondary" onclick="goDashboard()">← Back to Dashboard</button>
+    <button class="btn secondary" onclick="goScanner()">
+      <i class="fa-solid fa-qrcode"></i> Open Scanner
+    </button>
+  </div>
 </div>
 
 <script>
-/* ================= CONFIG ================= */
-const API_BASE = "/api/pravaah";
+const API="/api/pravaah";
+const params=new URLSearchParams(location.search);
+const paymentId=params.get("paymentId");
+const scanner=params.get("scanner");
 
-/* ================= PARAMS ================= */
-const params = new URLSearchParams(location.search);
-const paymentId = params.get("paymentId");
-const scanner   = params.get("scanner");
-
-if (!paymentId || !scanner) {
-  alert("Invalid scan");
-  location.href = "scan.html";
+if(!paymentId||!scanner){
+  alert("Invalid scan");location.href="scan.html";
 }
 
-/* ================= DOM ================= */
-const statusBox  = document.getElementById("statusBox");
-const eventSelect = document.getElementById("eventSelect");
-const list = document.getElementById("list");
+const statusBox=document.getElementById("statusBox");
+const participantsBox=document.getElementById("participantsBox");
+const eventSelect=document.getElementById("eventSelect");
+const submitBtn=document.getElementById("submitBtn");
 
-/* ================= DAY MAP (ADMIN SAME) ================= */
-const DAY_MAP = {
-  "2026-02-05": "day0",
-  "2026-02-06": "day1",
-  "2026-02-07": "day2",
-  "2026-02-08": "day3"
+function now(){
+  document.getElementById("nowTime").textContent=
+    new Date().toLocaleString("en-IN",{hour12:true});
+}
+now();setInterval(now,1000);
+
+const DAY_MAP={
+  "2026-02-05":"day0",
+  "2026-02-06":"day1",
+  "2026-02-07":"day2",
+  "2026-02-08":"day3"
 };
 
-/* ================= EVENTS ================= */
-const DAY_EVENTS = {
-  day1: ["General Quiz", "Nukkad", "Robowars"],
-  day2: ["Film Quiz", "Battle of Bands", "Roborace"],
-  day3: ["Street Battle", "Enigma", "Trekkon"]
+const DAY_EVENTS={
+  day1:["General Quiz","Nukkad","Robowars"],
+  day2:["Film Quiz","Battle of Bands","Roborace"],
+  day3:["Street Battle","Enigma","Trekkon"]
 };
 
-let passData = null;
-let participants = [];
-let todayKey = null;
+let passData,participants=[],todayKey=null;
 
-/* ================= FETCH PASS ================= */
-fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
-  .then(r => r.json())
-  .then(rows => {
-    if (!rows.length) throw "Invalid pass";
-    passData = rows[0];
-    participants = rows;
-    validateLikeAdmin();
-  })
-  .catch(err => {
-    statusBox.className = "status invalid";
-    statusBox.textContent = err;
-  });
+(async function load(){
+  const r=await fetch(`${API}?type=searchPass&query=${paymentId}`);
+  const rows=await r.json();
+  passData=rows[0];
+  participants=rows;
+  validate();
+})();
 
-/* ================= ADMIN-STYLE VALIDATION ================= */
-function validateLikeAdmin() {
-  const today = new Date().toISOString().slice(0,10);
-  todayKey = DAY_MAP[today];
+function validate(){
+  const today=new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"});
+  todayKey=DAY_MAP[today];
 
-  const passType = passData["Pass Type"];
-  const selectedDays = String(passData["Selected Days"] || "").toLowerCase();
-  const starnite = passData["Starnite"] === "YES";
+  statusBox.className="status valid";
+  statusBox.textContent="✔ Pass validated";
 
-  let valid = false;
-  let reason = "Pass not valid today";
+  document.getElementById("passInfo").innerHTML=`
+    <b>Payment ID:</b> ${passData["Payment ID"]}<br>
+    <b>Pass Type:</b> ${passData["Pass Type"]}
+  `;
 
-  if (passType === "Fest Pass") {
-    valid = true;
-    reason = "Fest Pass";
-  }
-  else if (passType === "Starnite Pass") {
-    valid = todayKey === "day3";
-    reason = valid ? "StarNite Access" : "StarNite valid only on Day 3";
-  }
-  else if (selectedDays.includes(todayKey)) {
-    valid = true;
-    reason = "Valid for today";
-  }
-
-  statusBox.className = "status " + (valid ? "valid" : "invalid");
-  statusBox.innerHTML =
-    `${valid ? "✔ VALID FOR TODAY" : "✖ NOT VALID TODAY"}<br><small>${reason}</small>`;
-
-  if (!valid) return;
-
-  DAY_EVENTS[todayKey]?.forEach(ev => {
-    const o = document.createElement("option");
-    o.value = ev;
-    o.textContent = ev;
+  DAY_EVENTS[todayKey]?.forEach(e=>{
+    const o=document.createElement("option");
+    o.value=e;o.textContent=e;
     eventSelect.appendChild(o);
   });
 
-  eventSelect.addEventListener("change", renderParticipants);
+  eventSelect.onchange=renderParticipants;
 }
 
-/* ================= PARTICIPANTS (ADMIN-STYLE) ================= */
-function renderParticipants() {
-  list.innerHTML = "";
-  if (!eventSelect.value) return;
+/* ===== CORE LOGIC ===== */
+function renderParticipants(){
+  participantsBox.innerHTML="";
+  submitBtn.disabled=true;
+  if(!eventSelect.value) return;
 
-  const eventName = eventSelect.value;
-  let entered = false;
+  const eventName=eventSelect.value;
 
-  try {
-    const evObj = JSON.parse(passData.Events || "{}");
-    entered = evObj[todayKey]?.includes(eventName);
-  } catch {}
+  const registered=new Set(
+    JSON.parse(passData.Events||"{}")[eventName]||[]
+  );
 
-  participants.forEach(p => {
-    const row = document.createElement("div");
-    row.className = "row" + (entered ? " disabled" : "");
+  const enteredSet=new Set(
+    JSON.parse(passData.EventEntries||"{}")[eventName]||[]
+  );
 
-    row.innerHTML = `
-      <input type="checkbox"
-        ${entered ? "checked disabled" : "checked"}
-        data-name="${p.Name}"
-        data-email="${p.Email}"
-        data-phone="${p.Phone}"
-        data-college="${p.College}">
-      <span>${p.Name} ${entered ? "(Entered)" : ""}</span>
-    `;
-    list.appendChild(row);
-  });
+  drawSection("REGISTERED", participants.filter(p=>registered.has(p.Name)), enteredSet, "#00ffcc");
+  drawSection("UNREGISTERED", participants.filter(p=>!registered.has(p.Name)), enteredSet, "#ff6b6b");
+
+  toggleBtn();
 }
 
-/* ================= SUBMIT ================= */
-function submitEntry() {
-  if (!eventSelect.value) return alert("Select event");
+function drawSection(title,list,enteredSet,color){
+  if(!list.length) return;
 
-  const checked = [...document.querySelectorAll("input[type=checkbox]:checked:not(:disabled)")];
-  if (!checked.length) return alert("No new participants");
+  const box=document.createElement("div");
+  box.innerHTML=`<div class="section-title" style="color:${color}">${title}</div>`;
 
-  const payloadParticipants = checked.map(cb => ({
-    paymentId,
-    name: cb.dataset.name,
-    email: cb.dataset.email,
-    phone: cb.dataset.phone,
-    college: cb.dataset.college,
-    passType: passData["Pass Type"],
-    registered: false
-  }));
+  const notEntered=list.filter(p=>!enteredSet.has(p.Name));
+  const entered=list.filter(p=>enteredSet.has(p.Name));
 
-  fetch(API_BASE, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      type: "EVENT_SCAN",
-      eventName: eventSelect.value,
+  if(notEntered.length){
+    box.innerHTML+=`<div class="section-title" style="font-size:.8rem;color:#00ffcc">NOT ENTERED</div>`;
+    notEntered.forEach(p=>box.appendChild(buildRow(p,false)));
+  }
+
+  if(entered.length){
+    box.innerHTML+=`<div class="section-title" style="font-size:.8rem;color:#ffb703">ENTERED</div>`;
+    entered.forEach(p=>box.appendChild(buildRow(p,true)));
+  }
+
+  participantsBox.appendChild(box);
+}
+
+function buildRow(p,disabled){
+  const row=document.createElement("div");
+  row.className="participant"+(disabled?" disabled":"");
+  row.innerHTML=`
+    <input type="checkbox" ${disabled?"checked disabled":"checked"}
+      data-name="${p.Name}" data-email="${p.Email}"
+      data-phone="${p.Phone}" data-college="${p.College}"
+      onchange="toggleBtn()">
+    <span><b>${p.Name}</b><br>${p.Email}</span>
+  `;
+  return row;
+}
+
+function toggleBtn(){
+  submitBtn.disabled=!document.querySelectorAll("input:checked:not(:disabled)").length;
+}
+
+submitBtn.onclick=async()=>{
+  const sel=[...document.querySelectorAll("input:checked:not(:disabled)")];
+  if(!sel.length) return;
+
+  await fetch(API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      type:"EVENT_SCAN",
+      eventName:eventSelect.value,
       scanner,
-      participants: payloadParticipants
+      participants:sel.map(c=>({
+        paymentId,
+        name:c.dataset.name,
+        email:c.dataset.email,
+        phone:c.dataset.phone,
+        college:c.dataset.college,
+        passType:passData["Pass Type"]
+      }))
     })
-  })
-  .then(r => r.json())
-  .then(res => {
-    if (!res.ok) throw res.reason;
-    alert("Entry recorded");
-    location.reload();
-  })
-  .catch(err => alert(err));
-}
-</script>
+  });
 
+  alert("Event entry recorded");
+  location.reload();
+};
+
+function goDashboard(){location.href="dashboard.html";}
+function goScanner(){location.href=`scan.html?scanner=${encodeURIComponent(scanner)}`;}
+</script>
 </body>
 </html>
