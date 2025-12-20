@@ -190,7 +190,8 @@ document.addEventListener("DOMContentLoaded", () => {
   =========================================================== */
 
   /* Get ORIGINAL slides only (no duplicates) */
-  const slides = document.querySelectorAll(".slide");
+const slides = document.querySelectorAll('.slide[data-original="true"]');
+
 
   let galleryImages = Array.from(slides).map((slide, index) => {
     const img = slide.querySelector("img");
@@ -270,7 +271,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   closeBtn.addEventListener("click", () => lightbox.classList.add("hidden"));
 
-  document.querySelectorAll(".zoom-icon").forEach((icon, i) => {
+ document.querySelectorAll('.slide[data-original="true"] .zoom-icon')
+  .forEach((icon, i) => {
+
     icon.addEventListener("click", (e) => {
       e.stopPropagation();
       openLightbox(i);  // FIXED INDEXING
@@ -291,6 +294,28 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === lightbox) lightbox.classList.add("hidden");
   });
 
+/* =======================
+   🔁 STABLE MARQUEE FIX
+======================= */
+const track = document.querySelector(".slider-track");
+if (track) {
+  const originals = Array.from(track.children);
+
+  // clone originals ONCE
+  originals.forEach(slide => {
+    slide.setAttribute("data-original", "true"); // mark original
+    track.appendChild(slide.cloneNode(true));
+  });
+
+  requestAnimationFrame(() => {
+    const gap = 30; // must match CSS gap
+    const slideWidth = originals[0].offsetWidth;
+    const totalWidth = originals.length * (slideWidth + gap);
+
+    track.style.setProperty("--distance", `-${totalWidth}px`);
+    track.style.setProperty("--duration", `${totalWidth / 60}s`);
+  });
+}
 
   /* ---------- SWIPE SUPPORT ---------- */
 
@@ -307,3 +332,4 @@ document.addEventListener("DOMContentLoaded", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
