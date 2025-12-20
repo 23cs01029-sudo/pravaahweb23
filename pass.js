@@ -521,14 +521,15 @@ function collectSelectedEvents() {
   const events = {};
 
   document.querySelectorAll(".event-checkbox:checked").forEach((c) => {
-    const day = c.dataset.day.toUpperCase();  
-    if (!events[day]) events[day] = [];
+    const day = c.dataset.day; // ✅ day0/day1/day2/day3 (lowercase)
 
+    if (!events[day]) events[day] = [];
     events[day].push(c.value);
   });
 
   return events;
 }
+
 
 
 
@@ -624,6 +625,7 @@ payBtn.addEventListener("click", async () => {
 
   rzp.open();
 });
+
 
 
 
