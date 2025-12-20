@@ -87,19 +87,18 @@ const retakeBtn = document.getElementById("retakeBtn");
 
 let stream=null, scanning=false, locked=false, detectedPaymentId=null;
 
-const scannerEmailParam =
-  new URLSearchParams(location.search).get("scanner");
+/* ---------------- URL PARAMS ---------------- */
+const params = new URLSearchParams(location.search);
+const scannerEmail = params.get("scanner");
+const prefilledPaymentId = params.get("paymentId");
 
-if (!scannerEmailParam) {
+if (!scannerEmail) {
   alert("Scanner identity missing. Please open scanner from dashboard.");
   location.href = "dashboard.html";
   throw new Error("Scanner email missing");
 }
 
-const scannerEmail = scannerEmailParam.toLowerCase();
-
-
-/* CAMERA */
+/* ---------------- CAMERA ---------------- */
 async function startCamera(){
   if(stream) return;
   stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
@@ -114,7 +113,7 @@ function stopCamera(){
   stream=null;
 }
 
-/* SCAN LOOP */
+/* ---------------- SCAN LOOP ---------------- */
 const canvas=document.createElement("canvas");
 const ctx=canvas.getContext("2d");
 
@@ -141,7 +140,7 @@ function scanLoop(){
   requestAnimationFrame(scanLoop);
 }
 
-/* LOAD PROFILE (NO VALIDITY CHECK) */
+/* ---------------- LOAD PROFILE ---------------- */
 function loadProfile(pid){
   fetch(`/api/pravaah?type=searchPass&query=${encodeURIComponent(pid)}`)
     .then(r=>r.json())
@@ -163,28 +162,41 @@ function loadProfile(pid){
     });
 }
 
-/* ACTIONS */
+/* ---------------- ACTIONS ---------------- */
 function showActions(){
   helperText.textContent="Select scan type";
   actionButtons.style.display="flex";
-  adminBtn.onclick=()=>location.href=`admin.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
-  eventBtn.onclick=()=>location.href=`event.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+
+  adminBtn.onclick=()=>location.href=
+    `admin.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+
+  eventBtn.onclick=()=>location.href=
+    `event.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+
   retakeBtn.onclick=resetScanner;
 }
 
-/* RESET */
+/* ---------------- RESET ---------------- */
 function resetScanner(){
   locked=false;
   detectedPaymentId=null;
   profilePreview.style.display="none";
   actionButtons.style.display="none";
   helperText.textContent="Align QR inside the square";
-  stopCamera();
   startCamera();
 }
 
-/* INIT */
-startCamera();
+/* ---------------- INIT ---------------- */
+if (prefilledPaymentId) {
+  // ✅ Opened from dashboard → skip camera
+  locked = true;
+  detectedPaymentId = prefilledPaymentId;
+  loadProfile(prefilledPaymentId);
+  showActions();
+} else {
+  // ✅ Normal scanning
+  startCamera();
+}
 </script>
 </body>
 </html>
