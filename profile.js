@@ -9,7 +9,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "/api/pravaah";
+const scriptURL = "/https://script.google.com/macros/s/AKfycbzZf3E-VXBfZwY39VL3s1A7NGNF2UUUzHlQgItM1fny9Av0uiK5MQDVts53ZglnGV6R1Q/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -341,6 +341,7 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
 
 
 
