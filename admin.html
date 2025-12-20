@@ -209,22 +209,44 @@ async function submitAction(action){
   statusBox.className="status";
   statusBox.textContent="⏳ Updating gate logs…";
 
-  await Promise.all(sel.map(c=>fetch(API,{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      logType:action==="ENTRY"?"GATE_ENTRY":"GATE_EXIT",
-      action,paymentId,
-      name:c.dataset.name,email:c.dataset.email,
-      phone:c.dataset.phone,college:c.dataset.college,
-      passType:passData["Pass Type"],
-      scanner:scannerEmail,scanMode:"GATE"
-    })
-  })));
+  try{
+    await Promise.all(sel.map(c=>fetch(API,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        logType:action==="ENTRY"?"GATE_ENTRY":"GATE_EXIT",
+        action,
+        paymentId,
+        name:c.dataset.name,
+        email:c.dataset.email,
+        phone:c.dataset.phone,
+        college:c.dataset.college,
+        passType:passData["Pass Type"],
+        scanner:scannerEmail,
+        scanMode:"GATE"
+      })
+    })));
 
-  statusBox.className="status valid";
-  statusBox.textContent=`✅ Gate logs updated — ${action==="ENTRY"?"Entry allowed":"Exit marked"}`;
-  loadData();
+    // ✅ POPUP
+    alert(
+      action === "ENTRY"
+        ? "Gate logs updated successfully.\nEntry allowed."
+        : "Gate logs updated successfully.\nExit marked."
+    );
+
+    statusBox.className="status valid";
+    statusBox.textContent =
+      `✅ Gate logs updated — ${action==="ENTRY"?"Entry allowed":"Exit marked"}`;
+
+    loadData();
+
+  }catch(err){
+    alert("Failed to update gate logs");
+    statusBox.className="status invalid";
+    statusBox.textContent="❌ Failed to update gate logs";
+  }
 }
+
 
 /* -------- NAV -------- */
 function goBack(){location.href="dashboard.html";}
