@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,6 +24,13 @@
 </head>
 
 <body style="color:#F5F8FA; font-family:'Exo 2', sans-serif;">
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.querySelector(".slider-track");
+  const slides = Array.from(track.children);
+  slides.forEach(slide => track.appendChild(slide.cloneNode(true)));
+});
+</script>
  <!-- NAVBAR -->
   <nav>
     <a href="https://www.iitbbs.ac.in/" class="iitbbs-logo" target="_blank">
