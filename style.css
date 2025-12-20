@@ -1543,7 +1543,7 @@ video:-webkit-full-screen {
 }
 /* FIX: let image decide height */
 .slide {
-  width: 400px;
+  width: 430px;
   height: auto;                 /* 🔑 remove fixed height */
   aspect-ratio: 16 / 9;         /* consistent card ratio */
   background: black;
@@ -1561,6 +1561,7 @@ video:-webkit-full-screen {
     aspect-ratio: 16 / 9;
   }
 }
+
 
 
 
