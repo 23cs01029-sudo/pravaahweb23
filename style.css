@@ -1559,5 +1559,28 @@ video:-webkit-full-screen {
     object-fit: contain;
   }
 }
+/* =========================================
+   🔥 HARD OVERRIDE — HIGHLIGHTS IMAGE FIX
+   ========================================= */
+
+/* Force correct rectangle */
+.slide {
+  width: 420px !important;
+  height: 240px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+/* FORCE full image visibility */
+.slide img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  transform: none !important;      /* 🔴 kills hover zoom cut */
+  background: #000 !important;
+}
+
 
 
