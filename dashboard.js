@@ -339,23 +339,25 @@ searchBtn.onclick = async () => {
   </tr>`;
 
   rows.forEach((x, i) => {
-    html += `<tr>
-      <td>${x.Name}</td>
-      <td>${x.Email}</td>
-      <td>${x.Phone}</td>
-      <td>${x.College}</td>
-      <td>${x["Payment ID"]}</td>
-      <td>${x["Pass Type"]}</td>
-      <td>
-        <div
-  class="qr-box"
-  id="qr-${i}"
-  data-qr="${FRONTEND_BASE}/public.html?paymentId=${encodeURIComponent(x["Payment ID"])}"
-  data-scan="${FRONTEND_BASE}/scan.html?paymentId=${encodeURIComponent(x["Payment ID"])}&from=dashboard"
-></div>
+    const adminEmail = auth.currentUser.email;
 
-      </td>
-    </tr>`;
+html += `<tr>
+  <td>${x.Name}</td>
+  <td>${x.Email}</td>
+  <td>${x.Phone}</td>
+  <td>${x.College}</td>
+  <td>${x["Payment ID"]}</td>
+  <td>${x["Pass Type"]}</td>
+  <td>
+    <div
+      class="qr-box"
+      id="qr-${i}"
+      data-qr="${FRONTEND_BASE}/public.html?paymentId=${encodeURIComponent(x["Payment ID"])}"
+      data-scan="${FRONTEND_BASE}/scan.html?paymentId=${encodeURIComponent(x["Payment ID"])}&scanner=${encodeURIComponent(adminEmail)}"
+    ></div>
+  </td>
+</tr>`;
+
   });
 
   html += "</table>";
