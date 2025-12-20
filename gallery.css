@@ -391,7 +391,12 @@ footer {
     opacity: 1 !important;
     transform: translateY(0) !important;
   }
+   .zoom-icon {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+  }
 }
+
 
 
 
