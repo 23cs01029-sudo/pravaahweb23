@@ -185,115 +185,125 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
- /* ===========================================================
-   🔵 LIGHTBOX SYSTEM — FINAL & WORKING
-=========================================================== */
+  /* ===========================================================
+     🔵 LIGHTBOX SYSTEM — FIXED & FINAL
+  =========================================================== */
 
-const track = document.querySelector(".slider-track");
-if (!track) return;
+  /* Get ORIGINAL slides only (no duplicates) */
+  const slides = document.querySelectorAll(".slide");
 
-/* ---------- STEP 1: MARK ORIGINAL SLIDES ---------- */
-const originals = Array.from(track.children);
-originals.forEach(slide => slide.setAttribute("data-original", "true"));
+  let galleryImages = Array.from(slides).map((slide, index) => {
+    const img = slide.querySelector("img");
 
-/* ---------- STEP 2: BUILD GALLERY ---------- */
-const slides = document.querySelectorAll('.slide[data-original="true"]');
-
-const galleryImages = Array.from(slides).map((slide, index) => {
-  const img = slide.querySelector("img");
-  return {
-    src: img.src,
-    title: slide.getAttribute("data-title") || "PRAVAAH",
-    desc: "Experience the Chronicles of Time — PRAVAAH 2K25.",
-    index
-  };
-});
-
-let currentIndex = 0;
-
-/* ---------- STEP 3: LIGHTBOX ELEMENTS ---------- */
-const lightbox = document.getElementById("lightbox");
-const lbImg = document.getElementById("lightboxImg");
-const lbTitle = document.getElementById("lightboxTitle");
-const lbDesc = document.getElementById("lightboxDesc");
-const downloadIcon = document.getElementById("downloadIcon");
-const closeBtn = document.querySelector(".close-lightbox");
-const leftArrow = document.querySelector(".lb-arrow.left");
-const rightArrow = document.querySelector(".lb-arrow.right");
-
-/* ---------- STEP 4: FUNCTIONS ---------- */
-function showSlide(index) {
-  const item = galleryImages[index];
-  if (!item) return;
-
-  lbImg.style.opacity = 0;
-
-  setTimeout(() => {
-    lbImg.src = item.src;
-    lbTitle.textContent = item.title;
-    lbDesc.textContent = item.desc;
-
-    downloadIcon.href = item.src;
-    downloadIcon.setAttribute("download", item.title.replace(/\s+/g, "_"));
-
-    lbImg.style.opacity = 1;
-  }, 200);
-}
-
-function openLightbox(index) {
-  currentIndex = index;
-  showSlide(index);
-  lightbox.classList.remove("hidden");
-}
-
-/* ---------- STEP 5: CLICK HANDLERS ---------- */
-slides.forEach((slide, index) => {
-  const zoom = slide.querySelector(".zoom-icon");
-  if (!zoom) return;
-
-  zoom.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openLightbox(index);
+    return {
+      src: img.src,
+      title: slide.getAttribute("data-title"),
+      desc: "Experience the Chronicles of Time — PRAVAAH 2K25.",
+      index
+    };
   });
-});
 
-closeBtn.addEventListener("click", () => lightbox.classList.add("hidden"));
+  let currentIndex = 0;
 
-leftArrow.addEventListener("click", () => {
-  currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
-  showSlide(currentIndex);
-});
 
-rightArrow.addEventListener("click", () => {
-  currentIndex = (currentIndex + 1) % galleryImages.length;
-  showSlide(currentIndex);
-});
+  /* ---------- Inject Lightbox HTML ---------- */
+  const lightbox = document.getElementById("lightbox");
 
-lightbox.addEventListener("click", (e) => {
-  if (e.target === lightbox) lightbox.classList.add("hidden");
-});
+  lightbox.innerHTML = `
+    <div class="lightbox-top">
+      <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
+      <a id="downloadIcon" class="download-icon" download>
+        <i class="fa-solid fa-download"></i>
+      </a>
+    </div>
 
-/* ---------- STEP 6: INFINITE MARQUEE ---------- */
-originals.forEach(slide => {
-  track.appendChild(slide.cloneNode(true));
-});
+    <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
 
-requestAnimationFrame(() => {
-  const gap = 30;
-  const slideWidth = originals[0].offsetWidth;
-  const totalWidth = originals.length * (slideWidth + gap);
+    <img id="lightboxImg">
 
-  track.style.setProperty("--distance", `-${totalWidth}px`);
-  track.style.setProperty("--duration", `${totalWidth / 60}s`);
-});
+    <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
 
-/* ---------- STEP 7: SWIPE SUPPORT ---------- */
-let startX = 0;
-lightbox.addEventListener("touchstart", e => {
-  startX = e.changedTouches[0].clientX;
-});
-lightbox.addEventListener("touchend", e => {
-  const endX = e.changedTouches[0].clientX;
-  if (startX - endX > 60) rightArrow.click();
-  if (endX - startX > 60) leftArrow.click();
+    <div class="lightbox-info">
+      <h3 id="lightboxTitle"></h3>
+      <p id="lightboxDesc"></p>
+    </div>
+  `;
+
+  const lbImg = document.getElementById("lightboxImg");
+  const lbTitle = document.getElementById("lightboxTitle");
+  const lbDesc = document.getElementById("lightboxDesc");
+  const downloadIcon = document.getElementById("downloadIcon");
+
+  const closeBtn = document.querySelector(".close-lightbox");
+  const leftArrow = document.querySelector(".lb-arrow.left");
+  const rightArrow = document.querySelector(".lb-arrow.right");
+
+
+
+  /* ---------- FUNCTIONS ---------- */
+
+  function showSlide(index) {
+    lbImg.style.opacity = 0;
+
+    setTimeout(() => {
+      const item = galleryImages[index];
+
+      lbImg.src = item.src;
+      lbTitle.textContent = item.title;
+      lbDesc.textContent = item.desc;
+
+      downloadIcon.href = item.src;
+      downloadIcon.setAttribute("download", item.title.replace(/\s+/g, "_"));
+
+      lbImg.style.opacity = 1;
+    }, 200);
+  }
+
+  function openLightbox(index) {
+    currentIndex = index;
+    showSlide(index);
+    lightbox.classList.remove("hidden");
+  }
+
+
+  /* ---------- EVENT LISTENERS ---------- */
+
+  closeBtn.addEventListener("click", () => lightbox.classList.add("hidden"));
+
+  document.querySelectorAll(".zoom-icon").forEach((icon, i) => {
+    icon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openLightbox(i);  // FIXED INDEXING
+    });
+  });
+
+  leftArrow.addEventListener("click", () => {
+    currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+    showSlide(currentIndex);
+  });
+
+  rightArrow.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % galleryImages.length;
+    showSlide(currentIndex);
+  });
+
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) lightbox.classList.add("hidden");
+  });
+
+
+  /* ---------- SWIPE SUPPORT ---------- */
+
+  let startX = 0;
+
+  lightbox.addEventListener("touchstart", (e) => {
+    startX = e.changedTouches[0].clientX;
+  });
+
+  lightbox.addEventListener("touchend", (e) => {
+    let endX = e.changedTouches[0].clientX;
+
+    if (startX - endX > 60) rightArrow.click();
+    if (endX - startX > 60) leftArrow.click();
+  });
 });
