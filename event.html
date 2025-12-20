@@ -136,20 +136,17 @@ body{
   <div class="box" id="participantsBox"></div>
 
   <div class="actions-vertical">
-  <button id="submitBtn" class="btn primary full" disabled>
-    CONFIRM EVENT ENTRY
-  </button>
+    <button id="submitBtn" class="btn primary full" disabled>
+      CONFIRM EVENT ENTRY
+    </button>
 
-  <div class="actions-row">
-    <button class="btn secondary half" onclick="goDashboard()">
-      ← Back to Dashboard
-    </button>
-    <button class="btn secondary half" onclick="goScanner()">
-      <i class="fa-solid fa-qrcode"></i> Open Scanner
-    </button>
+    <div class="actions-row">
+      <button class="btn secondary half" onclick="goDashboard()">← Back to Dashboard</button>
+      <button class="btn secondary half" onclick="goScanner()">
+        <i class="fa-solid fa-qrcode"></i> Open Scanner
+      </button>
+    </div>
   </div>
-</div>
-
 </div>
 
 <script>
@@ -159,7 +156,8 @@ const paymentId=params.get("paymentId");
 const scanner=params.get("scanner");
 
 if(!paymentId||!scanner){
-  alert("Invalid scan");location.href="scan.html";
+  alert("Invalid scan");
+  location.href="scan.html";
 }
 
 const statusBox=document.getElementById("statusBox");
@@ -168,11 +166,12 @@ const eventSelect=document.getElementById("eventSelect");
 const submitBtn=document.getElementById("submitBtn");
 
 function now(){
-  document.getElementById("nowTime").textContent=
+  document.getElementById("nowTime").textContent =
     new Date().toLocaleString("en-IN",{hour12:true});
 }
-now();setInterval(now,1000);
+now(); setInterval(now,1000);
 
+/* -------- DAY MAP -------- */
 const DAY_MAP={
   "2026-02-05":"day0",
   "2025-12-20":"day1",
@@ -186,82 +185,97 @@ const DAY_EVENTS={
   day3:["Street Battle","Enigma","Trekkon"]
 };
 
-let passData,participants=[],todayKey=null;
+let passData=null;
+let participants=[];
+let todayKey=null;
 
-(async function load(){
-  const r=await fetch(`${API}?type=searchPass&query=${paymentId}`);
-  const rows=await r.json();
-  passData=rows[0];
-  participants=rows;
-  validate();
+/* -------- LOAD PASS -------- */
+(async function(){
+  const r = await fetch(`${API}?type=searchPass&query=${paymentId}`);
+  const rows = await r.json();
+  passData = rows[0];
+  participants = rows;
+  validatePass();
 })();
 
-function validate(){
-  const today=new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"});
-  todayKey=DAY_MAP[today];
+/* -------- STATUS LOGIC (4 CASES) -------- */
+function validatePass(){
+  const today = new Date().toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata"});
+  todayKey = DAY_MAP[today];
 
-  statusBox.className="status valid";
-  statusBox.textContent="✔ Pass validated";
+  if(!todayKey){
+    setStatus("Fest not started today", false);
+    return;
+  }
 
-  document.getElementById("passInfo").innerHTML=`
+  setStatus("Select an event to continue", null);
+
+  document.getElementById("passInfo").innerHTML = `
     <b>Payment ID:</b> ${passData["Payment ID"]}<br>
     <b>Pass Type:</b> ${passData["Pass Type"]}
   `;
 
   DAY_EVENTS[todayKey]?.forEach(e=>{
     const o=document.createElement("option");
-    o.value=e;o.textContent=e;
+    o.value=e; o.textContent=e;
     eventSelect.appendChild(o);
   });
 
-  eventSelect.onchange=renderParticipants;
+  eventSelect.onchange = renderParticipants;
 }
 
-/* ===== CORE LOGIC ===== */
-async function renderParticipants(){
-  participantsBox.innerHTML = "";
-  participantsBox.style.display = "none"; // 🔴 hide initially
-  submitBtn.disabled = true;
+function setStatus(text, valid){
+  statusBox.textContent = text;
+  statusBox.className = "status " + (
+    valid === true ? "valid" :
+    valid === false ? "invalid" : ""
+  );
+}
 
-  if (!eventSelect.value) return;
+/* -------- CORE LOGIC -------- */
+async function renderParticipants(){
+  participantsBox.innerHTML="";
+  participantsBox.style.display="none";
+  submitBtn.disabled=true;
+
+  if(!eventSelect.value){
+    setStatus("Select an event to continue", null);
+    return;
+  }
 
   const eventName = eventSelect.value;
 
+  setStatus("Ready for event entry", true);
+
   const regRes = await fetch(
-    `${API}?type=eventRegistrations&event=${encodeURIComponent(eventName)}&paymentId=${encodeURIComponent(paymentId)}`
+    `${API}?type=eventRegistrations&event=${encodeURIComponent(eventName)}&paymentId=${paymentId}`
   );
   const registrations = await regRes.json();
 
   const entryRes = await fetch(
-    `${API}?type=eventEntries&event=${encodeURIComponent(eventName)}&paymentId=${encodeURIComponent(paymentId)}`
+    `${API}?type=eventEntries&event=${encodeURIComponent(eventName)}&paymentId=${paymentId}`
   );
   const entries = await entryRes.json();
 
-  const registeredSet = new Set(
-    registrations.map(r => r.Name)
-  );
-
-  const enteredSet = new Set(
-    entries.map(e => e.Name)
-  );
+  const registeredSet = new Set(registrations.map(r=>r.Name));
+  const enteredSet = new Set(entries.map(e=>e.Name));
 
   drawSection(
     "REGISTERED",
-    participants.filter(p => registeredSet.has(p.Name)),
+    participants.filter(p=>registeredSet.has(p.Name)),
     enteredSet,
     "#00ffcc"
   );
 
   drawSection(
     "UNREGISTERED",
-    participants.filter(p => !registeredSet.has(p.Name)),
+    participants.filter(p=>!registeredSet.has(p.Name)),
     enteredSet,
     "#ff6b6b"
   );
 
-  // ✅ SHOW ONLY IF CONTENT EXISTS
-  if (participantsBox.children.length > 0) {
-    participantsBox.style.display = "block";
+  if(participantsBox.children.length){
+    participantsBox.style.display="block";
   }
 
   toggleBtn();
@@ -289,7 +303,6 @@ function drawSection(title,list,enteredSet,color){
   participantsBox.appendChild(box);
 }
 
-
 function buildRow(p,disabled){
   const row=document.createElement("div");
   row.className="participant"+(disabled?" disabled":"");
@@ -304,10 +317,11 @@ function buildRow(p,disabled){
 }
 
 function toggleBtn(){
-  submitBtn.disabled=!document.querySelectorAll("input:checked:not(:disabled)").length;
+  submitBtn.disabled = !document.querySelectorAll("input:checked:not(:disabled)").length;
 }
 
-submitBtn.onclick=async()=>{
+/* -------- SUBMIT -------- */
+submitBtn.onclick = async()=>{
   const sel=[...document.querySelectorAll("input:checked:not(:disabled)")];
   if(!sel.length) return;
 
@@ -333,8 +347,8 @@ submitBtn.onclick=async()=>{
   location.reload();
 };
 
-function goDashboard(){location.href="dashboard.html";}
-function goScanner(){location.href=`scan.html?scanner=${encodeURIComponent(scanner)}`;}
+function goDashboard(){ location.href="dashboard.html"; }
+function goScanner(){ location.href=`scan.html?scanner=${encodeURIComponent(scanner)}`; }
 </script>
 </body>
 </html>
