@@ -167,6 +167,22 @@ onAuthStateChanged(auth, async (user) => {
   const editActions = document.getElementById("editActions");
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
+const photoOverlay = document.querySelector(".photo-overlay");
+
+photoOverlay.onclick = () => {
+  if (!isEditing) {
+    showToast("Tap ✏️ to edit profile", "info");
+    return;
+  }
+
+  // reset editor state
+  scale = 1;
+  rotation = 0;
+  pos = { x: 0, y: 0 };
+
+  editor.classList.remove("hidden");
+  img.src = userPhoto.src;
+};
 
   /* Prefill */
   /* Prefill basic info */
@@ -410,11 +426,7 @@ let dragging = false;
 let start = { x: 0, y: 0 };
 
 /* OPEN EDITOR ONLY IN EDIT MODE */
-document.querySelector(".photo-overlay").onclick = () => {
-  if (!isEditing) return;
-  editor.classList.remove("hidden");
-  img.src = userPhoto.src;
-};
+
 
 img.onload = () => draw();
 
@@ -475,6 +487,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
