@@ -175,13 +175,18 @@ onAuthStateChanged(auth, async (user) => {
   const logoutMobile = document.getElementById("logoutMobile");
 const cameraBtn = document.getElementById("cameraBtn");
 
-cameraBtn.onclick = () => {
-  if (!isEditing) {
-    showToast("Tap ✏️ to edit profile first", "info");
-    return;
-  }
-  uploadPhotoInput.click(); // 🔥 open file picker
-};
+const cameraBtn = document.getElementById("cameraBtn");
+
+if (cameraBtn) {
+  cameraBtn.addEventListener("click", () => {
+    if (!isEditing) {
+      showToast("Tap ✏️ to edit profile first", "info");
+      return;
+    }
+    uploadPhotoInput.click(); // open file picker
+  });
+}
+
 
   /* Prefill */
   /* Prefill basic info */
@@ -588,3 +593,4 @@ document.getElementById("cancelCrop").onclick = () => {
   editor.classList.add("hidden");
   showToast("Photo edit cancelled", "info");
 };
+
