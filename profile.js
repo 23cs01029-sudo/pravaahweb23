@@ -399,6 +399,165 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
+/* ======================================================
+   PHOTO EDIT ENGINE — DRAG / ZOOM / ROTATE / SAVE
+====================================================== */
+
+let photoState = {
+  x: 0,
+  y: 0,
+  scale: 1,
+  rotate: 0
+};
+
+let start = { x: 0, y: 0 };
+let dragging = false;
+let originalPhotoState = null;
+
+/* Apply transform */
+function applyPhotoTransform(img) {
+  img.style.transform =
+    `translate(${photoState.x}px, ${photoState.y}px)
+     scale(${photoState.scale})
+     rotate(${photoState.rotate}deg)`;
+}
+
+/* Reset */
+function resetPhoto(img) {
+  photoState = { x: 0, y: 0, scale: 1, rotate: 0 };
+  syncControls();
+  applyPhotoTransform(img);
+}
+
+/* Sync sliders */
+function syncControls() {
+  zoomRange.value = photoState.scale;
+  rotateRange.value = photoState.rotate;
+  rotateInput.value = photoState.rotate;
+}
+
+/* Save transform to Sheet */
+async function savePhotoTransform(email) {
+  await fetch(scriptURL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({
+      type: "photoTransform",
+      email,
+      transform: photoState
+    })
+  });
+}
+
+/* Load transform from Sheet */
+async function loadPhotoTransform(email, img) {
+  const r = await fetch(
+    `${scriptURL}?type=photoTransform&email=${encodeURIComponent(email)}`
+  );
+  const t = await r.json();
+  if (t?.transform) {
+    photoState = t.transform;
+    syncControls();
+    applyPhotoTransform(img);
+  }
+}
+
+/* ======================================================
+   INIT AFTER AUTH
+====================================================== */
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return;
+
+  const img = document.getElementById("userPhoto");
+  const controls = document.getElementById("photoControls");
+
+  window.zoomRange = document.getElementById("zoomRange");
+  window.rotateRange = document.getElementById("rotateRange");
+  window.rotateInput = document.getElementById("rotateInput");
+  const resetBtn = document.getElementById("resetPhotoBtn");
+
+  /* Restore saved transform */
+  await loadPhotoTransform(user.email, img);
+
+  /* ===== DRAG (MOUSE + TOUCH) ===== */
+  const startDrag = (x, y) => {
+    dragging = true;
+    start.x = x - photoState.x;
+    start.y = y - photoState.y;
+    img.parentElement.classList.add("dragging");
+  };
+
+  const moveDrag = (x, y) => {
+    if (!dragging) return;
+    photoState.x = x - start.x;
+    photoState.y = y - start.y;
+    applyPhotoTransform(img);
+  };
+
+  const endDrag = () => {
+    dragging = false;
+    img.parentElement.classList.remove("dragging");
+  };
+
+  img.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY));
+  window.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
+  window.addEventListener("mouseup", endDrag);
+
+  img.addEventListener("touchstart", e => {
+    const t = e.touches[0];
+    startDrag(t.clientX, t.clientY);
+  });
+
+  img.addEventListener("touchmove", e => {
+    const t = e.touches[0];
+    moveDrag(t.clientX, t.clientY);
+  });
+
+  img.addEventListener("touchend", endDrag);
+
+  /* ===== ZOOM ===== */
+  zoomRange.oninput = () => {
+    photoState.scale = parseFloat(zoomRange.value);
+    applyPhotoTransform(img);
+  };
+
+  /* ===== ROTATE ===== */
+  rotateRange.oninput = () => {
+    photoState.rotate = parseInt(rotateRange.value);
+    rotateInput.value = photoState.rotate;
+    applyPhotoTransform(img);
+  };
+
+  rotateInput.oninput = () => {
+    photoState.rotate = parseInt(rotateInput.value || 0);
+    rotateRange.value = photoState.rotate;
+    applyPhotoTransform(img);
+  };
+
+  /* ===== RESET ===== */
+  resetBtn.onclick = () => resetPhoto(img);
+
+  /* ===== EDIT MODE SNAPSHOT ===== */
+  document.getElementById("editPen").addEventListener("click", () => {
+    originalPhotoState = JSON.parse(JSON.stringify(photoState));
+  });
+
+  /* ===== CANCEL ===== */
+  document.getElementById("cancelEditBtn").addEventListener("click", () => {
+    if (originalPhotoState) {
+      photoState = originalPhotoState;
+      syncControls();
+      applyPhotoTransform(img);
+    }
+  });
+
+  /* ===== SAVE ===== */
+  document.getElementById("saveProfileBtn").addEventListener("click", async () => {
+    await savePhotoTransform(user.email);
+  });
+});
+
 
 
 
