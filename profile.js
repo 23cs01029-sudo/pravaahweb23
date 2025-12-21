@@ -214,9 +214,13 @@ if (p?.email) {
     userPhoto.classList.add("has-photo");
 
     if (p.transform) {
-      applyTransform(userPhoto, p.transform);
-      photoTransform = p.transform;
-    }
+  applyTransform(userPhoto, p.transform);
+  photoTransform = p.transform;
+} else {
+  resetPhotoTransform(userPhoto);
+  photoTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
+}
+
   };
 }
 
@@ -596,12 +600,23 @@ document.getElementById("applyCrop").onclick = async () => {
 };
 function applyTransform(img, t) {
   if (!t) return;
-  img.style.transform = `
+
+  const wrapper = img.closest(".photo-wrapper");
+  if (!wrapper) return;
+
+  wrapper.style.transform = `
     translate(${t.x}px, ${t.y}px)
     scale(${t.zoom})
     rotate(${t.rotation}rad)
   `;
 }
+function resetPhotoTransform(img) {
+  const wrapper = img.closest(".photo-wrapper");
+  if (wrapper) {
+    wrapper.style.transform = "none";
+  }
+}
+
 document.getElementById("cancelCrop").onclick = () => {
   editor.classList.add("hidden");
   showToast("Photo edit cancelled", "info");
@@ -641,6 +656,7 @@ function openPhotoEditorFromExisting() {
 
   img.src = userPhoto.src;
 }
+
 
 
 
