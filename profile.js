@@ -32,6 +32,12 @@ function showToast(message, type = "info") {
 /* ---------- State ---------- */
 let isEditing = false;
 let originalProfile = { phone: "", college: "" };
+let photoTransform = {
+  x: 0,
+  y: 0,
+  zoom: 1,
+  rotation: 0
+};
 
 function setEditMode(on, ctx) {
   isEditing = on;
@@ -398,6 +404,163 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+
+const editor = document.getElementById("photoEditor");
+const canvas = document.getElementById("cropCanvas");
+const ctx = canvas.getContext("2d");
+
+const CIRCLE_RADIUS = canvas.width / 2;
+
+let img = new Image();
+img.crossOrigin = "anonymous";
+
+let scale = 1;
+let rotation = 0;
+let pos = { x: 0, y: 0 };
+let baseScale = 1;
+let imageReady = false;
+let dragging = false;
+let start = { x: 0, y: 0 };
+function getEffectiveSize() {
+  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
+  return {
+    w: rotated ? img.height : img.width,
+    h: rotated ? img.width : img.height
+  };
+}
+
+function computeBaseScale() {
+  const { w, h } = getEffectiveSize();
+  baseScale = Math.max(
+    (CIRCLE_RADIUS * 2) / w,
+    (CIRCLE_RADIUS * 2) / h
+  );
+}
+
+function clamp(val, min, max) {
+  return Math.max(min, Math.min(max, val));
+}
+
+function clampPosition() {
+  const { w, h } = getEffectiveSize();
+  const halfW = (w * baseScale * scale) / 2;
+  const halfH = (h * baseScale * scale) / 2;
+
+  pos.x = clamp(pos.x, -(halfW - CIRCLE_RADIUS), halfW - CIRCLE_RADIUS);
+  pos.y = clamp(pos.y, -(halfH - CIRCLE_RADIUS), halfH - CIRCLE_RADIUS);
+}
+function draw() {
+  if (!imageReady) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+
+  ctx.translate(canvas.width / 2 + pos.x, canvas.height / 2 + pos.y);
+  ctx.rotate(rotation);
+  ctx.scale(baseScale * scale, baseScale * scale);
+
+  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
+  const w = rotated ? img.height : img.width;
+  const h = rotated ? img.width : img.height;
+
+  ctx.drawImage(img, -w / 2, -h / 2, w, h);
+  ctx.restore();
+}
+canvas.onmousedown = e => {
+  dragging = true;
+  start = { x: e.offsetX - pos.x, y: e.offsetY - pos.y };
+};
+
+canvas.onmousemove = e => {
+  if (!dragging) return;
+  pos.x = e.offsetX - start.x;
+  pos.y = e.offsetY - start.y;
+  clampPosition();
+  draw();
+};
+
+canvas.onmouseup = () => dragging = false;
+
+let lastTouch = null;
+let pinchStartDist = 0;
+let pinchStartScale = 1;
+
+canvas.addEventListener("touchstart", e => {
+  if (e.touches.length === 1) {
+    lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }
+  if (e.touches.length === 2) {
+    pinchStartDist = getDistance(e.touches[0], e.touches[1]);
+    pinchStartScale = scale;
+    lastTouch = null;
+  }
+}, { passive: false });
+
+canvas.addEventListener("touchmove", e => {
+  e.preventDefault();
+
+  if (e.touches.length === 1 && lastTouch) {
+    pos.x += e.touches[0].clientX - lastTouch.x;
+    pos.y += e.touches[0].clientY - lastTouch.y;
+    lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    clampPosition();
+    draw();
+  }
+
+  if (e.touches.length === 2) {
+    const dist = getDistance(e.touches[0], e.touches[1]);
+    scale = Math.max(1, pinchStartScale * (dist / pinchStartDist));
+    clampPosition();
+    draw();
+  }
+}, { passive: false });
+
+function getDistance(t1, t2) {
+  return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+}
+document.getElementById("zoomSlider").oninput = e => {
+  scale = Math.max(1, Number(e.target.value));
+  clampPosition();
+  draw();
+};
+
+document.getElementById("rotateBtn").onclick = () => {
+  rotation = (rotation + Math.PI / 2) % (Math.PI * 2);
+  scale = 1;
+  pos = { x: 0, y: 0 };
+  computeBaseScale();
+  draw();
+};
+document.getElementById("applyCrop").onclick = async () => {
+  photoTransform = {
+    x: pos.x,
+    y: pos.y,
+    zoom: scale,
+    rotation
+  };
+
+  await saveProfileToSheet({
+    name: auth.currentUser.displayName,
+    email: auth.currentUser.email,
+    phone: document.getElementById("userPhone").value,
+    college: document.getElementById("userCollege").value,
+    photo: document.getElementById("userPhoto").src,
+    transform: photoTransform
+  });
+
+  applyTransform(document.getElementById("userPhoto"), photoTransform);
+
+  editor.classList.add("hidden");
+  showToast("Photo position saved!", "success");
+};
+function applyTransform(img, t) {
+  if (!t) return;
+  img.style.transform = `
+    translate(${t.x}px, ${t.y}px)
+    scale(${t.zoom})
+    rotate(${t.rotation}rad)
+  `;
+}
 
 
 
