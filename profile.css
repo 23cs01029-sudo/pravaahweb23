@@ -571,4 +571,61 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 .has-photo ~ .profile-photo-text {
   display: none !important;
 }
+/* ===== PHOTO EDITOR MODAL ===== */
+.editor {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.editor.hidden { display: none; }
+
+.editor-box {
+  background: #000;
+  padding: 20px;
+  border-radius: 20px;
+  border: 2px solid cyan;
+  text-align: center;
+  width: 320px;
+}
+
+.crop-area {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 10px auto;
+}
+
+#cropCanvas {
+  background: #111;
+  border-radius: 50%;
+}
+
+.crop-circle {
+  position: absolute;
+  inset: 0;
+  border: 2px solid cyan;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.editor-actions button {
+  flex: 1;
+  margin: 0 4px;
+  padding: 8px;
+  background: cyan;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
 
