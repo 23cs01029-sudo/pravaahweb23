@@ -601,21 +601,17 @@ document.getElementById("applyCrop").onclick = async () => {
 function applyTransform(img, t) {
   if (!t) return;
 
-  const wrapper = img.closest(".photo-wrapper");
-  if (!wrapper) return;
-
-  wrapper.style.transform = `
+  img.style.transform = `
     translate(${t.x}px, ${t.y}px)
     scale(${t.zoom})
     rotate(${t.rotation}rad)
   `;
 }
+
 function resetPhotoTransform(img) {
-  const wrapper = img.closest(".photo-wrapper");
-  if (wrapper) {
-    wrapper.style.transform = "none";
-  }
+  img.style.transform = "translate(0px, 0px) scale(1) rotate(0rad)";
 }
+
 
 document.getElementById("cancelCrop").onclick = () => {
   editor.classList.add("hidden");
@@ -656,6 +652,7 @@ function openPhotoEditorFromExisting() {
 
   img.src = userPhoto.src;
 }
+
 
 
 
