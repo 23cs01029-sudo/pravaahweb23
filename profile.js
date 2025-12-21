@@ -15,6 +15,20 @@ const DEBUG_PROFILE = true;
 const log = (...args) => {
   if (DEBUG_PROFILE) console.log("[PROFILE]", ...args);
 };
+function onPhotoReady(img, transform) {
+  img.classList.add("has-photo");
+
+  // 🔒 force layout sync before transform
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (transform) {
+        applyTransform(img, transform);
+      } else {
+        resetPhotoTransform(img);
+      }
+    });
+  });
+}
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -49,6 +63,13 @@ function setEditMode(on, ctx) {
 
   ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
   ctx.userPhoto.style.outlineOffset = "6px";
+}
+function loadUserPhoto(src, transform) {
+  const img = document.getElementById("userPhoto");
+
+  img.onload = null; // 🔒 clear old handlers
+  img.onload = () => onPhotoReady(img, transform);
+  img.src = src;
 }
 
 /* ---------- Save Profile ---------- */
@@ -157,272 +178,201 @@ qrBox.addEventListener("click", () => {
 
 /* ---------- Main ---------- */
 onAuthStateChanged(auth, async (user) => {
-  if (!user) return (window.location.href = "index.html");
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
 
-  const container = document.querySelector(".profile-container");
-  const userPhoto = document.getElementById("userPhoto");
+  /* ================= ELEMENTS ================= */
+  const container        = document.querySelector(".profile-container");
+  const userPhoto        = document.getElementById("userPhoto");
   const uploadPhotoInput = document.getElementById("uploadPhoto");
-  const uploadOptions = document.getElementById("uploadOptions");
-  const driveUploadBtn = document.getElementById("driveUploadBtn");
+  const uploadOptions    = document.getElementById("uploadOptions");
+  const driveUploadBtn   = document.getElementById("driveUploadBtn");
 
-  const userNameEl = document.getElementById("userName");
-  const userEmailEl = document.getElementById("userEmail");
-  const userPhoneInput = document.getElementById("userPhone");
-  const userCollegeInput = document.getElementById("userCollege");
-  const passesList = document.getElementById("passesList");
+  const userNameEl       = document.getElementById("userName");
+  const userEmailEl      = document.getElementById("userEmail");
+  const userPhoneInput  = document.getElementById("userPhone");
+  const userCollegeInput= document.getElementById("userCollege");
+  const passesList      = document.getElementById("passesList");
 
-  const editActions = document.getElementById("editActions");
-  const logoutDesktop = document.getElementById("logoutDesktop");
-  const logoutMobile = document.getElementById("logoutMobile");
-const cameraBtn = document.getElementById("cameraBtn");
+  const editActions     = document.getElementById("editActions");
+  const logoutDesktop   = document.getElementById("logoutDesktop");
+  const logoutMobile    = document.getElementById("logoutMobile");
+  const cameraBtn       = document.getElementById("cameraBtn");
 
-if (cameraBtn) {
-  cameraBtn.addEventListener("click", () => {
-    if (!isEditing) {
-      showToast("Tap ✏️ to edit profile first", "info");
-      return;
-    }
+  /* ================= BASIC PREFILL ================= */
+  userNameEl.textContent  = user.displayName || "PRAVAAH User";
+  userEmailEl.textContent = user.email;
 
-    openPhotoEditorFromExisting(); // ✅ ONLY opens editor
-  });
+  // default avatar (NO onload here)
+  if (!userPhoto.src || userPhoto.src.includes("default-avatar")) {
+  userPhoto.src = "default-avatar.png";
 }
 
+  /* ================= LOAD PROFILE FROM SHEET ================= */
+  let p = null;
+  try {
+    const res = await fetch(
+      `${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`
+    );
+    p = await res.json();
+  } catch (e) {
+    console.error("Profile fetch failed", e);
+  }
 
+  /* ================= APPLY PROFILE DATA ================= */
+  if (p?.email) {
+    userPhoneInput.value   = p.phone   || "";
+    userCollegeInput.value = p.college || "";
 
-  /* Prefill */
-  /* Prefill basic info */
-userNameEl.textContent = user.displayName || "PRAVAAH User";
-userEmailEl.textContent = user.email;
+    photoTransform = p.transform || { x: 0, y: 0, zoom: 1, rotation: 0 };
 
-/* Default photo first */
-userPhoto.src = "default-avatar.png";
-
-/* Load profile from Sheet */
-const res = await fetch(
-  `${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`
-);
-const p = await res.json();
-
-if (p?.email) {
-  userPhoneInput.value = p.phone || "";
-  userCollegeInput.value = p.college || "";
-
-  // ✅ Priority 1: Sheet photo (Drive)
-  if (p.photo) {
-  userPhoto.src = p.photo;
-
-  userPhoto.onload = () => {
-    userPhoto.classList.add("has-photo");
-
-    if (p.transform) {
-  applyTransform(userPhoto, p.transform);
-  photoTransform = p.transform;
-} else {
-  resetPhotoTransform(userPhoto);
-  photoTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
+    if (p.photo) {
+  loadUserPhoto(p.photo, photoTransform);
 }
-
-  };
-}
-
-}
-// ✅ Priority 2: Firebase photo
 else if (user.photoURL) {
-  userPhoto.src = user.photoURL;
+  loadUserPhoto(user.photoURL, null);
 }
+  } 
+  else if (user.photoURL) {
+    loadUserPhoto(user.photoURL, null);
+    userPhoto.src = user.photoURL;
+  }
 
-// Hide placeholder once image loads
-userPhoto.onload = () => {
-  userPhoto.classList.add("has-photo");
-};
-
-
-  const phoneSpan = ensureFieldSpan(userPhoneInput, "userPhoneText");
+  /* ================= FIELD SPANS ================= */
+  const phoneSpan   = ensureFieldSpan(userPhoneInput, "userPhoneText");
   const collegeSpan = ensureFieldSpan(userCollegeInput, "userCollegeText");
 
-  originalProfile = { phone: userPhoneInput.value, college: userCollegeInput.value };
-
-  /* Load passes */
-  const passes = await fetchUserPasses(user.email);
-  renderPasses(passes, passesList, user.email);
-
-  /* Edit toggle */
-  document.getElementById("editPen").onclick = () => {
-    originalProfile = { phone: userPhoneInput.value, college: userCollegeInput.value };
-    setEditMode(!isEditing, { container, uploadOptions, userPhoto, editActions });
+  originalProfile = {
+    phone: userPhoneInput.value,
+    college: userCollegeInput.value
   };
 
-  /* Save */
+  /* ================= LOAD PASSES ================= */
+  try {
+    const passes = await fetchUserPasses(user.email);
+    renderPasses(passes, passesList, user.email);
+  } catch (e) {
+    console.error("Pass fetch failed", e);
+  }
+
+  /* ================= EDIT TOGGLE ================= */
+  document.getElementById("editPen").onclick = () => {
+    originalProfile = {
+      phone: userPhoneInput.value,
+      college: userCollegeInput.value
+    };
+    setEditMode(!isEditing, {
+      container,
+      uploadOptions,
+      userPhoto,
+      editActions
+    });
+  };
+
+  /* ================= SAVE ================= */
   document.getElementById("saveProfileBtn").onclick = async () => {
     await saveProfileToSheet({
       name: user.displayName,
       email: user.email,
       phone: userPhoneInput.value,
       college: userCollegeInput.value,
-      photo: userPhoto.src
+      photo: userPhoto.src,
+      transform: photoTransform
     });
-    phoneSpan.textContent = userPhoneInput.value || "-";
+
+    phoneSpan.textContent   = userPhoneInput.value || "-";
     collegeSpan.textContent = userCollegeInput.value || "-";
+
     showToast("Profile updated!", "success");
-    setEditMode(false, { container, uploadOptions, userPhoto, editActions });
+    setEditMode(false, {
+      container,
+      uploadOptions,
+      userPhoto,
+      editActions
+    });
   };
 
-  /* Cancel */
+  /* ================= CANCEL ================= */
   document.getElementById("cancelEditBtn").onclick = () => {
-    userPhoneInput.value = originalProfile.phone;
+    userPhoneInput.value   = originalProfile.phone;
     userCollegeInput.value = originalProfile.college;
-    phoneSpan.textContent = originalProfile.phone || "-";
+
+    phoneSpan.textContent   = originalProfile.phone || "-";
     collegeSpan.textContent = originalProfile.college || "-";
-    setEditMode(false, { container, uploadOptions, userPhoto, editActions });
+
+    setEditMode(false, {
+      container,
+      uploadOptions,
+      userPhoto,
+      editActions
+    });
   };
 
-  /* -------- DEVICE PHOTO UPLOAD -------- */
+  /* ================= CAMERA BUTTON ================= */
+  if (cameraBtn) {
+    cameraBtn.onclick = () => {
+      if (!isEditing) {
+        showToast("Tap ✏️ to edit profile first", "info");
+        return;
+      }
+      openPhotoEditorFromExisting();
+    };
+  }
+
+  /* ================= DEVICE UPLOAD ================= */
   document.getElementById("deviceUploadBtn").onclick = () => {
-    if (!isEditing) return showToast("Tap ✏️ to edit", "info");
+    if (!isEditing) {
+      showToast("Tap ✏️ to edit", "info");
+      return;
+    }
     uploadPhotoInput.click();
   };
 
-  uploadPhotoInput.onchange = async (e) => {
-  log("Device upload triggered");
+  /* ================= DRIVE UPLOAD ================= */
+  driveUploadBtn.onclick = async () => {
+    if (!isEditing) {
+      showToast("Tap ✏️ to edit", "info");
+      return;
+    }
 
-  if (!e.target.files.length) {
-    log("No file selected");
-    return;
-  }
+    const link = prompt("Paste Google Drive image link");
+    if (!link) return;
 
-  const file = e.target.files[0];
-  log("File selected:", {
-    name: file.name,
-    size: file.size,
-    type: file.type
-  });
+    const match = link.match(/(?:id=|\/d\/)([-\w]{25,})/);
+    if (!match) {
+      showToast("Invalid Google Drive link", "error");
+      return;
+    }
 
-  const reader = new FileReader();
+    const cdnUrl = `https://lh3.googleusercontent.com/d/${match[1]}=w512-h512`;
 
- reader.onload = async () => {
-  log("Base64 generated");
+    loadUserPhoto(cdnUrl, photoTransform);
 
-  /* =================================================
-     1️⃣ LOAD IMAGE INTO EDITOR (CRITICAL FIX)
-  ================================================= */
-  img.onload = () => {
-    imageReady = true;
 
-    // reset editor state
-    rotation = 0;
-    scale = 1;
-    pos = { x: 0, y: 0 };
-
-    computeBaseScale();
-    draw();
-
-    // 🔥 OPEN PHOTO EDITOR
-    editor.classList.remove("hidden");
-  };
-
-  img.src = reader.result; // ❗ THIS LINE WAS MISSING
-
-  /* =================================================
-     2️⃣ PREVIEW ON PROFILE IMAGE
-  ================================================= */
-  userPhoto.src = reader.result;
-
-  /* =================================================
-     3️⃣ UPLOAD TO BACKEND
-  ================================================= */
-  const base64 = reader.result.split(",")[1];
-
-  const payload = {
-    type: "photoUpload",
-    email: user.email,
-    mimetype: file.type,
-    file: base64
-  };
-
-  try {
-    const r = await fetch(scriptURL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
+    await saveProfileToSheet({
+      name: user.displayName,
+      email: user.email,
+      phone: userPhoneInput.value,
+      college: userCollegeInput.value,
+      photo: cdnUrl,
+      transform: photoTransform
     });
 
-    const out = await r.json();
-
-    if (out.ok) {
-      const finalPhoto = out.photo + "&t=" + Date.now();
-
-      userPhoto.src = finalPhoto;
-
-
-      userPhoto.onload = () => {
-        userPhoto.classList.add("has-photo");
-      };
-
-      showToast("Adjust photo & click Done", "success");
-    } else {
-      showToast("Upload failed", "error");
-    }
-  } catch (err) {
-    console.error(err);
-    showToast("Upload error", "error");
-  }
-};
-
-
-
-  reader.readAsDataURL(file);
-};
-
-  /* -------- DRIVE PHOTO UPLOAD -------- */
-  driveUploadBtn.onclick = async () => {
-  if (!isEditing) return showToast("Tap ✏️ to edit", "info");
-
-  const link = prompt("Paste Google Drive image link");
-  if (!link) return;
-
-  // 🔍 Extract file ID from ANY Drive link format
-  const match = link.match(
-    /(?:id=|\/d\/)([-\w]{25,})/
-  );
-
-  if (!match) {
-    showToast("Invalid Google Drive link", "error");
-    return;
-  }
-
-  const fileId = match[1];
-
-  // ✅ Convert to IMAGE CDN (works everywhere)
-  const cdnUrl = `https://lh3.googleusercontent.com/d/${fileId}=w512-h512`;
-
-  // 1️⃣ Preview immediately
-  userPhoto.src = cdnUrl;
-
-  // 3️⃣ Save to Sheet
-  await saveProfileToSheet({
-    name: user.displayName,
-    email: user.email,
-    phone: userPhoneInput.value,
-    college: userCollegeInput.value,
-    photo: cdnUrl
-  });
-
-  userPhoto.onload = () => {
-    userPhoto.classList.add("has-photo");
+    showToast("Photo updated!", "success");
   };
 
-  showToast("Photo updated!", "success");
-};
-
-
-  /* Logout */
+  /* ================= LOGOUT ================= */
   const logout = async () => {
     await signOut(auth);
     window.location.href = "index.html";
   };
+
   logoutDesktop.onclick = logout;
-  logoutMobile.onclick = logout;
+  logoutMobile.onclick  = logout;
 });
+
 
 /* ---------- Toast CSS ---------- */
 const style = document.createElement("style");
@@ -651,15 +601,6 @@ function openPhotoEditorFromExisting() {
     editor.classList.remove("hidden");
   };
 
-  img.src = userPhoto.src;
+  img.src = userPhoto.src + "&editor=" + Date.now();
+
 }
-
-
-
-
-
-
-
-
-
-
