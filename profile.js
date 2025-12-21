@@ -447,14 +447,29 @@ let start = { x: 0, y: 0 };
 img.onload = () => draw();
 
 function draw() {
-  ctx.clearRect(0,0,260,260);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.save();
-  ctx.translate(130 + pos.x, 130 + pos.y);
+
+  ctx.translate(canvas.width / 2 + pos.x, canvas.height / 2 + pos.y);
   ctx.rotate(rotation);
   ctx.scale(scale, scale);
-  ctx.drawImage(img, -img.width/2, -img.height/2);
+
+  const ratio = Math.min(
+    canvas.width / img.width,
+    canvas.height / img.height
+  );
+
+  ctx.drawImage(
+    img,
+    -img.width * ratio / 2,
+    -img.height * ratio / 2,
+    img.width * ratio,
+    img.height * ratio
+  );
+
   ctx.restore();
 }
+
 
 /* DRAG */
 canvas.onmousedown = e => {
@@ -474,6 +489,57 @@ document.getElementById("zoomSlider").oninput = e => {
   scale = e.target.value;
   draw();
 };
+/* ===== TOUCH DRAG (MOBILE) ===== */
+let lastTouch = null;
+
+canvas.addEventListener("touchstart", e => {
+  if (e.touches.length === 1) {
+    const t = e.touches[0];
+    lastTouch = { x: t.clientX, y: t.clientY };
+  }
+}, { passive: false });
+
+canvas.addEventListener("touchmove", e => {
+  if (e.touches.length === 1 && lastTouch) {
+    e.preventDefault();
+    const t = e.touches[0];
+
+    pos.x += t.clientX - lastTouch.x;
+    pos.y += t.clientY - lastTouch.y;
+
+    lastTouch = { x: t.clientX, y: t.clientY };
+    draw();
+  }
+}, { passive: false });
+
+canvas.addEventListener("touchend", () => {
+  lastTouch = null;
+});
+/* ===== PINCH TO ZOOM ===== */
+let pinchStartDist = 0;
+let pinchStartScale = 1;
+
+function getDistance(t1, t2) {
+  const dx = t1.clientX - t2.clientX;
+  const dy = t1.clientY - t2.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+canvas.addEventListener("touchstart", e => {
+  if (e.touches.length === 2) {
+    pinchStartDist = getDistance(e.touches[0], e.touches[1]);
+    pinchStartScale = scale;
+  }
+}, { passive: false });
+
+canvas.addEventListener("touchmove", e => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dist = getDistance(e.touches[0], e.touches[1]);
+    scale = Math.min(4, Math.max(0.4, pinchStartScale * (dist / pinchStartDist)));
+    draw();
+  }
+}, { passive: false });
 
 /* ROTATE */
 document.getElementById("rotateBtn").onclick = () => {
@@ -524,6 +590,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
