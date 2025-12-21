@@ -533,6 +533,15 @@ canvas.addEventListener("touchstart", e => {
     lastTouch = null;
   }
 }, { passive: false });
+canvas.addEventListener("wheel", e => {
+  e.preventDefault(); // 🔒 stop browser zoom
+
+  const delta = -e.deltaY * 0.001;
+  scale = Math.max(1, scale + delta);
+
+  clampPosition();
+  draw();
+}, { passive: false });
 
 canvas.addEventListener("touchmove", e => {
   e.preventDefault();
@@ -638,6 +647,7 @@ function openPhotoEditorFromExisting() {
 
   img.src = userPhoto.src;
 }
+
 
 
 
