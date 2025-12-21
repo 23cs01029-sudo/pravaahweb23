@@ -679,15 +679,8 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   transform-origin: center center;
 }
 
-.photo-wrapper {
-  position: relative;
-  width: 150px;
-  height: 150px;
 
-  border-radius: 50%;
-  overflow: hidden;          /* 🔒 HARD CLIP — REQUIRED */
-  isolation: isolate;        /* 🔒 Prevent transform bleed */
-}
+
 
 
 
