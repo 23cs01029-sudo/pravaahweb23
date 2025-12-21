@@ -7,6 +7,12 @@ import { onAuthStateChanged, signOut, updateProfile } from
   "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
+let photoTransform = {
+  x: 0,
+  y: 0,
+  zoom: 1,
+  rotation: 0
+};
 
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "https://script.google.com/macros/s/AKfycbwjVgX_Ph43dN2JIMYhjxiOCgNY-HswrcRU8WO5DRc-oJo7mVKAjt-qjslf-9j5W4Ee/exec";
@@ -398,3 +404,196 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+/* ==========================================================
+   🖼️ PHOTO EDITOR LOGIC (MATCHES HTML + CSS)
+========================================================== */
+
+const editor = document.getElementById("photoEditor");
+const canvas = document.getElementById("cropCanvas");
+const ctx = canvas.getContext("2d");
+
+const CIRCLE_RADIUS = canvas.width / 2;
+
+let img = new Image();
+img.crossOrigin = "anonymous";
+
+let scale = 1;
+let rotation = 0; // radians
+let pos = { x: 0, y: 0 };
+let baseScale = 1;
+let dragging = false;
+let start = { x: 0, y: 0 };
+let imageReady = false;
+
+/* ---------- Helpers ---------- */
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
+function computeBaseScale() {
+  baseScale = Math.max(
+    (CIRCLE_RADIUS * 2) / img.width,
+    (CIRCLE_RADIUS * 2) / img.height
+  );
+}
+
+function clampPosition() {
+  const halfW = (img.width * baseScale * scale) / 2;
+  const halfH = (img.height * baseScale * scale) / 2;
+
+  pos.x = clamp(pos.x, -(halfW - CIRCLE_RADIUS), halfW - CIRCLE_RADIUS);
+  pos.y = clamp(pos.y, -(halfH - CIRCLE_RADIUS), halfH - CIRCLE_RADIUS);
+}
+
+/* ---------- Draw ---------- */
+function draw() {
+  if (!imageReady) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+
+  ctx.translate(canvas.width / 2 + pos.x, canvas.height / 2 + pos.y);
+  ctx.rotate(rotation);
+  ctx.scale(baseScale * scale, baseScale * scale);
+
+  ctx.drawImage(
+    img,
+    -img.width / 2,
+    -img.height / 2
+  );
+
+  ctx.restore();
+}
+
+/* ---------- Mouse Drag ---------- */
+canvas.onmousedown = e => {
+  dragging = true;
+  start = { x: e.offsetX - pos.x, y: e.offsetY - pos.y };
+};
+
+canvas.onmousemove = e => {
+  if (!dragging) return;
+  pos.x = e.offsetX - start.x;
+  pos.y = e.offsetY - start.y;
+  clampPosition();
+  draw();
+};
+
+canvas.onmouseup = () => dragging = false;
+
+/* ---------- Touch (Drag + Pinch) ---------- */
+let lastTouch = null;
+let pinchStartDist = 0;
+let pinchStartScale = 1;
+
+canvas.addEventListener("touchstart", e => {
+  if (e.touches.length === 1) {
+    lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }
+  if (e.touches.length === 2) {
+    pinchStartDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    pinchStartScale = scale;
+  }
+}, { passive: false });
+
+canvas.addEventListener("touchmove", e => {
+  e.preventDefault();
+
+  if (e.touches.length === 1 && lastTouch) {
+    pos.x += e.touches[0].clientX - lastTouch.x;
+    pos.y += e.touches[0].clientY - lastTouch.y;
+    lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    clampPosition();
+    draw();
+  }
+
+  if (e.touches.length === 2) {
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    scale = Math.max(1, pinchStartScale * (dist / pinchStartDist));
+    clampPosition();
+    draw();
+  }
+}, { passive: false });
+
+/* ---------- Zoom Slider ---------- */
+document.getElementById("zoomSlider").oninput = e => {
+  scale = Number(e.target.value);
+  clampPosition();
+  draw();
+};
+
+/* ---------- Rotate ---------- */
+document.getElementById("rotateBtn").onclick = () => {
+  rotation += Math.PI / 2;
+  draw();
+};
+
+/* ---------- Open Editor ---------- */
+document.getElementById("cameraBtn").onclick = () => {
+  if (!isEditing) return showToast("Tap ✏️ to edit first", "info");
+
+  img.onload = () => {
+    imageReady = true;
+
+    rotation = (photoTransform.rotation || 0) * Math.PI / 180;
+    scale = photoTransform.zoom || 1;
+    pos = {
+      x: photoTransform.x || 0,
+      y: photoTransform.y || 0
+    };
+
+    computeBaseScale();
+    clampPosition();
+    draw();
+
+    editor.classList.remove("hidden");
+  };
+
+  img.src = document.getElementById("userPhoto").src + "?t=" + Date.now();
+};
+
+/* ---------- Apply Crop ---------- */
+document.getElementById("applyCrop").onclick = async () => {
+  photoTransform = {
+    x: pos.x,
+    y: pos.y,
+    zoom: scale,
+    rotation: rotation * 180 / Math.PI
+  };
+
+  applyTransform(document.getElementById("userPhoto"), photoTransform);
+
+  await saveProfileToSheet({
+    name: auth.currentUser.displayName,
+    email: auth.currentUser.email,
+    phone: document.getElementById("userPhone").value,
+    college: document.getElementById("userCollege").value,
+    photo: document.getElementById("userPhoto").src,
+    transform: photoTransform
+  });
+
+  editor.classList.add("hidden");
+  showToast("Photo updated!", "success");
+};
+
+/* ---------- Cancel ---------- */
+document.getElementById("cancelCrop").onclick = () => {
+  editor.classList.add("hidden");
+};
+
+/* ---------- Apply Transform ---------- */
+function applyTransform(imgEl, t) {
+  imgEl.style.transform = `
+    translate(-50%, -50%)
+    translate(${t.x}px, ${t.y}px)
+    scale(${t.zoom})
+    rotate(${t.rotation}deg)
+  `;
+}
+
