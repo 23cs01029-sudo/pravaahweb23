@@ -398,6 +398,84 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
+const editor = document.getElementById("photoEditor");
+const canvas = document.getElementById("cropCanvas");
+const ctx = canvas.getContext("2d");
+
+let img = new Image();
+let scale = 1;
+let rotation = 0;
+let pos = { x: 0, y: 0 };
+let dragging = false;
+let start = { x: 0, y: 0 };
+
+/* OPEN EDITOR ONLY IN EDIT MODE */
+document.querySelector(".photo-overlay").onclick = () => {
+  if (!isEditing) return;
+  editor.classList.remove("hidden");
+  img.src = userPhoto.src;
+};
+
+img.onload = () => draw();
+
+function draw() {
+  ctx.clearRect(0,0,260,260);
+  ctx.save();
+  ctx.translate(130 + pos.x, 130 + pos.y);
+  ctx.rotate(rotation);
+  ctx.scale(scale, scale);
+  ctx.drawImage(img, -img.width/2, -img.height/2);
+  ctx.restore();
+}
+
+/* DRAG */
+canvas.onmousedown = e => {
+  dragging = true;
+  start = { x: e.offsetX - pos.x, y: e.offsetY - pos.y };
+};
+canvas.onmousemove = e => {
+  if (!dragging) return;
+  pos.x = e.offsetX - start.x;
+  pos.y = e.offsetY - start.y;
+  draw();
+};
+canvas.onmouseup = () => dragging = false;
+
+/* ZOOM */
+document.getElementById("zoomSlider").oninput = e => {
+  scale = e.target.value;
+  draw();
+};
+
+/* ROTATE */
+document.getElementById("rotateBtn").onclick = () => {
+  rotation += Math.PI / 2;
+  draw();
+};
+
+/* CANCEL */
+document.getElementById("cancelCrop").onclick = () => {
+  editor.classList.add("hidden");
+};
+
+/* APPLY */
+document.getElementById("applyCrop").onclick = async () => {
+  const final = canvas.toDataURL("image/png");
+  userPhoto.src = final;
+
+  await updateProfile(auth.currentUser, { photoURL: final });
+  await saveProfileToSheet({
+    name: auth.currentUser.displayName,
+    email: auth.currentUser.email,
+    phone: userPhoneInput.value,
+    college: userCollegeInput.value,
+    photo: final
+  });
+
+  editor.classList.add("hidden");
+  showToast("Photo updated!", "success");
+};
+
 
 
 
