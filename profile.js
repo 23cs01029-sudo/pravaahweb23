@@ -19,7 +19,10 @@ let userPhoto;
 let userPhoneInput;
 let userCollegeInput;
 let baseScale = 1;
-const CIRCLE_RADIUS = canvas.width / 2;
+document.addEventListener("mouseup", () => {
+  dragging = false;
+});
+
 
 async function fetchImageAsBase64(url) {
   const r = await fetch(
@@ -437,6 +440,9 @@ const editor = document.getElementById("photoEditor");
 const canvas = document.getElementById("cropCanvas");
 const ctx = canvas.getContext("2d");
 
+const CIRCLE_RADIUS = canvas.width / 2;
+
+
 let img = new Image();
 let scale = 1;
 let rotation = 0;
@@ -499,8 +505,11 @@ canvas.onmousemove = e => {
   pos.x = e.offsetX - start.x;
   pos.y = e.offsetY - start.y;
 
-  const maxX = (img.width * baseScale * scale) / 2 - CIRCLE_RADIUS;
-  const maxY = (img.height * baseScale * scale) / 2 - CIRCLE_RADIUS;
+  const halfW = (img.width * baseScale * scale) / 2;
+  const halfH = (img.height * baseScale * scale) / 2;
+
+  const maxX = Math.max(0, halfW - CIRCLE_RADIUS);
+  const maxY = Math.max(0, halfH - CIRCLE_RADIUS);
 
   pos.x = clamp(pos.x, -maxX, maxX);
   pos.y = clamp(pos.y, -maxY, maxY);
@@ -508,13 +517,15 @@ canvas.onmousemove = e => {
   draw();
 };
 
+
 canvas.onmouseup = () => dragging = false;
 
 /* ZOOM */
 document.getElementById("zoomSlider").oninput = e => {
-  scale = e.target.value;
+  scale = Math.max(1, Number(e.target.value));
   draw();
 };
+
 /* ===== TOUCH DRAG (MOBILE) ===== */
 let lastTouch = null;
 
@@ -538,29 +549,33 @@ canvas.addEventListener("touchmove", e => {
     e.preventDefault();
 
     const t = e.touches[0];
-
-    // movement delta (viewport based – stable)
     const dx = t.clientX - lastTouch.x;
     const dy = t.clientY - lastTouch.y;
 
     pos.x += dx;
     pos.y += dy;
 
-    // image half size after scale
     const halfW = (img.width * baseScale * scale) / 2;
     const halfH = (img.height * baseScale * scale) / 2;
 
-    // clamp limits (never negative)
     const maxX = Math.max(0, halfW - CIRCLE_RADIUS);
     const maxY = Math.max(0, halfH - CIRCLE_RADIUS);
 
     pos.x = clamp(pos.x, -maxX, maxX);
     pos.y = clamp(pos.y, -maxY, maxY);
 
-    lastTouch = {
-      x: t.clientX,
-      y: t.clientY
-    };
+    lastTouch = { x: t.clientX, y: t.clientY };
+    draw();
+  }
+
+  if (e.touches.length === 2) {
+    e.preventDefault();
+
+    const dist = getDistance(e.touches[0], e.touches[1]);
+    scale = Math.max(
+      1,
+      Math.min(4, pinchStartScale * (dist / pinchStartDist))
+    );
 
     draw();
   }
@@ -568,9 +583,14 @@ canvas.addEventListener("touchmove", e => {
 
 
 
-canvas.addEventListener("touchend", () => {
-  lastTouch = null;
+
+canvas.addEventListener("touchend", e => {
+  if (e.touches.length === 0) {
+    lastTouch = null;
+    pinchStartDist = 0;
+  }
 });
+
 /* ===== PINCH TO ZOOM ===== */
 let pinchStartDist = 0;
 let pinchStartScale = 1;
@@ -632,6 +652,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
