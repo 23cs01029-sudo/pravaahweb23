@@ -55,18 +55,12 @@ async function saveProfileToSheet(profile) {
     photo: profile.photo || "",
     transform: profile.transform || null,   // 🔥 ADD THIS
   });
+await fetch(scriptURL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: payload
+});
 
-
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon(scriptURL, new Blob([payload], { type: "text/plain" }));
-  } else {
-    await fetch(scriptURL, {
-      method: "POST",
-       mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: payload
-    });
-  }
 }
 
 /* ---------- Field Text ---------- */
@@ -634,5 +628,6 @@ function applyTransform(imgEl, t) {
     rotate(${t.rotation}deg)
   `;
 }
+
 
 
