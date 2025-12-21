@@ -208,8 +208,18 @@ if (p?.email) {
 
   // ✅ Priority 1: Sheet photo (Drive)
   if (p.photo) {
-    userPhoto.src = p.photo;
-  }
+  userPhoto.src = p.photo;
+
+  userPhoto.onload = () => {
+    userPhoto.classList.add("has-photo");
+
+    if (p.transform) {
+      applyTransform(userPhoto, p.transform);
+      photoTransform = p.transform;
+    }
+  };
+}
+
 }
 // ✅ Priority 2: Firebase photo
 else if (user.photoURL) {
@@ -593,4 +603,5 @@ document.getElementById("cancelCrop").onclick = () => {
   editor.classList.add("hidden");
   showToast("Photo edit cancelled", "info");
 };
+
 
