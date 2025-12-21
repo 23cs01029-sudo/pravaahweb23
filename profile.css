@@ -670,6 +670,10 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   overscroll-behavior: none;
 }
 
+.profile-photo img {
+  transform-origin: center center;
+}
+
 
 
 
