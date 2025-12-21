@@ -3,13 +3,13 @@
 ========================================================== */
 
 import { auth } from "./auth.js";
-import { onAuthStateChanged, signOut} from
+import { onAuthStateChanged, signOut, updateProfile } from
   "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbyjPQWJjyKc8En6Xz5jh9o1bcFOD8aHU3huf4jK1zEC0Hnwt52-g9x-GfEmBUPSDpsw9Q/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwjVgX_Ph43dN2JIMYhjxiOCgNY-HswrcRU8WO5DRc-oJo7mVKAjt-qjslf-9j5W4Ee/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -32,12 +32,6 @@ function showToast(message, type = "info") {
 /* ---------- State ---------- */
 let isEditing = false;
 let originalProfile = { phone: "", college: "" };
-let photoTransform = {
-  x: 0,
-  y: 0,
-  zoom: 1,
-  rotation: 0
-};
 
 function setEditMode(on, ctx) {
   isEditing = on;
@@ -58,8 +52,7 @@ async function saveProfileToSheet(profile) {
     email: profile.email || "",
     phone: profile.phone || "",
     college: profile.college || "",
-     photo: profile.photo || "",
-    transform: profile.transform || null
+    photo: profile.photo || ""
   });
 
   if (navigator.sendBeacon) {
@@ -174,20 +167,6 @@ onAuthStateChanged(auth, async (user) => {
   const editActions = document.getElementById("editActions");
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
-const cameraBtn = document.getElementById("cameraBtn");
-
-if (cameraBtn) {
-  cameraBtn.addEventListener("click", () => {
-    if (!isEditing) {
-      showToast("Tap ✏️ to edit profile first", "info");
-      return;
-    }
-
-    openPhotoEditorFromExisting(); // ✅ ONLY opens editor
-  });
-}
-
-
 
   /* Prefill */
   /* Prefill basic info */
@@ -209,22 +188,8 @@ if (p?.email) {
 
   // ✅ Priority 1: Sheet photo (Drive)
   if (p.photo) {
-  userPhoto.src = p.photo;
-
-  userPhoto.onload = () => {
-    userPhoto.classList.add("has-photo");
-
-    if (p.transform) {
-  applyTransform(userPhoto, p.transform);
-  photoTransform = p.transform;
-} else {
-  resetPhotoTransform(userPhoto);
-  photoTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
-}
-
-  };
-}
-
+    userPhoto.src = p.photo;
+  }
 }
 // ✅ Priority 2: Firebase photo
 else if (user.photoURL) {
@@ -299,37 +264,11 @@ userPhoto.onload = () => {
 
   const reader = new FileReader();
 
- reader.onload = async () => {
+  reader.onload = async () => {
   log("Base64 generated");
 
-  /* =================================================
-     1️⃣ LOAD IMAGE INTO EDITOR (CRITICAL FIX)
-  ================================================= */
-  img.onload = () => {
-    imageReady = true;
-
-    // reset editor state
-    rotation = 0;
-    scale = 1;
-    pos = { x: 0, y: 0 };
-
-    computeBaseScale();
-    draw();
-
-    // 🔥 OPEN PHOTO EDITOR
-    editor.classList.remove("hidden");
-  };
-
-  img.src = reader.result; // ❗ THIS LINE WAS MISSING
-
-  /* =================================================
-     2️⃣ PREVIEW ON PROFILE IMAGE
-  ================================================= */
   userPhoto.src = reader.result;
 
-  /* =================================================
-     3️⃣ UPLOAD TO BACKEND
-  ================================================= */
   const base64 = reader.result.split(",")[1];
 
   const payload = {
@@ -339,6 +278,12 @@ userPhoto.onload = () => {
     file: base64
   };
 
+  log("Upload payload summary:", {
+    email: payload.email,
+    mimetype: payload.mimetype,
+    base64Length: base64.length
+  });
+
   try {
     const r = await fetch(scriptURL, {
       method: "POST",
@@ -346,28 +291,37 @@ userPhoto.onload = () => {
       body: JSON.stringify(payload)
     });
 
+    log("Upload response status:", r.status);
+
     const out = await r.json();
+    log("Upload response JSON:", out);
+if (out.ok) {
+  // 🔥 Cache-busted URL so browser reloads image
+  const finalPhoto = out.photo + "&t=" + Date.now();
 
-    if (out.ok) {
-      const finalPhoto = out.photo + "&t=" + Date.now();
+  // 1️⃣ Update image immediately
+  userPhoto.src = finalPhoto;
 
-      userPhoto.src = finalPhoto;
+  // 2️⃣ Persist in Firebase (CRITICAL FIX)
+  await updateProfile(user, {
+    photoURL: finalPhoto
+  });
 
+  // 3️⃣ Hide placeholder text once image loads
+  userPhoto.onload = () => {
+    userPhoto.classList.add("has-photo");
+  };
 
-      userPhoto.onload = () => {
-        userPhoto.classList.add("has-photo");
-      };
-
-      showToast("Adjust photo & click Done", "success");
-    } else {
+  showToast("Photo updated!", "success");
+}
+else {
       showToast("Upload failed", "error");
     }
   } catch (err) {
-    console.error(err);
+    console.error("UPLOAD ERROR:", err);
     showToast("Upload error", "error");
   }
 };
-
 
 
   reader.readAsDataURL(file);
@@ -397,6 +351,9 @@ userPhoto.onload = () => {
 
   // 1️⃣ Preview immediately
   userPhoto.src = cdnUrl;
+
+  // 2️⃣ Save to Firebase (important)
+  await updateProfile(user, { photoURL: cdnUrl });
 
   // 3️⃣ Save to Sheet
   await saveProfileToSheet({
@@ -441,215 +398,3 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
-
-const editor = document.getElementById("photoEditor");
-const canvas = document.getElementById("cropCanvas");
-const ctx = canvas.getContext("2d");
-
-const CIRCLE_RADIUS = canvas.width / 2;
-
-let img = new Image();
-img.crossOrigin = "anonymous";
-
-let scale = 1;
-let rotation = 0;
-let pos = { x: 0, y: 0 };
-let baseScale = 1;
-let imageReady = false;
-let dragging = false;
-let start = { x: 0, y: 0 };
-function getEffectiveSize() {
-  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
-  return {
-    w: rotated ? img.height : img.width,
-    h: rotated ? img.width : img.height
-  };
-}
-
-function computeBaseScale() {
-  const { w, h } = getEffectiveSize();
-  baseScale = Math.max(
-    (CIRCLE_RADIUS * 2) / w,
-    (CIRCLE_RADIUS * 2) / h
-  );
-}
-
-function clamp(val, min, max) {
-  return Math.max(min, Math.min(max, val));
-}
-
-function clampPosition() {
-  const { w, h } = getEffectiveSize();
-  const halfW = (w * baseScale * scale) / 2;
-  const halfH = (h * baseScale * scale) / 2;
-
-  pos.x = clamp(pos.x, -(halfW - CIRCLE_RADIUS), halfW - CIRCLE_RADIUS);
-  pos.y = clamp(pos.y, -(halfH - CIRCLE_RADIUS), halfH - CIRCLE_RADIUS);
-}
-function draw() {
-  if (!imageReady) return;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.save();
-
-  ctx.translate(canvas.width / 2 + pos.x, canvas.height / 2 + pos.y);
-  ctx.rotate(rotation);
-  ctx.scale(baseScale * scale, baseScale * scale);
-
-  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
-  const w = rotated ? img.height : img.width;
-  const h = rotated ? img.width : img.height;
-
-  ctx.drawImage(img, -w / 2, -h / 2, w, h);
-  ctx.restore();
-}
-canvas.onmousedown = e => {
-  dragging = true;
-  start = { x: e.offsetX - pos.x, y: e.offsetY - pos.y };
-};
-
-canvas.onmousemove = e => {
-  if (!dragging) return;
-  pos.x = e.offsetX - start.x;
-  pos.y = e.offsetY - start.y;
-  clampPosition();
-  draw();
-};
-
-canvas.onmouseup = () => dragging = false;
-
-let lastTouch = null;
-let pinchStartDist = 0;
-let pinchStartScale = 1;
-
-canvas.addEventListener("touchstart", e => {
-  if (e.touches.length === 1) {
-    lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  }
-  if (e.touches.length === 2) {
-    pinchStartDist = getDistance(e.touches[0], e.touches[1]);
-    pinchStartScale = scale;
-    lastTouch = null;
-  }
-}, { passive: false });
-canvas.addEventListener("wheel", e => {
-  e.preventDefault(); // 🔒 stop browser zoom
-
-  const delta = -e.deltaY * 0.001;
-  scale = Math.max(1, scale + delta);
-
-  clampPosition();
-  draw();
-}, { passive: false });
-
-canvas.addEventListener("touchmove", e => {
-  e.preventDefault();
-
-  if (e.touches.length === 1 && lastTouch) {
-    pos.x += e.touches[0].clientX - lastTouch.x;
-    pos.y += e.touches[0].clientY - lastTouch.y;
-    lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    clampPosition();
-    draw();
-  }
-
-  if (e.touches.length === 2) {
-    const dist = getDistance(e.touches[0], e.touches[1]);
-    scale = Math.max(1, pinchStartScale * (dist / pinchStartDist));
-    clampPosition();
-    draw();
-  }
-}, { passive: false });
-
-function getDistance(t1, t2) {
-  return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
-}
-document.getElementById("zoomSlider").oninput = e => {
-  scale = Math.max(1, Number(e.target.value));
-  clampPosition();
-  draw();
-};
-
-document.getElementById("rotateBtn").onclick = () => {
-  rotation = (rotation + Math.PI / 2) % (Math.PI * 2);
-  scale = 1;
-  pos = { x: 0, y: 0 };
-  computeBaseScale();
-  draw();
-};
-document.getElementById("applyCrop").onclick = async () => {
-  photoTransform = {
-    x: pos.x,
-    y: pos.y,
-    zoom: scale,
-    rotation
-  };
-
-  await saveProfileToSheet({
-    name: auth.currentUser.displayName,
-    email: auth.currentUser.email,
-    phone: document.getElementById("userPhone").value,
-    college: document.getElementById("userCollege").value,
-    photo: document.getElementById("userPhoto").src,
-    transform: photoTransform
-  });
-
-  applyTransform(document.getElementById("userPhoto"), photoTransform);
-
-  editor.classList.add("hidden");
-  showToast("Photo position saved!", "success");
-};
-function applyTransform(img, t) {
-  if (!t) return;
-
-  img.style.transform = `
-    translate(${t.x}px, ${t.y}px)
-    scale(${t.zoom})
-    rotate(${t.rotation}rad)
-  `;
-}
-
-function resetPhotoTransform(img) {
-  img.style.transform = "translate(0px, 0px) scale(1) rotate(0rad)";
-}
-
-
-document.getElementById("cancelCrop").onclick = () => {
-  editor.classList.add("hidden");
-  showToast("Photo edit cancelled", "info");
-};
-function openPhotoEditorFromExisting() {
-  // 🚫 No photo → do nothing
-  if (!userPhoto.src || userPhoto.src.includes("default-avatar")) {
-    showToast("Upload a photo first", "info");
-    return;
-  }
-
-  img.onload = () => {
-    imageReady = true;
-
-    // ✅ If transform exists → reuse
-    if (photoTransform && Object.keys(photoTransform).length) {
-      rotation = photoTransform.rotation || 0;
-      scale    = photoTransform.zoom || 1;
-      pos = {
-        x: photoTransform.x || 0,
-        y: photoTransform.y || 0
-      };
-    }
-    // ✅ Else → fresh zero editor
-    else {
-      rotation = 0;
-      scale = 1;
-      pos = { x: 0, y: 0 };
-    }
-
-    computeBaseScale();
-    clampPosition();
-    draw();
-
-    editor.classList.remove("hidden");
-  };
-
-  img.src = userPhoto.src;
-}
