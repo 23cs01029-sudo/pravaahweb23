@@ -224,6 +224,26 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
 
 </div>
+<script type="module">
+  import { getAuth, signOut } from
+    "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  const auth = getAuth();
+
+  const logoutDesktop = document.getElementById("logoutDesktop");
+  const logoutMobile = document.getElementById("logoutMobile");
+
+  function logoutUser() {
+    signOut(auth)
+      .then(() => {
+        window.location.href = "index.html";
+      })
+      .catch(err => console.error("Logout error:", err));
+  }
+
+  logoutDesktop?.addEventListener("click", logoutUser);
+  logoutMobile?.addEventListener("click", logoutUser);
+</script>
 
 </body>
 </html>
