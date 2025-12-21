@@ -9,28 +9,12 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbwC8l6uD6DL9bp6tVSFUgd5-i2e46yG3z51mx1vF4r9WR-s-u39Bvqk7PJh1b3YFv2EmQ/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwjVgX_Ph43dN2JIMYhjxiOCgNY-HswrcRU8WO5DRc-oJo7mVKAjt-qjslf-9j5W4Ee/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
   if (DEBUG_PROFILE) console.log("[PROFILE]", ...args);
 };
-let userPhoto;
-let userPhoneInput;
-let userCollegeInput;
-let baseScale = 1;
-let imageReady = false;
-
-
-
-async function fetchImageAsBase64(url) {
-  const r = await fetch(
-    `${scriptURL}?type=imageToBase64&url=${encodeURIComponent(url)}`
-  );
-  const j = await r.json();
-  if (!j.ok) throw new Error("Image fetch failed");
-  return j.base64;
-}
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -163,53 +147,26 @@ qrBox.addEventListener("click", () => {
 
   });
 }
-window.addEventListener("wheel", e => {
-  if (e.ctrlKey) e.preventDefault();
-}, { passive: false });
 
 /* ---------- Main ---------- */
 onAuthStateChanged(auth, async (user) => {
   if (!user) return (window.location.href = "index.html");
 
   const container = document.querySelector(".profile-container");
-  userPhoto = document.getElementById("userPhoto");
+  const userPhoto = document.getElementById("userPhoto");
   const uploadPhotoInput = document.getElementById("uploadPhoto");
   const uploadOptions = document.getElementById("uploadOptions");
   const driveUploadBtn = document.getElementById("driveUploadBtn");
 
   const userNameEl = document.getElementById("userName");
   const userEmailEl = document.getElementById("userEmail");
-  userPhoneInput = document.getElementById("userPhone");
-  userCollegeInput = document.getElementById("userCollege");
+  const userPhoneInput = document.getElementById("userPhone");
+  const userCollegeInput = document.getElementById("userCollege");
   const passesList = document.getElementById("passesList");
 
   const editActions = document.getElementById("editActions");
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
-const photoOverlay = document.querySelector(".photo-overlay");
-
-photoOverlay.onclick = async () => {
-  if (!isEditing) {
-    showToast("Tap ✏️ to edit profile", "info");
-    return;
-  }
-
-  imageReady = false;
-
-  editor.classList.remove("hidden");
-
-  try {
-    const base64 = await fetchImageAsBase64(userPhoto.src);
-    img.src = base64;
-  } catch (err) {
-    console.error(err);
-    showToast("Unable to load image editor", "error");
-    editor.classList.add("hidden");
-  }
-};
-
-
-
 
   /* Prefill */
   /* Prefill basic info */
@@ -441,277 +398,6 @@ style.innerHTML = `
 .toast.info { border-color: cyan; color: cyan; }
 `;
 document.head.appendChild(style);
-const editor = document.getElementById("photoEditor");
-const canvas = document.getElementById("cropCanvas");
-const ctx = canvas.getContext("2d");
-
-const CIRCLE_RADIUS = canvas.width / 2;
-
-
-let img = new Image();
-img.crossOrigin = "anonymous";
-
-let scale = 1;
-let rotation = 0;
-let pos = { x: 0, y: 0 };
-let dragging = false;
-document.addEventListener("mouseup", () => {
-  dragging = false;
-})
-let start = { x: 0, y: 0 };
-function getEffectiveSize() {
-  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
-
-  return {
-    w: rotated ? img.height : img.width,
-    h: rotated ? img.width  : img.height
-  };
-}
-
-/* OPEN EDITOR ONLY IN EDIT MODE */
-function computeBaseScale() {
-  const { w, h } = getEffectiveSize();
-
-  baseScale = Math.max(
-    (CIRCLE_RADIUS * 2) / w,
-    (CIRCLE_RADIUS * 2) / h
-  );
-}
-
-
-
-img.onload = () => {
-  imageReady = true;
-
-  rotation = 0;
-  scale = 1;
-  pos = { x: 0, y: 0 };
-
-  computeBaseScale();
-  draw();
-};
-
-img.onerror = () => {
-  imageReady = false;
-  showToast("Failed to load image", "error");
-};
-
-
-function clamp(val, min, max) {
-  return Math.max(min, Math.min(max, val));
-}
-
-function clampPosition() {
-  const { w, h } = getEffectiveSize();
-
-  const halfW = (w * baseScale * scale) / 2;
-  const halfH = (h * baseScale * scale) / 2;
-
-  const maxX = Math.max(0, halfW - CIRCLE_RADIUS);
-  const maxY = Math.max(0, halfH - CIRCLE_RADIUS);
-
-  pos.x = clamp(pos.x, -maxX, maxX);
-  pos.y = clamp(pos.y, -maxY, maxY);
-}
-
-
-function draw() {
-  if (!imageReady) return;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.save();
-
-  ctx.translate(
-    canvas.width / 2 + pos.x,
-    canvas.height / 2 + pos.y
-  );
-
-  ctx.rotate(rotation);
-
-  const finalScale = baseScale * scale;
-  ctx.scale(finalScale, finalScale);
-
-  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
-  const drawW = rotated ? img.height : img.width;
-  const drawH = rotated ? img.width  : img.height;
-
-  ctx.drawImage(
-    img,
-    -drawW / 2,
-    -drawH / 2,
-    drawW,
-    drawH
-  );
-
-  ctx.restore();
-}
-
-
-
-
-/* DRAG */
-canvas.onmousedown = e => {
-  dragging = true;
-  start = { x: e.offsetX - pos.x, y: e.offsetY - pos.y };
-};
-canvas.onmousemove = e => {
-  if (!dragging) return;
-
-  pos.x = e.offsetX - start.x;
-  pos.y = e.offsetY - start.y;
-
-  clampPosition();
-  draw();
-};
-
-
-
-canvas.onmouseup = () => dragging = false;
-
-/* ZOOM */
-document.getElementById("zoomSlider").oninput = e => {
-  scale = Math.max(1, Number(e.target.value));
-
-  clampPosition();
-  draw();
-};
-
-
-/* ===== TOUCH DRAG (MOBILE) ===== */
-let lastTouch = null;
-
-/* ===== TOUCH START (DRAG + PINCH) ===== */
-canvas.addEventListener("touchstart", e => {
-  if (e.touches.length === 1) {
-    const t = e.touches[0];
-    lastTouch = { x: t.clientX, y: t.clientY };
-  }
-
-  if (e.touches.length === 2) {
-    pinchStartDist = getDistance(e.touches[0], e.touches[1]);
-    pinchStartScale = scale;
-    lastTouch = null; // disable drag during pinch
-  }
-}, { passive: false });
-
-
-canvas.addEventListener("touchmove", e => {
-  e.preventDefault();
-
-  if (e.touches.length === 1 && lastTouch) {
-    const t = e.touches[0];
-    pos.x += t.clientX - lastTouch.x;
-    pos.y += t.clientY - lastTouch.y;
-
-    lastTouch = { x: t.clientX, y: t.clientY };
-
-    clampPosition();
-    draw();
-  }
-
-  if (e.touches.length === 2) {
-    const dist = getDistance(e.touches[0], e.touches[1]);
-    scale = Math.max(1, Math.min(4, pinchStartScale * (dist / pinchStartDist)));
-
-    clampPosition();
-    draw();
-  }
-}, { passive: false });
-
-
-
-
-
-canvas.addEventListener("touchend", e => {
-  if (e.touches.length === 0) {
-    lastTouch = null;
-    pinchStartDist = 0;
-  }
-});
-
-/* ===== PINCH TO ZOOM ===== */
-let pinchStartDist = 0;
-let pinchStartScale = 1;
-
-function getDistance(t1, t2) {
-  const dx = t1.clientX - t2.clientX;
-  const dy = t1.clientY - t2.clientY;
-  return Math.sqrt(dx * dx + dy * dy);
-}
-
-
-
-/* ROTATE */
-document.getElementById("rotateBtn").onclick = () => {
-  rotation = (rotation + Math.PI / 2) % (Math.PI * 2);
-
-  scale = 1;
-  pos = { x: 0, y: 0 };
-
-  computeBaseScale();
-  clampPosition();
-  draw();
-};
-
-
-
-/* CANCEL */
-document.getElementById("cancelCrop").onclick = () => {
-  editor.classList.add("hidden");
-};
-
-/* APPLY */
-document.getElementById("applyCrop").onclick = async () => {
-  const base64 = canvas.toDataURL("image/png").split(",")[1];
-
-  const r = await fetch(scriptURL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({
-      type: "saveFinalPhoto",
-      base64
-    })
-  });
-
-  const out = await r.json();
-  if (!out.ok) {
-    showToast("Save failed", "error");
-    return;
-  }
-
-  const cdnUrl = out.url + "&t=" + Date.now();
-
-  userPhoto.src = cdnUrl;
-
-  await updateProfile(auth.currentUser, {
-    photoURL: cdnUrl
-  });
-
-  await saveProfileToSheet({
-    name: auth.currentUser.displayName,
-    email: auth.currentUser.email,
-    phone: userPhoneInput.value,
-    college: userCollegeInput.value,
-    photo: cdnUrl
-  });
-
-  editor.classList.add("hidden");
-  showToast("Photo updated!", "success");
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
