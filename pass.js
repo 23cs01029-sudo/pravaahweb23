@@ -603,6 +603,38 @@ payBtn.addEventListener("click", async () => {
         }
 
         window.location.replace("payment_success.html");
+        import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+const auth = getAuth();
+const user = auth.currentUser;
+
+if (user && user.email) {
+  const loggedEmail = user.email.toLowerCase().trim();
+  const loggedName = (user.displayName || "").toLowerCase().trim();
+
+  // 🔍 STRICT MATCH: name + email
+  const matchedParticipant = participants.find(p =>
+    p.email &&
+    p.name &&
+    p.email.toLowerCase().trim() === loggedEmail &&
+    p.name.toLowerCase().trim() === loggedName
+  );
+
+  // ✅ Update profile ONLY if match found
+  if (matchedParticipant) {
+    await fetch(scriptURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: matchedParticipant.email,
+        name: matchedParticipant.name,
+        phone: matchedParticipant.phone,
+        college: matchedParticipant.college
+      })
+    });
+  }
+}
+
       } catch (e) {
         console.error(e);
         alert("Payment succeeded but saving failed. Contact support.");
@@ -625,6 +657,7 @@ payBtn.addEventListener("click", async () => {
 
   rzp.open();
 });
+
 
 
 
