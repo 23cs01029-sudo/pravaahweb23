@@ -75,7 +75,9 @@ body {
   width: 150px;                 /* ↓ smaller avatar */
   height: 150px;
   display: block;
-  margin: 0 auto;               /* ✅ perfect centering */
+  margin: 0 auto; 
+  overflow: hidden;      /* 🔥 REQUIRED */
+  isolation: isolate; /* ✅ perfect centering */
 }
 
 .photo-wrapper::before {
@@ -110,7 +112,6 @@ body {
 }
 
 
-.profile-photo img:hover { transform: scale(1.03); }
 
 /* CAMERA OVERLAY */
 .photo-overlay {
@@ -678,6 +679,7 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 .profile-photo img {
   transform-origin: center center;
 }
+
 
 
 
