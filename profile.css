@@ -1312,6 +1312,18 @@ body.is-photo-editing {
   touch-action: none;
   overscroll-behavior: contain;
 }
+.photo-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* ONLY visible in edit mode */
+.is-edit .photo-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 
 
 
