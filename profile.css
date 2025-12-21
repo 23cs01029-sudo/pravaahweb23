@@ -656,6 +656,10 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   pointer-events: auto;
   cursor: pointer;
 }
+#cropCanvas {
+  touch-action: none;
+}
+
 
 
 
