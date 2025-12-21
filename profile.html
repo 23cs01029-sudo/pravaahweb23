@@ -67,16 +67,20 @@
         <!-- 🖼️ PHOTO AREA -->
         <div class="profile-photo" id="photoArea">
           <div class="photo-wrapper">
-            <img id="userPhoto" src="default-avatar.png" alt="Profile Photo" />
-            <div class="photo-overlay" id="photoEditBtn" title="Edit photo">
-  <i class="fa-solid fa-camera"></i>
+  <img id="userPhoto" src="default-avatar.png" alt="Profile Photo" />
+
+  <!-- ✅ ADD THIS -->
+  <div class="crop-ring"></div>
+
+  <div class="photo-overlay" id="photoEditBtn" title="Edit photo">
+    <i class="fa-solid fa-camera"></i>
+  </div>
+
+  <button id="editPen" class="edit-pen" title="Edit profile">
+    <i class="fa-solid fa-pen"></i>
+  </button>
 </div>
 
-
-            <button id="editPen" class="edit-pen" title="Edit profile">
-              <i class="fa-solid fa-pen"></i>
-            </button>
-          </div>
 
           <input type="file" id="uploadPhoto" accept="image/*" hidden />
 
