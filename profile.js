@@ -452,18 +452,28 @@ document.addEventListener("mouseup", () => {
 let start = { x: 0, y: 0 };
 
 /* OPEN EDITOR ONLY IN EDIT MODE */
+function computeBaseScale() {
+  const rotated = Math.abs(rotation / (Math.PI / 2)) % 2 === 1;
+
+  const w = rotated ? img.height : img.width;
+  const h = rotated ? img.width  : img.height;
+
+  baseScale = Math.max(
+    (CIRCLE_RADIUS * 2) / w,
+    (CIRCLE_RADIUS * 2) / h
+  );
+}
 
 
 img.onload = () => {
-  baseScale = Math.max(
-    (CIRCLE_RADIUS * 2) / img.width,
-    (CIRCLE_RADIUS * 2) / img.height
-  );
-
-  scale = 1; // relative scale
+  rotation = 0;
+  scale = 1;
   pos = { x: 0, y: 0 };
+
+  computeBaseScale();
   draw();
 };
+
 function clamp(val, min, max) {
   return Math.max(min, Math.min(max, val));
 }
@@ -617,12 +627,15 @@ function getDistance(t1, t2) {
 
 /* ROTATE */
 document.getElementById("rotateBtn").onclick = () => {
-  rotation += Math.PI / 2;
-pos = { x: 0, y: 0 }; // reset position to keep circle safe
-draw();
+  rotation = (rotation + Math.PI / 2) % (Math.PI * 2);
 
+  scale = 1;              // reset relative zoom
+  pos = { x: 0, y: 0 };   // center image
+
+  computeBaseScale();     // 🔥 IMPORTANT
   draw();
 };
+
 
 /* CANCEL */
 document.getElementById("cancelCrop").onclick = () => {
@@ -667,6 +680,7 @@ document.getElementById("applyCrop").onclick = async () => {
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
 
 
 
