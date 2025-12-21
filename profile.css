@@ -76,8 +76,6 @@ body {
   height: 150px;
   display: block;
   margin: 0 auto; 
-  overflow: hidden;      /* 🔥 REQUIRED */
-  isolation: isolate; /* ✅ perfect centering */
 }
 
 .photo-wrapper::before {
@@ -679,6 +677,7 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 .profile-photo img {
   transform-origin: center center;
 }
+
 
 
 
