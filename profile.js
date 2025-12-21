@@ -52,8 +52,10 @@ async function saveProfileToSheet(profile) {
     email: profile.email || "",
     phone: profile.phone || "",
     college: profile.college || "",
-    photo: profile.photo || ""
+    photo: profile.photo || "",
+    transform: profile.transform || null,   // 🔥 ADD THIS
   });
+
 
   if (navigator.sendBeacon) {
     navigator.sendBeacon(scriptURL, new Blob([payload], { type: "text/plain" }));
@@ -229,27 +231,40 @@ userPhoto.onload = () => {
   document.getElementById("saveProfileBtn").onclick = async () => {
     // ✅ If photo editor was used, commit preview + transform
 if (previewPhotoSrc && pendingTransform) {
+
+  // ✅ upload FINAL cropped image to backend
+  const r = await fetch(scriptURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "saveFinalPhoto",
+      base64: previewPhotoSrc.split(",")[1]
+    })
+  });
+
+  const out = await r.json();
+
+  if (!out.ok) {
+    showToast("Photo save failed", "error");
+    return;
+  }
+
+  const finalPhotoUrl = out.url;
+
   await saveProfileToSheet({
     name: user.displayName,
     email: user.email,
     phone: userPhoneInput.value,
     college: userCollegeInput.value,
-    photo: previewPhotoSrc,
-    transform: pendingTransform
+    photo: finalPhotoUrl,          // ✅ CDN URL
+    transform: pendingTransform    // ✅ transform saved
   });
+
+  await updateProfile(user, { photoURL: finalPhotoUrl });
 
   photoTransform = pendingTransform;
   previewPhotoSrc = null;
   pendingTransform = null;
-} else {
-  // Normal save
-  await saveProfileToSheet({
-    name: user.displayName,
-    email: user.email,
-    phone: userPhoneInput.value,
-    college: userCollegeInput.value,
-    photo: userPhoto.src
-  });
 }
 
     phoneSpan.textContent = userPhoneInput.value || "-";
@@ -619,4 +634,5 @@ function applyTransform(imgEl, t) {
     rotate(${t.rotation}deg)
   `;
 }
+
 
