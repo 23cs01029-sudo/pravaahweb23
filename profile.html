@@ -67,20 +67,14 @@
         <!-- 🖼️ PHOTO AREA -->
         <div class="profile-photo" id="photoArea">
           <div class="photo-wrapper">
-  <img id="userPhoto" src="default-avatar.png" alt="Profile Photo" />
-
-  <!-- ✅ ADD THIS -->
-  <div class="crop-ring"></div>
-
-  <div class="photo-overlay" id="photoEditBtn" title="Edit photo">
-    <i class="fa-solid fa-camera"></i>
-  </div>
-
-  <button id="editPen" class="edit-pen" title="Edit profile">
-    <i class="fa-solid fa-pen"></i>
-  </button>
-</div>
-
+            <img id="userPhoto" src="default-avatar.png" alt="Profile Photo" />
+            <div class="photo-overlay">
+              <i class="fa-solid fa-camera"></i>
+            </div>
+            <button id="editPen" class="edit-pen" title="Edit profile">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </div>
 
           <input type="file" id="uploadPhoto" accept="image/*" hidden />
 
@@ -93,19 +87,6 @@
             </button>
           </div>
         </div>
-        <!-- 🛠️ PHOTO EDIT CONTROLS (VISIBLE ONLY IN EDIT MODE) -->
-<div class="photo-controls hidden" id="photoControls">
-
-  <label>Zoom</label>
-  <input type="range" id="zoomSlider" min="1" max="3" step="0.01" value="1">
-
-  <label>Rotate (°)</label>
-  <input type="range" id="rotateSlider" min="-180" max="180" step="1" value="0">
-  <input type="number" id="rotateInput" min="-180" max="180" value="0">
-
-  <button id="resetPhotoBtn">Reset Photo</button>
-
-</div>
 
         <!-- 🧾 USER DETAILS -->
         <div class="profile-info">
