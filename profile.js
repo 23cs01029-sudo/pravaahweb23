@@ -9,7 +9,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbxGtj5SfzucfmzKU94mr3Nh57Dq5d7ioid4--jHLneIKHF-1T_Mr2nn28hcHn5Ey5_jgw/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbyjPQWJjyKc8En6Xz5jh9o1bcFOD8aHU3huf4jK1zEC0Hnwt52-g9x-GfEmBUPSDpsw9Q/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -603,5 +603,6 @@ document.getElementById("cancelCrop").onclick = () => {
   editor.classList.add("hidden");
   showToast("Photo edit cancelled", "info");
 };
+
 
 
