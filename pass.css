@@ -485,6 +485,33 @@ body {
   width: auto;
   height: auto;
 }
+@media (max-width: 600px) {
+
+  .event-row {
+    align-items: flex-start;   /* 🔥 allow height growth */
+  }
+
+  .event-left {
+    align-items: flex-start;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .event-label {
+    font-size: 1rem;
+    white-space: normal;       /* ✅ allow wrap */
+    overflow: visible;         /* ✅ no cut */
+    text-overflow: unset;      /* ✅ remove dots */
+    line-height: 1.3;
+    word-break: break-word;
+  }
+
+  .pdf-icon {
+    flex-shrink: 0;
+    margin-top: 2px;           /* align nicely */
+  }
+}
+
 
 
 
