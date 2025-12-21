@@ -3,7 +3,7 @@
 ========================================================== */
 
 import { auth } from "./auth.js";
-import { onAuthStateChanged, signOut, updateProfile } from
+import { onAuthStateChanged, signOut} from
   "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
@@ -348,9 +348,6 @@ userPhoto.onload = () => {
 
       userPhoto.src = finalPhoto;
 
-      await updateProfile(user, {
-        photoURL: finalPhoto
-      });
 
       userPhoto.onload = () => {
         userPhoto.classList.add("has-photo");
@@ -395,9 +392,6 @@ userPhoto.onload = () => {
 
   // 1️⃣ Preview immediately
   userPhoto.src = cdnUrl;
-
-  // 2️⃣ Save to Firebase (important)
-  await updateProfile(user, { photoURL: cdnUrl });
 
   // 3️⃣ Save to Sheet
   await saveProfileToSheet({
@@ -647,6 +641,7 @@ function openPhotoEditorFromExisting() {
 
   img.src = userPhoto.src;
 }
+
 
 
 
