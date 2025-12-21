@@ -53,7 +53,7 @@ const payBtn = document.getElementById("payBtn");
 if (payBtn) payBtn.setAttribute("type", "button");
 
 let currentPassType = null;
-let currentDay = null;
+let currentDayPassDays = [];
 let currentVisitorDays = [];
 let includeStarNite = false;
 let participantsCount = 0;
@@ -152,7 +152,7 @@ passCards.forEach((c) => {
     else if (/star/i.test(t)) t = "Starnite Pass";
 
     currentPassType = t;
-    currentDay = null;
+    currentDayPassDays = [];
     currentVisitorDays = [];
     includeStarNite = false;
 
@@ -205,18 +205,22 @@ function renderSelectionArea() {
     `;
 
     document.querySelectorAll(".day-card").forEach((btn) =>
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".day-card").forEach((x) => x.classList.remove("active"));
-        btn.classList.add("active");
+  btn.addEventListener("click", () => {
+    const d = btn.dataset.day;
 
-        currentDay = btn.dataset.day;
-        includeStarNite = false;
+    if (currentDayPassDays.includes(d)) {
+      currentDayPassDays = currentDayPassDays.filter(x => x !== d);
+      btn.classList.remove("active");
+    } else {
+      currentDayPassDays.push(d);
+      btn.classList.add("active");
+    }
 
-        renderDayEvents(currentDay);
-        calculateTotal();
+    renderDayEvents(currentDayPassDays);
+    calculateTotal();
+  })
+);
 
-      })
-    );
   }
 
   /* ---------- VISITOR PASS ---------- */
@@ -286,30 +290,41 @@ function renderSelectionArea() {
 /* =======================================
       RENDER DAY PASS EVENTS
 ======================================= */
-function renderDayEvents(day) {
-  const evs = EVENTS[day] || [];
-
-  document.getElementById("dayEventsContainer").innerHTML = `
+function renderDayEvents(days) {
+  const container = document.getElementById("dayEventsContainer");
+  if (!days.length) {
+    container.innerHTML = "";
+    includeStarNite = false;
+    return;
+  }
+if (!days.includes("day3")) {
+  includeStarNite = false;
+}
+  container.innerHTML = days.map(d => `
     <div class="participant-card">
-      <h4>${day.toUpperCase()}</h4>
-      <div>${evs.map((e) => renderEventRow(e, { dayKey: day, selectable: true })).join("")}</div>
-      ${day === "day3" ? starNiteToggleHTML("day3StarToggle") : ""}
+      <h4>${d.toUpperCase()}</h4>
+      <div>
+        ${EVENTS[d].map(e => renderEventRow(e, { dayKey: d, selectable: true })).join("")}
+      </div>
+      ${d === "day3" ? starNiteToggleHTML("day3StarToggle_daypass") : ""}
     </div>
-  `;
+  `).join("");
 
-  const toggle = document.getElementById("day3StarToggle");
-  if (toggle)
+  const toggle = document.getElementById("day3StarToggle_daypass");
+  if (toggle) {
     toggle.addEventListener("change", () => {
       includeStarNite = toggle.checked;
       calculateTotal();
-
     });
+  }
 }
+
 
 /* =======================================
       VISITOR PASS EVENTS
 ======================================= */
 function renderVisitorEvents(days) {
+
   const c = document.getElementById("visitorEventsContainer");
 
   if (!days.length) {
@@ -353,7 +368,8 @@ function renderVisitorStarToggleIfNeeded() {
 ======================================= */
 function renderFestEvents() {
   const c = document.getElementById("festEventsContainer");
-
+  currentDayPassDays = ["day0", "day1", "day2", "day3"];
+  includeStarNite = false;
   c.innerHTML = ["day0", "day1", "day2", "day3"]
     .map(
       (d) => `
@@ -476,15 +492,18 @@ function calculateTotal() {
   let base = 0;
 
   if (currentPassType === "Day Pass") {
-    if (!currentDay) return updateTotal(0);
+  if (!currentDayPassDays.length) return updateTotal(0);
 
-    base =
-      currentDay !== "day3"
-        ? PRICES.dayPass[currentDay]
+  currentDayPassDays.forEach(d => {
+    base +=
+      d !== "day3"
+        ? PRICES.dayPass[d]
         : includeStarNite
         ? PRICES.dayPass.day3_star
         : PRICES.dayPass.day3_normal;
-  }
+  });
+}
+
 
   if (currentPassType === "Visitor Pass") {
     currentVisitorDays.forEach((d) => {
@@ -573,7 +592,7 @@ payBtn.addEventListener("click", async () => {
     passType: currentPassType,
     totalAmount: currentTotal,
     participants,
-    daySelected: currentDay,
+    daySelected: currentDayPassDays,
     visitorDays: currentVisitorDays,
     starnite: includeStarNite,
     events: collectSelectedEvents()
@@ -650,6 +669,7 @@ const matchedParticipant = participants.find(p =>
 
   rzp.open();
 });
+
 
 
 
