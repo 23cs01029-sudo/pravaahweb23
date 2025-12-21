@@ -15,6 +15,17 @@ const DEBUG_PROFILE = true;
 const log = (...args) => {
   if (DEBUG_PROFILE) console.log("[PROFILE]", ...args);
 };
+let userPhoto;
+let userPhoneInput;
+let userCollegeInput;
+async function fetchImageAsBase64(url) {
+  const r = await fetch(
+    `${scriptURL}?type=imageToBase64&url=${encodeURIComponent(url)}`
+  );
+  const j = await r.json();
+  if (!j.ok) throw new Error("Image fetch failed");
+  return j.base64;
+}
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -153,15 +164,15 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) return (window.location.href = "index.html");
 
   const container = document.querySelector(".profile-container");
-  const userPhoto = document.getElementById("userPhoto");
+  userPhoto = document.getElementById("userPhoto");
   const uploadPhotoInput = document.getElementById("uploadPhoto");
   const uploadOptions = document.getElementById("uploadOptions");
   const driveUploadBtn = document.getElementById("driveUploadBtn");
 
   const userNameEl = document.getElementById("userName");
   const userEmailEl = document.getElementById("userEmail");
-  const userPhoneInput = document.getElementById("userPhone");
-  const userCollegeInput = document.getElementById("userCollege");
+  userPhoneInput = document.getElementById("userPhone");
+  userCollegeInput = document.getElementById("userCollege");
   const passesList = document.getElementById("passesList");
 
   const editActions = document.getElementById("editActions");
@@ -169,20 +180,25 @@ onAuthStateChanged(auth, async (user) => {
   const logoutMobile = document.getElementById("logoutMobile");
 const photoOverlay = document.querySelector(".photo-overlay");
 
-photoOverlay.onclick = () => {
+photoOverlay.onclick = async () => {
   if (!isEditing) {
     showToast("Tap ✏️ to edit profile", "info");
     return;
   }
 
-  // reset editor state
   scale = 1;
   rotation = 0;
   pos = { x: 0, y: 0 };
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   editor.classList.remove("hidden");
-  img.src = userPhoto.src;
+
+  const base64 = await fetchImageAsBase64(userPhoto.src);
+  img.src = base64;
 };
+
+
 
   /* Prefill */
   /* Prefill basic info */
@@ -472,21 +488,44 @@ document.getElementById("cancelCrop").onclick = () => {
 
 /* APPLY */
 document.getElementById("applyCrop").onclick = async () => {
-  const final = canvas.toDataURL("image/png");
-  userPhoto.src = final;
+  const base64 = canvas.toDataURL("image/png").split(",")[1];
 
-  await updateProfile(auth.currentUser, { photoURL: final });
+  const r = await fetch(scriptURL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({
+      type: "saveFinalPhoto",
+      base64
+    })
+  });
+
+  const out = await r.json();
+  if (!out.ok) {
+    showToast("Save failed", "error");
+    return;
+  }
+
+  const cdnUrl = out.url + "&t=" + Date.now();
+
+  userPhoto.src = cdnUrl;
+
+  await updateProfile(auth.currentUser, {
+    photoURL: cdnUrl
+  });
+
   await saveProfileToSheet({
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
     phone: userPhoneInput.value,
     college: userCollegeInput.value,
-    photo: final
+    photo: cdnUrl
   });
 
   editor.classList.add("hidden");
   showToast("Photo updated!", "success");
 };
+
+
 
 
 
