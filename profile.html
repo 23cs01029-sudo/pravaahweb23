@@ -178,6 +178,25 @@
       document.getElementById("menu").classList.toggle("active");
     });
   </script>
+<!-- 🖼️ PHOTO EDITOR MODAL -->
+<div id="photoEditor" class="editor hidden">
+  <div class="editor-box">
+    <h3>Edit Photo</h3>
+
+    <div class="crop-area">
+      <canvas id="cropCanvas" width="260" height="260"></canvas>
+      <div class="crop-circle"></div>
+    </div>
+
+    <input type="range" id="zoomSlider" min="1" max="3" step="0.01" value="1">
+
+    <div class="editor-actions">
+      <button id="rotateBtn">⟳ Rotate</button>
+      <button id="cancelCrop">Cancel</button>
+      <button id="applyCrop">Done</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
