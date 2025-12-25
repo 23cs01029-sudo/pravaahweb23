@@ -33,17 +33,6 @@ function showToast(message, type = "info") {
 let isEditing = false;
 let originalProfile = { phone: "", college: "" };
 
-function setEditMode(on, ctx) {
-  isEditing = on;
-  ctx.container.classList.toggle("is-edit", on);
-  ctx.editActions.style.display = on ? "flex" : "none";
-
-  ctx.uploadOptions.classList.toggle("hidden", !on);
-  ctx.uploadOptions.style.display = on ? "flex" : "none";
-
-  ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
-  ctx.userPhoto.style.outlineOffset = "6px";
-}
 
 /* ---------- Save Profile ---------- */
 async function saveProfileToSheet(profile) {
@@ -233,47 +222,6 @@ function setEditMode(on, ctx) {
   };
 
   /* Save */
-  document.getElementById("saveProfileBtn").onclick = async ()=>{
-
-    let finalPhotoURL=document.getElementById("userPhoto").src;
-
-    // If edited → upload to backend
-    if(previewPhotoSrc && pendingTransform){
-        const r = await fetch(scriptURL,{
-          method:"POST",
-           mode: "no-cors",
-          headers:{ "Content-Type":"application/json"},
-          body:JSON.stringify({
-            type:"saveFinalPhoto",
-            base64:previewPhotoSrc.split(",")[1]
-          })
-        }).then(r=>r.json());
-
-        if(r.ok){
-            finalPhotoURL=r.url;
-            savedTransform=pendingTransform;
-            pendingTransform=null; 
-            previewPhotoSrc=null;
-        } else return showToast("Save failed","error");
-    }
-
-    // SAVE to Sheet with transform
-    await fetch(scriptURL,{
-      method:"POST",
-       mode: "no-cors",
-      headers:{ "Content-Type":"application/json"},
-      body:JSON.stringify({
-        email:auth.currentUser.email,
-        phone:userPhone.value,
-        college:userCollege.value,
-        photo:finalPhotoURL,
-        transform:savedTransform ?? null  // <-- FIX APPLIED
-      })
-    });
-
-    showToast("Profile Updated","success");
-    setTimeout(()=>location.reload(),800);
-};
 
 
   /* Cancel */
@@ -558,48 +506,46 @@ cropCancel.onclick=()=>{
 };
 
 
-/* ------------- MODIFY SAVE BUTTON ------------- */
-document.getElementById("saveProfileBtn").onclick = async ()=>{
-
+  document.getElementById("saveProfileBtn").onclick = async ()=>{
     let finalPhotoURL=document.getElementById("userPhoto").src;
 
-    /* If user edited image → upload BASE64 */
     if(previewPhotoSrc && pendingTransform){
         const r = await fetch(scriptURL,{
           method:"POST",
-           mode: "no-cors",
           headers:{ "Content-Type":"application/json"},
           body:JSON.stringify({
             type:"saveFinalPhoto",
             base64:previewPhotoSrc.split(",")[1]
           })
-        }).then(r=>r.json());
+        });
 
-        if(r.ok){
-            finalPhotoURL=r.url;
-            savedTransform=pendingTransform;
+        let out;
+        try{ out = await r.json(); } catch(e){ out=null; }
+
+        if(out && out.ok){
+            finalPhotoURL = out.url;
+            savedTransform = pendingTransform;
             pendingTransform=null; previewPhotoSrc=null;
         } else return showToast("Save failed","error");
     }
 
-    /* SAVE TO SHEET */
     await fetch(scriptURL,{
       method:"POST",
-       mode: "no-cors",
       headers:{ "Content-Type":"application/json"},
       body:JSON.stringify({
          type:"saveProfile",
-        email:auth.currentUser.email,
-        phone:userPhone.value,
-        college:userCollege.value,
-        photo:finalPhotoURL,
-        transform:savedTransform?JSON.stringify(savedTransform):null
+         email:auth.currentUser.email,
+         phone:userPhoneInput.value,
+         college:userCollegeInput.value,
+         photo:finalPhotoURL,
+         transform:savedTransform ? JSON.stringify(savedTransform) : null
       })
     });
 
     showToast("Profile Updated","success");
-    location.reload();
+    setTimeout(()=>location.reload(),800);
 };
+
 /* Drag Move (Mouse) */
 canvas.onmousedown = e => { drag=true; startPos={x:e.offsetX-offset.x,y:e.offsetY-offset.y}; }
 canvas.onmousemove = e => { 
@@ -685,6 +631,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
