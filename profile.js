@@ -241,6 +241,7 @@ function setEditMode(on, ctx) {
     if(previewPhotoSrc && pendingTransform){
         const r = await fetch(scriptURL,{
           method:"POST",
+           mode: "no-cors",
           headers:{ "Content-Type":"application/json"},
           body:JSON.stringify({
             type:"saveFinalPhoto",
@@ -259,6 +260,7 @@ function setEditMode(on, ctx) {
     // SAVE to Sheet with transform
     await fetch(scriptURL,{
       method:"POST",
+       mode: "no-cors",
       headers:{ "Content-Type":"application/json"},
       body:JSON.stringify({
         email:auth.currentUser.email,
@@ -333,6 +335,7 @@ setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
   try {
     const r = await fetch(scriptURL, {
       method: "POST",
+       mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload)
     });
@@ -564,6 +567,7 @@ document.getElementById("saveProfileBtn").onclick = async ()=>{
     if(previewPhotoSrc && pendingTransform){
         const r = await fetch(scriptURL,{
           method:"POST",
+           mode: "no-cors",
           headers:{ "Content-Type":"application/json"},
           body:JSON.stringify({
             type:"saveFinalPhoto",
@@ -581,8 +585,10 @@ document.getElementById("saveProfileBtn").onclick = async ()=>{
     /* SAVE TO SHEET */
     await fetch(scriptURL,{
       method:"POST",
+       mode: "no-cors",
       headers:{ "Content-Type":"application/json"},
       body:JSON.stringify({
+         type:"saveProfile",
         email:auth.currentUser.email,
         phone:userPhone.value,
         college:userCollege.value,
@@ -594,6 +600,70 @@ document.getElementById("saveProfileBtn").onclick = async ()=>{
     showToast("Profile Updated","success");
     location.reload();
 };
+/* Drag Move (Mouse) */
+canvas.onmousedown = e => { drag=true; startPos={x:e.offsetX-offset.x,y:e.offsetY-offset.y}; }
+canvas.onmousemove = e => { 
+    if(!drag) return; 
+    offset.x=e.offsetX-startPos.x; 
+    offset.y=e.offsetY-startPos.y;
+    clampXY(); redraw(); 
+};
+canvas.onmouseup   = ()=> drag=false;
+canvas.onmouseleave= ()=> drag=false;
+/* ===========================
+   📱 Touch Support (Drag + Pinch Zoom)
+=========================== */
+let lastTouchDist = 0;
+let isPinching = false;
+
+canvas.addEventListener("touchstart", (e)=>{
+    if(e.touches.length === 1){
+        // One finger drag
+        drag = true;
+        const t = e.touches[0];
+        startPos = { x:t.clientX-offset.x, y:t.clientY-offset.y };
+    } 
+    else if(e.touches.length === 2){
+        // Two finger zoom start
+        isPinching = true;
+        lastTouchDist = getTouchDistance(e.touches);
+    }
+},{passive:false});
+
+
+canvas.addEventListener("touchmove",(e)=>{
+    e.preventDefault();
+
+    if(isPinching && e.touches.length === 2){
+        const newDist = getTouchDistance(e.touches);
+        const diff = newDist - lastTouchDist;
+
+        scaleV += diff*0.002;  // sensitivity
+        scaleV = Math.min(3, Math.max(1, scaleV)); // limit zoom 1x to 3x
+
+        lastTouchDist = newDist;
+        clampXY(); redraw();
+    }
+    else if(drag && e.touches.length === 1){
+        const t = e.touches[0];
+        offset.x = t.clientX - startPos.x;
+        offset.y = t.clientY - startPos.y;
+        clampXY(); redraw();
+    }
+},{passive:false});
+
+
+canvas.addEventListener("touchend",(e)=>{
+    if(e.touches.length < 2) isPinching=false;
+    if(e.touches.length === 0) drag=false;
+});
+
+/* Distance for pinch */
+function getTouchDistance(t){
+    const x = t[0].clientX - t[1].clientX;
+    const y = t[0].clientY - t[1].clientY;
+    return Math.sqrt(x*x + y*y);
+}
 
 
 /* -------- Load transform on startup -------- */
@@ -615,6 +685,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
