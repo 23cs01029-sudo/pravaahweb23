@@ -504,7 +504,7 @@ cropCancel.onclick=()=>{
     let finalPhotoURL=document.getElementById("userPhoto").src;
 
     if(previewPhotoSrc && pendingTransform){
-        const r = await fetch("https://script.google.com/macros/s/AKfycbxNMykNedjBmoP6qjm6g-yE0W_lw9VHvHGoADu8xS0z1ZpbxHrDXK6iw_FLZpKCWdgt5A/exec",{
+       const r = await fetch(scriptURL,{
           method:"POST",
           headers:{ "Content-Type":"application/json"},
           body:JSON.stringify({
@@ -625,6 +625,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
