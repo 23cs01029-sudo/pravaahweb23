@@ -167,6 +167,8 @@ onAuthStateChanged(auth, async (user) => {
   const editActions = document.getElementById("editActions");
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
+const cameraBtn = document.getElementById("cameraBtn"); // <-- FIX
+cameraBtn.style.display = "none"; // hidden until edit enabled
 
   /* Prefill */
   /* Prefill basic info */
@@ -200,6 +202,19 @@ else if (user.photoURL) {
 userPhoto.onload = () => {
   userPhoto.classList.add("has-photo");
 };
+function setEditMode(on, ctx) {
+  isEditing = on;
+  ctx.container.classList.toggle("is-edit", on);
+  ctx.editActions.style.display = on ? "flex" : "none";
+
+  ctx.uploadOptions.classList.toggle("hidden", !on);
+  ctx.uploadOptions.style.display = on ? "flex" : "none";
+
+  ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
+  ctx.userPhoto.style.outlineOffset = "6px";
+
+  document.getElementById("cameraBtn").style.display = on ? "flex" : "none";  // ⭐ camera visible only in edit mode
+}
 
 
   const phoneSpan = ensureFieldSpan(userPhoneInput, "userPhoneText");
@@ -295,6 +310,10 @@ userPhoto.onload = () => {
   log("Base64 generated");
 
   userPhoto.src = reader.result;
+previewPhotoSrc = reader.result;
+pendingTransform = {x:0,y:0,zoom:1,rotation:0};
+setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
+
 
   const base64 = reader.result.split(",")[1];
 
@@ -474,23 +493,28 @@ function redraw(){
   ctx2.restore();
 }
 
-/* Load editor */
-cameraBtn.onclick = ()=>{
-  if(!isEditing) return showToast("Tap ✏️ first","info");
-
-  originalPhotoSrc=document.getElementById("userPhoto").src;
-  img2.src = originalPhotoSrc+"?t="+Date.now();
-
-  img2.onload = ()=>{
-      scaleV=savedTransform?.zoom||1;
-      rotV=(savedTransform?.rotation||0)*Math.PI/180;
-      offset.x=savedTransform?.x||0;
-      offset.y=savedTransform?.y||0;
-
-      baseScaleCalc(); clampXY(); redraw();
-      editor.classList.remove("hidden");
-  };
+/* Click camera → open editor */
+cameraBtn.onclick = () => {
+  if (!isEditing) return showToast("Click ✏️ Edit first", "info");
+  openEditor();
 };
+function openEditor(){
+  originalPhotoSrc = document.getElementById("userPhoto").src;
+  img2.src = originalPhotoSrc + "?t=" + Date.now();
+
+  img2.onload = () => {
+    scaleV = savedTransform?.zoom || 1;
+    rotV   = (savedTransform?.rotation || 0) * Math.PI/180;
+    offset.x = savedTransform?.x || 0;
+    offset.y = savedTransform?.y || 0;
+
+    baseScaleCalc();
+    clampXY();
+    redraw();
+    editor.classList.remove("hidden");
+  };
+}
+
 
 /* Zoom */
 zoomRange.oninput=(e)=>{ scaleV=parseFloat(e.target.value); clampXY(); redraw(); }
@@ -591,5 +615,6 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
