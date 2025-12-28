@@ -174,6 +174,21 @@ qrBox.addEventListener("click", () => {
 /* ---------- Main ---------- */
 onAuthStateChanged(auth, async (user) => {
   if (!user) return (window.location.href = "index.html");
+// 🔥 Load cached data instantly without waiting server
+const cached = getCachedProfile(user.email);
+
+if(cached){
+    userPhoto.src = cached.photo || "default-avatar.png";
+    savedTransform = cached.transform || null;
+
+    userPhoneInput.value  = cached.phone || "";
+    userCollegeInput.value = cached.college || "";
+    userNameEl.textContent = cached.name || user.displayName || "User";
+
+    if(cached.transform){
+        renderProfilePhoto(cached.photo, cached.transform);
+    }
+}
 
   const container = document.querySelector(".profile-container");
   userPhoto = document.getElementById("userPhoto");
@@ -208,8 +223,24 @@ const p = await res.json();
 if (p?.email) {
   userPhoneInput.value = p.phone || "";
   userCollegeInput.value = p.college || "";
-  if (p.photo) userPhoto.src = p.photo;         // <--- FIRST LOAD IMG
+  if (p.photo) userPhoto.src = p.photo;
+
+  if(p.transform){
+    savedTransform = JSON.parse(p.transform);
+    renderProfilePhoto(userPhoto.src, savedTransform);
+  }
+
+  // 🟡 Update local cache
+  cacheProfile({
+    email:user.email,
+    name:user.displayName,
+    phone:p.phone,
+    college:p.college,
+    photo:p.photo,
+    transform:p.transform ? JSON.parse(p.transform) : null
+  });
 }
+
 
 /* Apply transform if exists */
 if (p?.transform) {
@@ -418,6 +449,15 @@ document.getElementById("saveProfileBtn").onclick = async () => {
   editor.classList.add("hidden");
 
   showToast("Profile Updated", "success");
+   cacheProfile({
+  email:user.email,
+  name:userNameEl.textContent,
+  phone:userPhoneInput.value,
+  college:userCollegeInput.value,
+  photo:userPhoto.src,
+  transform:savedTransform
+});
+
 };
 
 
@@ -684,6 +724,25 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+/* ==========================================================
+   📌 LOCAL CACHE SYSTEM (Saves after each update)
+========================================================== */
+
+function cacheProfile(data) {
+  const key = "pravaah_profile_" + data.email;  // separate cache per user
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function getCachedProfile(email) {
+  const key = "pravaah_profile_" + email;
+  const saved = localStorage.getItem(key);
+  return saved ? JSON.parse(saved) : null;
+}
+
+function clearProfileCache(email) {
+  localStorage.removeItem("pravaah_profile_" + email);
+}
+
 
 
 
