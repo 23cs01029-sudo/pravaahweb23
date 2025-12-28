@@ -310,31 +310,33 @@ uploadPhotoInput.onchange = (e) => {
 
     pendingTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
     savedTransform = null;
-
-    // 🔒 4. Wait for browser to fully decode image
-    userPhoto.onload = () => {
-      userPhoto.classList.add("has-photo");
-
-      // extra delay = GPU + canvas safety
-      setTimeout(() => {
-        updatePersistentToast("Photo ready for editing", "success");
-        openEditor();               // ✅ SAFE NOW
-        // Close toast when editor is actually visible
-setTimeout(() => {
-  if (!editor.classList.contains("hidden")) {
-    closePersistentToast();
-  }
-}, 800);
-
-      }, 400);
-    };
   };
-
   reader.readAsDataURL(file);
 };
+cameraBtn.onclick = () => {
+  if (!isEditing) return showToast("Click ✏️ Edit first", "info");
+  openEditor();
+};
+function openEditor() {
+  if (!userPhoto.src || userPhoto.src.includes("default-avatar")) {
+    showToast("Upload a photo first", "info");
+    return;
+  }
+  originalPhotoSrc = document.getElementById("userPhoto").src;
+  img2.src = originalPhotoSrc + "?t=" + Date.now();
 
+  img2.onload = () => {
+    scaleV = savedTransform?.zoom || 1;
+    rotV   = (savedTransform?.rotation || 0) * Math.PI/180;
+    offset.x = savedTransform?.x || 0;
+    offset.y = savedTransform?.y || 0;
 
-
+    baseScaleCalc();
+    clampXY();
+    redraw();
+    editor.classList.remove("hidden");
+  };
+}
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
   if (!isEditing) return showToast("Tap ✏️ to edit", "info");
@@ -365,9 +367,6 @@ setTimeout(() => {
     photo: cdnUrl
   });
 
-  userPhoto.onload = () => {
-    userPhoto.classList.add("has-photo");
-  };
 
   showToast("Photo updated", "success");
 };
@@ -497,30 +496,7 @@ function redraw(){
 }
 
 /* Click camera → open editor */
-cameraBtn.onclick = () => {
-  if (!isEditing) return showToast("Click ✏️ Edit first", "info");
-  openEditor();
-};
-function openEditor() {
-  if (!userPhoto.src || userPhoto.src.includes("default-avatar")) {
-    showToast("Upload a photo first", "info");
-    return;
-  }
-  originalPhotoSrc = document.getElementById("userPhoto").src;
-  img2.src = originalPhotoSrc + "?t=" + Date.now();
 
-  img2.onload = () => {
-    scaleV = savedTransform?.zoom || 1;
-    rotV   = (savedTransform?.rotation || 0) * Math.PI/180;
-    offset.x = savedTransform?.x || 0;
-    offset.y = savedTransform?.y || 0;
-
-    baseScaleCalc();
-    clampXY();
-    redraw();
-    editor.classList.remove("hidden");
-  };
-}
 
 
 /* Zoom */
@@ -663,6 +639,7 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
 
 
 
