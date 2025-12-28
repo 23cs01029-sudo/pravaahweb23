@@ -252,14 +252,12 @@ function setEditMode(on, ctx) {
 
   const reader = new FileReader();
 
-  reader.onload = async () => {
-  log("Base64 generated");
-
+ reader.onload = async () => {
   userPhoto.src = reader.result;
-previewPhotoSrc = reader.result;
-pendingTransform = {x:0,y:0,zoom:1,rotation:0};
-setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
+  previewPhotoSrc = reader.result;
+  pendingTransform = { x:0, y:0, zoom:1, rotation:0 };
 
+  setTimeout(() => openEditor(), 300);
 
   const base64 = reader.result.split(",")[1];
 
@@ -270,50 +268,29 @@ setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
     file: base64
   };
 
-  log("Upload payload summary:", {
-    email: payload.email,
-    mimetype: payload.mimetype,
-    base64Length: base64.length
-  });
-
   try {
-    const r = await fetch(scriptURL,{
-  method:"POST",
-  mode:"no-cors",
-  body: JSON.stringify(payload)
-});
-
-    log("Upload response status:", r.status);
-
     await fetch(scriptURL, {
-  method: "POST",
-  mode: "no-cors",
-  body: JSON.stringify(payload)
-});
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify(payload)
+    });
 
-// ✅ use local preview (already base64)
-await updateProfile(user, {
-  photoURL: userPhoto.src
-});
+    await updateProfile(user, {
+      photoURL: userPhoto.src
+    });
 
-showToast("Photo uploaded", "success");
+    userPhoto.onload = () => {
+      userPhoto.classList.add("has-photo");
+    };
 
+    showToast("Photo uploaded", "success");
 
-  // 3️⃣ Hide placeholder text once image loads
-  userPhoto.onload = () => {
-    userPhoto.classList.add("has-photo");
-  };
-
-  showToast("Photo updated!", "success");
-}
-else {
-      showToast("Upload failed", "error");
-    }
   } catch (err) {
     console.error("UPLOAD ERROR:", err);
     showToast("Upload error", "error");
   }
 };
+
 
 
   reader.readAsDataURL(file);
@@ -611,6 +588,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
