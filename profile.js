@@ -730,6 +730,8 @@ canvas.onmouseup=()=>drag=false;
 
 /* Apply Preview */
 cropApply.onclick = () => {
+
+  // Keep preview only for editing, but don't overwrite last saved photo
   pendingTransform = {
     x: offset.x,
     y: offset.y,
@@ -737,46 +739,37 @@ cropApply.onclick = () => {
     rotation: (rotV * 180 / Math.PI) % 360
   };
 
-  // ✅ APPLY PREVIEW DIRECTLY TO PROFILE IMAGE
- renderProfilePhoto(originalPhotoSrc, pendingTransform);
+  // Preview into main UI (temporary)
+  renderProfilePhoto(previewPhotoSrc || originalPhotoSrc, pendingTransform);
 
   editor.classList.add("hidden");
-  showToast("Preview ready — click SAVE PROFILE", "info");
+  showToast("Preview ready — click SAVE PROFILE to apply", "info");
 };
+
 
 
 
 /* Cancel Edit */
 cropCancel.onclick = () => {
-
   editor.classList.add("hidden");
 
-  // ❗ If user uploaded new image but didn't save -> discard instantly
-  if (previewPhotoSrc) {
-      const cached = getCachedProfile(user.email);
+  const cached = getCachedProfile(user.email); // last saved truth
 
-      if (cached?.photo) {
-          userPhoto.src = cached.photo;
-          renderProfilePhoto(cached.photo, cached.transform || {x:0,y:0,zoom:1,rotation:0});
-      } else {
-          userPhoto.src = "default-avatar.png";
-          renderProfilePhoto("default-avatar.png",{x:0,y:0,zoom:1,rotation:0});
-      }
-
-  } else { 
-      // ❗ No new upload -> revert to last saved state properly
-      userPhoto.src = lastSavedPhoto || originalPhotoSrc;
-      renderProfilePhoto(
-          lastSavedPhoto ? lastSavedTransform : savedTransform || {x:0,y:0,zoom:1,rotation:0}
-      );
+  if (cached?.photo) {
+      userPhoto.src = cached.photo;
+      renderProfilePhoto(cached.photo, cached.transform || {x:0,y:0,zoom:1,rotation:0});
+  } else {
+      userPhoto.src = "default-avatar.png";
+      renderProfilePhoto("default-avatar.png", {x:0,y:0,zoom:1,rotation:0});
   }
 
-  pendingTransform = null;
+  // reset unsaved changes
   previewPhotoSrc = null;
-  drag = false;
+  pendingTransform = null;
 
-  showToast("Changes discarded", "info");
+  showToast("Photo reverted — unsaved changes discarded", "info");
 };
+
 
 
 
@@ -944,6 +937,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
