@@ -720,9 +720,7 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   cursor: pointer;
 }
 /* 🔒 Hidden render canvas (logic only, no UI) */
-#profileCanvas {
-  display: none;
-}
+
 /* Prevent editor flash before ready */
 .editor.hidden {
   opacity: 0;
@@ -744,6 +742,25 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   color: #ffcc00;
   letter-spacing: 1px;
 }
+
+/* ===============================
+   CANVAS = IMAGE (NO VISUAL CHANGE)
+   =============================== */
+
+#profileCanvas {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+  background: transparent;
+
+  z-index: 1;
+}
+
+
 
 
 
