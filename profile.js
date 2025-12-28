@@ -213,12 +213,18 @@ if (p?.transform) {
 
   originalPhotoSrc = userPhoto.src;
 
-  userPhoto.style.transform = `
-    translate(${savedTransform.x}px, ${savedTransform.y}px)
-    scale(${savedTransform.zoom})
-    rotate(${savedTransform.rotation}deg)
-  `;
+  applyTransformToMainPhoto(savedTransform);
 }
+function applyTransformToMainPhoto(t) {
+  if (!userPhoto) return;
+
+  userPhoto.style.transform =
+    `translate(-50%, -50%)
+     translate(${t.x}px, ${t.y}px)
+     scale(${t.zoom})
+     rotate(${t.rotation}deg)`;
+}
+
 
 
 // Hide placeholder once image loads
@@ -385,6 +391,9 @@ document.getElementById("saveProfileBtn").onclick = async () => {
   if (pendingTransform) {
     savedTransform = pendingTransform;
   }
+   if (savedTransform) {
+  applyTransformToMainPhoto(savedTransform);
+}
   pendingTransform = null;
   previewPhotoSrc = null;
 
@@ -459,12 +468,24 @@ function baseScaleCalc(){
     baseFit = Math.max((RING*2)/img2.width , (RING*2)/img2.height);
 }
 
-function clampXY(){
-  const hw = (img2.width * baseFit * scaleV)/2;
-  const hh = (img2.height* baseFit * scaleV)/2;
-  offset.x = Math.max(-(hw-RING), Math.min(hw-RING, offset.x));
-  offset.y = Math.max(-(hh-RING), Math.min(hh-RING, offset.y));
+function clampXY() {
+  const w = img2.width * baseFit * scaleV;
+  const h = img2.height * baseFit * scaleV;
+
+  // rotation-aware bounding box
+  const sin = Math.abs(Math.sin(rotV));
+  const cos = Math.abs(Math.cos(rotV));
+
+  const boundW = w * cos + h * sin;
+  const boundH = w * sin + h * cos;
+
+  const limitX = Math.max(0, (boundW / 2) - RING);
+  const limitY = Math.max(0, (boundH / 2) - RING);
+
+  offset.x = Math.max(-limitX, Math.min(limitX, offset.x));
+  offset.y = Math.max(-limitY, Math.min(limitY, offset.y));
 }
+
 
 function redraw(){
   ctx2.clearRect(0,0,260,260);
@@ -641,6 +662,7 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
 
 
 
