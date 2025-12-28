@@ -45,10 +45,12 @@ async function saveProfileToSheet(profile) {
       email: profile.email || "",
       phone: profile.phone || "",
       college: profile.college || "",
-      photo: profile.photo || ""
+      photo: profile.photo || "",
+      transform: profile.transform || null
     })
   });
 }
+
 
 
 
@@ -588,6 +590,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
