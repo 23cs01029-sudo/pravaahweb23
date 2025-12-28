@@ -206,10 +206,20 @@ if (p?.email) {
     userPhoto.src = p.photo;
   }
 }
-// ✅ Priority 2: Firebase photo
-else if (user.photoURL) {
-  userPhoto.src = user.photoURL;
+if (p?.transform) {
+  savedTransform = typeof p.transform === "string"
+    ? JSON.parse(p.transform)
+    : p.transform;
+
+  originalPhotoSrc = userPhoto.src;
+
+  userPhoto.style.transform = `
+    translate(${savedTransform.x}px, ${savedTransform.y}px)
+    scale(${savedTransform.zoom})
+    rotate(${savedTransform.rotation}deg)
+  `;
 }
+
 
 // Hide placeholder once image loads
 userPhoto.onload = () => {
@@ -631,27 +641,8 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
-window.addEventListener("load", async () => {
-  const res = await fetch(
-    `${scriptURL}?type=profile&email=${encodeURIComponent(auth.currentUser.email)}`
-  );
-  const p = await res.json();
 
-  if (!p?.photo || !p?.transform) return;
 
-  savedTransform = typeof p.transform === "string"
-    ? JSON.parse(p.transform)
-    : p.transform;
-if (savedTransform && userPhoto) {
-  userPhoto.style.transform = `
-    translate(${savedTransform.x}px, ${savedTransform.y}px)
-    scale(${savedTransform.zoom})
-    rotate(${savedTransform.rotation}deg)
-  `;
-}
-
-  renderProfilePhoto(p.photo, savedTransform);
-});
 
 
 
