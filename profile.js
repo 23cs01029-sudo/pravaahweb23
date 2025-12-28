@@ -318,6 +318,35 @@ setInterval(async ()=>{
       console.log("Sync error",err);
   }
 },60000);
+/* 🔁 Profile Auto-Sync every 60 sec */
+setInterval(async ()=>{
+  try{
+      const r = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
+      const newP = await r.json();
+      const old = getCachedProfile(user.email);
+
+      if(JSON.stringify(newP) !== JSON.stringify(old)){
+          console.log("🔄 Profile synced from cloud");
+
+          userPhoneInput.value = newP.phone || "";
+          userCollegeInput.value = newP.college || "";
+          if(newP.photo){
+              userPhoto.src = newP.photo;
+              savedTransform = newP.transform ? JSON.parse(newP.transform) : null;
+              renderProfilePhoto(newP.photo, savedTransform || {x:0,y:0,zoom:1,rotation:0});
+          }
+
+          cacheProfile({
+              email:user.email,
+              name:newP.name,
+              phone:newP.phone,
+              college:newP.college,
+              photo:newP.photo,
+              transform:newP.transform?JSON.parse(newP.transform):null
+          });
+      }
+  }catch(e){}
+},60000);
 
 
   /* Edit toggle */
@@ -471,16 +500,6 @@ function openEditor() {
       editor.classList.remove("hidden");
     };
   }, 400);
-
-  // SAVE to Sheet + Cache
-  await saveProfileToSheet({
-    name: userNameEl.textContent,
-    email: user.email,
-    phone: userPhoneInput.value,
-    college: userCollegeInput.value,
-    photo: cdnUrl,
-    transform: JSON.stringify(pendingTransform)
-  });
 
   showToast("Drive image applied — adjust & Save ✔", "success");
 };
@@ -910,6 +929,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
