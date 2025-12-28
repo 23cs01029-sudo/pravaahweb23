@@ -68,6 +68,9 @@ function closePersistentToast() {
 /* ---------- State ---------- */
 let isEditing = false;
 let originalProfile = { phone: "", college: "" };
+// ⭐ Stores last saved state when user uploads new photo (for cancel restore)
+let lastSavedPhoto = null;
+let lastSavedTransform = null;
 
 
 /* ---------- Save Profile ---------- */
@@ -328,12 +331,23 @@ setInterval(async ()=>{
 
   /* Cancel */
   document.getElementById("cancelEditBtn").onclick = () => {
-    userPhoneInput.value = originalProfile.phone;
-    userCollegeInput.value = originalProfile.college;
-    phoneSpan.textContent = originalProfile.phone || "-";
-    collegeSpan.textContent = originalProfile.college || "-";
-    setEditMode(false, { container, uploadOptions, userPhoto, editActions });
-  };
+  userPhoneInput.value = originalProfile.phone;
+  userCollegeInput.value = originalProfile.college;
+  phoneSpan.textContent = originalProfile.phone || "-";
+  collegeSpan.textContent = originalProfile.college || "-";
+
+  // revert photo & transform fully
+  if (lastSavedPhoto) {
+      userPhoto.src = lastSavedPhoto;
+      renderProfilePhoto(lastSavedPhoto, lastSavedTransform);
+  } else {
+      renderProfilePhoto(originalPhotoSrc, savedTransform);
+  }
+
+  setEditMode(false, { container, uploadOptions, userPhoto, editActions });
+  showToast("Edit cancelled", "info");
+};
+
 
   /* -------- DEVICE PHOTO UPLOAD -------- */
   document.getElementById("deviceUploadBtn").onclick = () => {
@@ -343,6 +357,9 @@ setInterval(async ()=>{
 
 uploadPhotoInput.onchange = (e) => {
   if (!e.target.files.length) return;
+// store previous state before replacing (for cancel restore)
+lastSavedPhoto = userPhoto.src;
+lastSavedTransform = savedTransform;
 
   const file = e.target.files[0];
   const reader = new FileReader();
@@ -417,6 +434,9 @@ function openEditor() {
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
   if (!isEditing) return showToast("Tap ✏️ to edit", "info");
+// store previous state before replacing
+lastSavedPhoto = userPhoto.src;
+lastSavedTransform = savedTransform;
 
   const link = prompt("Paste Google Drive image link");
   if (!link) return;
@@ -719,15 +739,17 @@ cropCancel.onclick = () => {
   previewPhotoSrc = null;
   editor.classList.add("hidden");
 
-  // Restore original saved transform view
-  if (savedTransform) {
-      renderProfilePhoto(originalPhotoSrc, savedTransform);
+  // Restore OLD photo before upload attempt
+  if (lastSavedPhoto) {
+      userPhoto.src = lastSavedPhoto;
+      renderProfilePhoto(lastSavedPhoto, lastSavedTransform || {x:0,y:0,zoom:1,rotation:0});
   } else {
-      renderProfilePhoto(originalPhotoSrc, { x:0, y:0, zoom:1, rotation:0 });
+      renderProfilePhoto(originalPhotoSrc, savedTransform || {x:0,y:0,zoom:1,rotation:0});
   }
 
   showToast("Changes discarded", "info");
 };
+
 
 
 
@@ -893,6 +915,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
