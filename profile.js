@@ -502,48 +502,30 @@ cropCancel.onclick=()=>{
 
   document.getElementById("saveProfileBtn").onclick = async ()=>{
 
-  console.log("=== SAVE PROFILE START ===");
-  console.log("scriptURL =", scriptURL);
+  const finalPhotoURL = auth.currentUser.photoURL; // keep original upload URL
 
-  let finalPhotoURL = document.getElementById("userPhoto").src;
+  try{
+    const saveRes = await fetch(scriptURL,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json"},
+      body:JSON.stringify({
+        type:"saveProfile",
+        email:auth.currentUser.email,
+        phone:userPhoneInput.value,
+        college:userCollegeInput.value,
+        photo:finalPhotoURL,                  // same original image
+        transform: pendingTransform ? JSON.stringify(pendingTransform) : savedTransform ? JSON.stringify(savedTransform) : null
+      })
+    });
 
-  // -------------------------
-  // 1. Upload cropped final image (if edited)
-  // -------------------------
-  if(previewPhotoSrc && pendingTransform){
-    console.log("Sending cropped image to server...");
+    showToast("Profile Updated","success");
+    setTimeout(()=>location.reload(),800);
 
-    try{
-      const r = await fetch(scriptURL,{
-        method:"POST",
-        headers:{ "Content-Type":"application/json"},
-        body:JSON.stringify({
-          type:"saveFinalPhoto",
-          base64:previewPhotoSrc.split(",")[1]
-        })
-      });
-
-      console.log("saveFinalPhoto status:", r.status);
-
-      const out = await r.json();
-      console.log("saveFinalPhoto result:", out);
-
-      if(out.ok){
-        finalPhotoURL = out.url;
-        savedTransform = pendingTransform;
-        pendingTransform = null;
-        previewPhotoSrc = null;
-      } else {
-        showToast("Photo save failed","error");
-        return;
-      }
-
-    }catch(err){
-      console.error("❌ Error uploading photo:", err);
-      showToast("Upload failed","error");
-      return;
-    }
+  }catch(err){
+    showToast("Save Failed","error");
   }
+};
+
 
   // -------------------------
   // 2. Save profile fields + photo + transform
@@ -664,6 +646,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
