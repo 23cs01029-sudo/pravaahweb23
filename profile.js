@@ -571,59 +571,70 @@ canvas.onmousemove = e => {
 canvas.onmouseup   = ()=> drag=false;
 canvas.onmouseleave= ()=> drag=false;
 /* ===========================
-   📱 Touch Support (Drag + Pinch Zoom)
+📱 Mobile Touch + Pinch Zoom Support
 =========================== */
-let lastTouchDist = 0;
-let isPinching = false;
 
-canvas.addEventListener("touchstart", (e)=>{
+let dragging = false;
+let start = {x:0,y:0};
+let lastZoomDist = 0;
+
+canvas.style.touchAction = "none";   // VERY IMPORTANT
+
+canvas.addEventListener("touchstart",(e)=>{
+    e.preventDefault();
+
+    const rect = canvas.getBoundingClientRect();
+
+    // One finger → drag
     if(e.touches.length === 1){
-        // One finger drag
-        drag = true;
-        const t = e.touches[0];
-        startPos = { x:t.clientX-offset.x, y:t.clientY-offset.y };
-    } 
-    else if(e.touches.length === 2){
-        // Two finger zoom start
-        isPinching = true;
-        lastTouchDist = getTouchDistance(e.touches);
+        dragging = true;
+        start.x = (e.touches[0].clientX - rect.left) - offset.x;
+        start.y = (e.touches[0].clientY - rect.top) - offset.y;
     }
+
+    // Two finger → start pinch
+    if(e.touches.length === 2){
+        dragging = false;
+        lastZoomDist = getDist(e.touches);
+    }
+
 },{passive:false});
 
 
 canvas.addEventListener("touchmove",(e)=>{
     e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
 
-    if(isPinching && e.touches.length === 2){
-        const newDist = getTouchDistance(e.touches);
-        const diff = newDist - lastTouchDist;
+    // Pinch Zoom
+    if(e.touches.length === 2){
+        let dist = getDist(e.touches);
+        let change = dist - lastZoomDist;
 
-        scaleV += diff*0.002;  // sensitivity
-        scaleV = Math.min(3, Math.max(1, scaleV)); // limit zoom 1x to 3x
+        scaleV += change * 0.004;               // Zoom Speed 🔥
+        scaleV = Math.max(1, Math.min(scaleV, 3));   // Limit zoom 1x → 3x
 
-        lastTouchDist = newDist;
+        lastZoomDist = dist;
         clampXY(); redraw();
     }
-    else if(drag && e.touches.length === 1){
-        const t = e.touches[0];
-        offset.x = t.clientX - startPos.x;
-        offset.y = t.clientY - startPos.y;
+
+    // Drag
+    if(e.touches.length === 1 && dragging){
+        offset.x = (e.touches[0].clientX - rect.left) - start.x;
+        offset.y = (e.touches[0].clientY - rect.top) - start.y;
         clampXY(); redraw();
     }
+
 },{passive:false});
 
 
-canvas.addEventListener("touchend",(e)=>{
-    if(e.touches.length < 2) isPinching=false;
-    if(e.touches.length === 0) drag=false;
-});
+canvas.addEventListener("touchend",()=> dragging=false);
 
-/* Distance for pinch */
-function getTouchDistance(t){
+function getDist(t){
     const x = t[0].clientX - t[1].clientX;
     const y = t[0].clientY - t[1].clientY;
-    return Math.sqrt(x*x + y*y);
+    return Math.sqrt(x*x+y*y);
 }
+
 
 
 function renderProfilePhoto(photoUrl, transform) {
@@ -660,6 +671,7 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
 
 
 
