@@ -635,6 +635,20 @@ function redraw(){
 
 /* Zoom */
 zoomRange.oninput=(e)=>{ scaleV=parseFloat(e.target.value); clampXY(); redraw(); }
+/* =====================
+   Zoom Buttons Click
+===================== */
+document.getElementById("zoomOutBtn").onclick = ()=>{
+    scaleV = Math.max(1, scaleV - 0.1);       // Step size 0.1
+    zoomRange.value = scaleV;
+    clampXY(); redraw();
+};
+
+document.getElementById("zoomInBtn").onclick = ()=>{
+    scaleV = Math.min(3, scaleV + 0.1);
+    zoomRange.value = scaleV;
+    clampXY(); redraw();
+};
 
 /* Rotate */
 rotateBtn2.onclick=()=>{ rotV+=Math.PI/2; redraw(); }
@@ -837,6 +851,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
