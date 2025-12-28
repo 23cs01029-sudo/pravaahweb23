@@ -238,73 +238,39 @@ function setEditMode(on, ctx) {
   };
 
   uploadPhotoInput.onchange = async (e) => {
-  log("Device upload triggered");
-
-  if (!e.target.files.length) {
-    log("No file selected");
-    return;
-  }
+  if (!e.target.files.length) return;
 
   const file = e.target.files[0];
-  log("File selected:", {
-    name: file.name,
-    size: file.size,
-    type: file.type
-  });
-
   const reader = new FileReader();
 
- reader.onload = async () => {
-  userPhoto.src = reader.result;
-  previewPhotoSrc = reader.result;
-  pendingTransform = { x:0, y:0, zoom:1, rotation:0 };
+  reader.onload = async () => {
+    // 1️⃣ Preview locally
+    userPhoto.src = reader.result;
+    previewPhotoSrc = reader.result;
+    pendingTransform = { x:0, y:0, zoom:1, rotation:0 };
 
-  setTimeout(() => openEditor(), 300);
+    setTimeout(openEditor, 300);
 
-  const base64 = reader.result.split(",")[1];
+    // 2️⃣ Upload to Drive via Apps Script
+    const base64 = reader.result.split(",")[1];
 
-  const payload = {
-    type: "photoUpload",
-    email: user.email,
-    mimetype: file.type,
-    file: base64
-  };
-
-  try {
     await fetch(scriptURL, {
       method: "POST",
       mode: "no-cors",
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        type: "photoUpload",
+        email: user.email,
+        mimetype: file.type,
+        file: base64
+      })
     });
 
-    // ⬇ Save directly to Google Sheet instead of Firebase
-await saveProfileToSheet({
-  name: user.displayName,
-  email: user.email,
-  phone: userPhoneInput.value,
-  college: userCollegeInput.value,
-  photo: userPhoto.src, // THIS SAVES THE NEW PHOTO
-  transform: pendingTransform ? JSON.stringify(pendingTransform) : null
-});
-
-
-
-    userPhoto.onload = () => {
-      userPhoto.classList.add("has-photo");
-    };
-
-    showToast("Photo uploaded", "success");
-
-  } catch (err) {
-    console.error("UPLOAD ERROR:", err);
-    showToast("Upload error", "error");
-  }
-};
-
-
+    showToast("Photo uploaded. Click SAVE PROFILE", "info");
+  };
 
   reader.readAsDataURL(file);
 };
+
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
@@ -598,8 +564,6 @@ window.addEventListener("load", ()=>{
       }
     });
 });
-
-
 
 
 
