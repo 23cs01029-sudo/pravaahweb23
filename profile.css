@@ -74,7 +74,7 @@ body {
   width: 150px;                 /* ↓ smaller avatar */
   height: 150px;
   display: block;
-  margin: 0 auto;               /* ✅ perfect centering */
+  margin: 0 auto; 
 }
 
 .photo-wrapper::before {
@@ -93,18 +93,22 @@ body {
 }
 
 .profile-photo img {
-  display: block;
+  position: absolute;        /* 🔒 critical */
+  inset: 0;
+
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
+
+  border-radius: 50%;
+  transform-origin: center center;
+  will-change: transform;
   cursor: pointer;
-  transition: transform .25s ease;
-  position: relative;
+
   z-index: 1;
 }
 
-.profile-photo img:hover { transform: scale(1.03); }
+
 
 /* CAMERA OVERLAY */
 .photo-overlay {
@@ -121,7 +125,7 @@ body {
   pointer-events: none;
 }
 .photo-overlay i { color: cyan; font-size: 2rem; }
-.photo-wrapper:hover .photo-overlay { opacity: 1; background: rgba(0, 255, 255, 0.35); }
+
 
 /* ✏️ EDIT PEN */
 .edit-pen {
@@ -569,4 +573,149 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
 .has-photo + .profile-photo-text,
 .has-photo ~ .profile-photo-text {
   display: none !important;
+}
+/* ===== PHOTO EDITOR MODAL ===== */
+.editor {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.editor.hidden { display: none; }
+
+.editor-box {
+  background: #000;
+  padding: 20px;
+  border-radius: 20px;
+  border: 2px solid cyan;
+  text-align: center;
+  width: 320px;
+}
+
+.crop-area {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 10px auto;
+}
+
+#cropCanvas {
+  background: #111;
+  border-radius: 50%;
+}
+
+.crop-circle {
+  position: absolute;
+  inset: 0;
+  border: 2px solid cyan;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.editor-actions button {
+  flex: 1;
+  margin: 0 4px;
+  padding: 8px;
+  background: cyan;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+}
+/* Camera hidden by default */
+.photo-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Show camera ONLY when editing + hovering */
+.profile-container.is-edit .photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+.profile-container.is-edit .photo-overlay {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Camera hidden by default */
+.photo-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Camera only in edit mode + hover */
+.profile-container.is-edit .photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+  background: rgba(0, 255, 255, 0.35);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+#cropCanvas {
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+.profile-photo img {
+  transform-origin: center center;
+}
+.profile-photo img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  /* 🔑 critical for correct transform */
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+
+  will-change: transform;
+  cursor: pointer;
+  z-index: 1;
+}
+/* ===============================
+   🟡 PHOTO PREVIEW (NOT SAVED YET)
+   =============================== */
+
+.profile-photo.preview img {
+  outline: 3px dashed #ffcc00;
+  outline-offset: 6px;
+}
+
+.profile-photo.preview::after {
+  content: "Preview";
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #ffcc00;
+  letter-spacing: 1px;
+}
+/* Camera hidden by default */
+.photo-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Camera ONLY when editing + hover */
+.profile-container.is-edit .photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+  background: rgba(0, 255, 255, 0.35);
+  pointer-events: auto;
+  cursor: pointer;
 }
