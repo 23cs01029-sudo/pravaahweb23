@@ -226,7 +226,7 @@ userPhoto.addEventListener("load", () => {
   userPhoto.classList.add("has-photo");
 
   if (savedTransform) {
-    applyTransformToMainPhoto(savedTransform);
+    renderProfilePhoto(p.photo, savedTransform);
   }
 });
 
@@ -390,7 +390,7 @@ document.getElementById("saveProfileBtn").onclick = async () => {
     savedTransform = pendingTransform;
   }
    if (savedTransform) {
-  applyTransformToMainPhoto(savedTransform);
+  renderProfilePhoto(originalPhotoSrc, savedTransform);
 }
   pendingTransform = null;
   previewPhotoSrc = null;
@@ -525,7 +525,7 @@ cropApply.onclick = () => {
   };
 
   // ✅ APPLY PREVIEW DIRECTLY TO PROFILE IMAGE
-  applyTransformToMainPhoto(pendingTransform);
+ renderProfilePhoto(originalPhotoSrc, pendingTransform);
 
   editor.classList.add("hidden");
   showToast("Preview ready — click SAVE PROFILE", "info");
@@ -617,44 +617,31 @@ function renderProfilePhoto(photoUrl, transform) {
 
   const img = new Image();
   img.crossOrigin = "anonymous";
-  img.src = photoUrl + "?t=" + Date.now();
+  img.src = photoUrl;
 
   img.onload = () => {
     const R = canvas.width / 2;
 
     const baseFit = Math.max(
-      (R * 2) / img.width,
-      (R * 2) / img.height
+      canvas.width / img.width,
+      canvas.height / img.height
     );
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
 
-    ctx.translate(R + transform.x, R + transform.y);
-    ctx.rotate(transform.rotation * Math.PI / 180);
-    ctx.scale(baseFit * transform.zoom, baseFit * transform.zoom);
+    ctx.translate(
+      R + (transform?.x || 0),
+      R + (transform?.y || 0)
+    );
+
+    ctx.rotate(((transform?.rotation || 0) * Math.PI) / 180);
+    ctx.scale(
+      baseFit * (transform?.zoom || 1),
+      baseFit * (transform?.zoom || 1)
+    );
 
     ctx.drawImage(img, -img.width / 2, -img.height / 2);
-
     ctx.restore();
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
