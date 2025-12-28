@@ -361,46 +361,28 @@ else {
 
   showToast("Photo updated!", "success");
 };
-document.getElementById("saveProfileBtn").onclick = async ()=>{
+document.getElementById("saveProfileBtn").onclick = async () => {
+  const transformData = savedTransform
+    ? JSON.stringify(savedTransform)
+    : null;
 
-  console.log("=== SAVE PROFILE START ===");
+  await saveProfileToSheet({
+    name: user.displayName,
+    email: user.email,
+    phone: userPhoneInput.value,
+    college: userCollegeInput.value,
+    photo: userPhoto.src,
+    transform: transformData     // ⬅ added properly
+  });
 
-  const finalPhotoURL = auth.currentUser.photoURL;  // keep original uploaded image URL
+  // UI update
+  phoneSpan.textContent = userPhoneInput.value || "-";
+  collegeSpan.textContent = userCollegeInput.value || "-";
 
-  // Save profile with transform only
-  try{
-    const saveRes = await fetch(scriptURL,{
-      method:"POST",
-      headers:{ "Content-Type":"application/json"},
-      body:JSON.stringify({
-        type:"saveProfile",
-        email:auth.currentUser.email,
-        phone:userPhoneInput.value,
-        college:userCollegeInput.value,
-        photo:finalPhotoURL,
-        transform: pendingTransform 
-          ? JSON.stringify(pendingTransform) 
-          : savedTransform 
-            ? JSON.stringify(savedTransform) 
-            : null
-      })
-    });
-
-    console.log("saveProfile status:", saveRes.status);
-    console.log("saveProfile response:", await saveRes.text());
-
-  }catch(err){
-    console.error("❌ Save profile request failed:", err);
-    showToast("Save Failed","error");
-    return;
-  }
-
-  showToast("Profile Updated","success");
-  savedTransform = pendingTransform || savedTransform; // update locally
-  pendingTransform = null;
-  previewPhotoSrc = null;
-  setTimeout(()=>location.reload(),800);
+  showToast("Profile updated!", "success");
+  setEditMode(false, { container, uploadOptions, userPhoto, editActions });
 };
+
 
   /* Logout */
   const logout = async () => {
@@ -628,4 +610,5 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
