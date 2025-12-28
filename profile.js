@@ -229,6 +229,9 @@ userPhoto.addEventListener("load", () => {
     renderProfilePhoto(p.photo, savedTransform);
   }
 });
+if (!p?.photo) {
+  renderProfilePhoto("default-avatar.png", { x:0, y:0, zoom:1, rotation:0 });
+}
 
 function setEditMode(on, ctx) {
   isEditing = on;
@@ -645,3 +648,4 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
