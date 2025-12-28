@@ -221,20 +221,15 @@ if (p?.transform) {
   savedTransform = typeof p.transform === "string"
     ? JSON.parse(p.transform)
     : p.transform;
-
-  userPhoto.onload = () => {
-    userPhoto.classList.add("has-photo");
-    applyTransformToMainPhoto(savedTransform);
-  };
 }
-
-
-
-
-// Hide placeholder once image loads
-userPhoto.onload = () => {
+userPhoto.addEventListener("load", () => {
   userPhoto.classList.add("has-photo");
-};
+
+  if (savedTransform) {
+    applyTransformToMainPhoto(savedTransform);
+  }
+});
+
 function setEditMode(on, ctx) {
   isEditing = on;
   ctx.container.classList.toggle("is-edit", on);
@@ -668,6 +663,7 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
 
 
 
