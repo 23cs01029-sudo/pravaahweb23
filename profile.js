@@ -302,30 +302,23 @@ function setEditMode(on, ctx) {
   const link = prompt("Paste Google Drive image link");
   if (!link) return;
 
-  // 🔍 Extract file ID from ANY Drive link format
-  const match = link.match(
-    /(?:id=|\/d\/)([-\w]{25,})/
-  );
-
+  const match = link.match(/(?:id=|\/d\/)([-\w]{25,})/);
   if (!match) {
     showToast("Invalid Google Drive link", "error");
     return;
   }
 
   const fileId = match[1];
-
-  // ✅ Convert to IMAGE CDN (works everywhere)
   const cdnUrl = `https://lh3.googleusercontent.com/d/${fileId}=w512-h512`;
 
-  // 1️⃣ Preview immediately
+  // ✅ Update UI
   userPhoto.src = cdnUrl;
+  originalPhotoSrc = cdnUrl;
+  previewPhotoSrc = cdnUrl;
 
-  // 2️⃣ Save to Firebase (important)
-  await updateProfile(user, { photoURL: cdnUrl });
-
-  // 3️⃣ Save to Sheet
+  // ✅ Save ONLY to Sheets
   await saveProfileToSheet({
-    name: user.displayName,
+    name: userNameEl.textContent,
     email: user.email,
     phone: userPhoneInput.value,
     college: userCollegeInput.value,
@@ -336,15 +329,16 @@ function setEditMode(on, ctx) {
     userPhoto.classList.add("has-photo");
   };
 
-  showToast("Photo updated!", "success");
+  showToast("Photo updated", "success");
 };
+
 document.getElementById("saveProfileBtn").onclick = async () => {
   await saveProfileToSheet({
-    name: auth.currentUser.displayName,
-    email: auth.currentUser.email,
+    name: userNameEl.textContent,
+    email: user.email,
     phone: userPhoneInput.value,
     college: userCollegeInput.value,
-    photo: auth.currentUser.photoURL,
+    photo: userPhoto.src, // ✅ FINAL SOURCE OF TRUTH
     transform: pendingTransform
       ? JSON.stringify(pendingTransform)
       : savedTransform
@@ -358,6 +352,7 @@ document.getElementById("saveProfileBtn").onclick = async () => {
 
   showToast("Profile Updated", "success");
 };
+
 
 
   /* Logout */
@@ -590,6 +585,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
