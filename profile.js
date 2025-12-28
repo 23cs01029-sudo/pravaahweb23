@@ -747,22 +747,37 @@ cropApply.onclick = () => {
 
 
 /* Cancel Edit */
-/* Cancel Edit */
 cropCancel.onclick = () => {
-  pendingTransform = null;
-  previewPhotoSrc = null;
+
   editor.classList.add("hidden");
 
-  // Restore OLD photo before upload attempt
-  if (lastSavedPhoto) {
-      userPhoto.src = lastSavedPhoto;
-      renderProfilePhoto(lastSavedPhoto, lastSavedTransform || {x:0,y:0,zoom:1,rotation:0});
-  } else {
-      renderProfilePhoto(originalPhotoSrc, savedTransform || {x:0,y:0,zoom:1,rotation:0});
+  // ❗ If user uploaded new image but didn't save -> discard instantly
+  if (previewPhotoSrc) {
+      const cached = getCachedProfile(user.email);
+
+      if (cached?.photo) {
+          userPhoto.src = cached.photo;
+          renderProfilePhoto(cached.photo, cached.transform || {x:0,y:0,zoom:1,rotation:0});
+      } else {
+          userPhoto.src = "default-avatar.png";
+          renderProfilePhoto("default-avatar.png",{x:0,y:0,zoom:1,rotation:0});
+      }
+
+  } else { 
+      // ❗ No new upload -> revert to last saved state properly
+      userPhoto.src = lastSavedPhoto || originalPhotoSrc;
+      renderProfilePhoto(
+          lastSavedPhoto ? lastSavedTransform : savedTransform || {x:0,y:0,zoom:1,rotation:0}
+      );
   }
+
+  pendingTransform = null;
+  previewPhotoSrc = null;
+  drag = false;
 
   showToast("Changes discarded", "info");
 };
+
 
 
 
@@ -929,6 +944,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
