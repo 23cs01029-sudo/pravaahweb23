@@ -29,6 +29,7 @@ function showToast(message, type = "info") {
   }, 3000);
 }
 let activeToast = null;
+let userPhoto = null;
 
 function showPersistentToast(message, type = "info") {
   if (activeToast) activeToast.remove();
@@ -165,7 +166,7 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) return (window.location.href = "index.html");
 
   const container = document.querySelector(".profile-container");
-  const userPhoto = document.getElementById("userPhoto");
+  userPhoto = document.getElementById("userPhoto");
   const uploadPhotoInput = document.getElementById("uploadPhoto");
   const uploadOptions = document.getElementById("uploadOptions");
   const driveUploadBtn = document.getElementById("driveUploadBtn");
@@ -303,7 +304,13 @@ uploadPhotoInput.onchange = (e) => {
       setTimeout(() => {
         updatePersistentToast("Photo ready for editing", "success");
         openEditor();               // ✅ SAFE NOW
-        setTimeout(closePersistentToast, 1200);
+        // Close toast when editor is actually visible
+setTimeout(() => {
+  if (!editor.classList.contains("hidden")) {
+    closePersistentToast();
+  }
+}, 800);
+
       }, 400);
     };
   };
@@ -635,9 +642,17 @@ window.addEventListener("load", async () => {
   savedTransform = typeof p.transform === "string"
     ? JSON.parse(p.transform)
     : p.transform;
+if (savedTransform && userPhoto) {
+  userPhoto.style.transform = `
+    translate(${savedTransform.x}px, ${savedTransform.y}px)
+    scale(${savedTransform.zoom})
+    rotate(${savedTransform.rotation}deg)
+  `;
+}
 
   renderProfilePhoto(p.photo, savedTransform);
 });
+
 
 
 
