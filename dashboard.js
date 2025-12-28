@@ -255,38 +255,64 @@ async function setupEventFilter() {
 
 /* ================= STATS ================= */
 async function loadDashboardStats() {
-  const qs = new URLSearchParams({
-    type: "dashboardStats",
-    day: CURRENT_DAY,
-    event: CURRENT_EVENT,
-    role: CURRENT_ROLE
-  });
+  const cached = getCachedDashboard();
 
-  const res = await fetch(`${API}?${qs}`);
-  const d = await res.json();
+  /* 🚀 1. FAST LOAD using CACHE FIRST */
+  if(cached){
+    applyStatsToUI(cached);
+  }
 
+  /* 🔄 2. Fetch fresh data live & update cache */
+  try {
+    const qs = new URLSearchParams({
+      type: "dashboardStats",
+      day: CURRENT_DAY,
+      event: CURRENT_EVENT,
+      role: CURRENT_ROLE
+    });
+
+    const res = await fetch(`${API}?${qs}`);
+    const d = await res.json();
+
+    cacheDashboard(d);          // store for 1 min load
+    applyStatsToUI(d);          // live update UI
+  }
+  catch(e){
+    console.log("⚠ Using cached data (offline)",e);
+  }
+}
+function applyStatsToUI(d){
   statTotalReg.textContent = d.totalRegistrations ?? "—";
-  statScan.textContent = d.scansToday ?? "—";
-  statMoney.textContent = d.totalAmount != null ? `₹${d.totalAmount}` : "—";
+  statScan.textContent     = d.scansToday ?? "—";
+  statMoney.textContent    = d.totalAmount != null ? `₹${d.totalAmount}` : "—";
 
   eventCountEl.textContent = CURRENT_EVENT ? (d.eventRegistrations ?? 0) : "—";
 
   statInCampus.innerHTML = `Live: <b>${d.insideCampus?.live ?? 0}</b><br>Max: <b>${d.insideCampus?.max ?? 0}</b>`;
   statAccommodation.innerHTML = `Live: <b>${d.accommodation?.live ?? 0}</b><br>Max: <b>${d.accommodation?.max ?? 0}</b>`;
 
-  if (CURRENT_ROLE !== "Admin" && d.passes) {
-    passDay.textContent = d.passes.day ?? "—";
-    passFest.textContent = d.passes.fest ?? "—";
-    passStar.textContent = d.passes.starnite ?? "—";
+  if(CURRENT_ROLE !== "Admin" && d.passes){
+    passDay.textContent     = d.passes.day ?? "—";
+    passFest.textContent    = d.passes.fest ?? "—";
+    passStar.textContent    = d.passes.starnite ?? "—";
     passVisitor.textContent = d.passes.visitor ?? "—";
   }
 }
 
+
 /* ================= AUTO REFRESH ================= */
 function startAutoRefresh() {
   if (REFRESH_TIMER) clearInterval(REFRESH_TIMER);
-  REFRESH_TIMER = setInterval(loadDashboardStats, 30000);
+  REFRESH_TIMER = setInterval(loadDashboardStats, 60000);   // every 1 min
+
+  // Extra: refresh once when tab becomes visible
+  document.addEventListener("visibilitychange", ()=>{
+    if(document.visibilityState === "visible"){
+      loadDashboardStats();
+    }
+  });
 }
+
 
 /* ================= PASSES SHEET ================= */
 function setupPassesSheet() {
@@ -425,6 +451,28 @@ document.getElementById("logoutDesktop").onclick = logout;
 document.getElementById("logoutMobile").onclick = logout;
 
 async function logout() {
+  clearDashboardCache();          // 🧹 clear stats
+  localStorage.removeItem("pravaah_dashboard"); 
   await signOut(auth);
   location.href = "login.html";
+}
+
+/* ============================================================
+   📌 LOCAL CACHE SYSTEM for DASHBOARD (Stats + Pass Counts)
+============================================================ */
+
+function cacheDashboard(data){
+  localStorage.setItem("pravaah_dashboard", JSON.stringify({
+    time: Date.now(),
+    data
+  }));
+}
+
+function getCachedDashboard(){
+  let x = localStorage.getItem("pravaah_dashboard");
+  return x ? JSON.parse(x).data : null;
+}
+
+function clearDashboardCache(){
+  localStorage.removeItem("pravaah_dashboard");
 }
