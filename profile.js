@@ -9,7 +9,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbw6U9Flw5hjv8RXF_4APCfOp3hxdY_X51xjl12hfoxTcRIu7PHedAewQDjUYILwpqlELw/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxKEJJxuLAyCBxQUF4zs1rFGv6qluYJgJaLYgglQTrR_9Chg1aowAT5wcRIWU9WadLRPA/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -38,18 +38,17 @@ let originalProfile = { phone: "", college: "" };
 async function saveProfileToSheet(profile) {
   await fetch(scriptURL, {
     method: "POST",
+    mode: "no-cors",
     body: JSON.stringify({
       type: "saveProfile",
       name: profile.name || "",
       email: profile.email || "",
       phone: profile.phone || "",
       college: profile.college || "",
-      photo: profile.photo || "",
-      transform: profile.transform || null     // <-- REQUIRED FIX
+      photo: profile.photo || ""
     })
   });
 }
-
 
 
 /* ---------- Field Text ---------- */
@@ -279,6 +278,7 @@ setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
   try {
     const r = await fetch(scriptURL,{
   method:"POST",
+  headers:{ "Content-Type":"application/json" },
   body: JSON.stringify(payload)
 });
 
@@ -319,14 +319,16 @@ else {
 };
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
-driveUploadBtn.onclick = async () => {
+  driveUploadBtn.onclick = async () => {
   if (!isEditing) return showToast("Tap ✏️ to edit", "info");
 
   const link = prompt("Paste Google Drive image link");
   if (!link) return;
 
   // 🔍 Extract file ID from ANY Drive link format
-  const match = link.match(/(?:id=|\/d\/)([-\w]{25,})/);
+  const match = link.match(
+    /(?:id=|\/d\/)([-\w]{25,})/
+  );
 
   if (!match) {
     showToast("Invalid Google Drive link", "error");
@@ -335,61 +337,70 @@ driveUploadBtn.onclick = async () => {
 
   const fileId = match[1];
 
-  // 🔥 Best CDN viewable universal link
-  const cdnUrl = `https://lh3.googleusercontent.com/d/${fileId}=w1024-h1024`;
+  // ✅ Convert to IMAGE CDN (works everywhere)
+  const cdnUrl = `https://lh3.googleusercontent.com/d/${fileId}=w512-h512`;
 
-  // Show immediately
+  // 1️⃣ Preview immediately
   userPhoto.src = cdnUrl;
 
-  // Save crop state reset (because new image loaded)
-  savedTransform = null;
-  pendingTransform = null;
-
-  // Save to Firebase profile
+  // 2️⃣ Save to Firebase (important)
   await updateProfile(user, { photoURL: cdnUrl });
 
-  // Save to Sheet including transform null
+  // 3️⃣ Save to Sheet
   await saveProfileToSheet({
     name: user.displayName,
     email: user.email,
     phone: userPhoneInput.value,
     college: userCollegeInput.value,
-    photo: cdnUrl,
-    transform: null
+    photo: cdnUrl
   });
 
   userPhoto.onload = () => {
     userPhoto.classList.add("has-photo");
   };
 
-  showToast("Photo updated from Drive!", "success");
+  showToast("Photo updated!", "success");
 };
+document.getElementById("saveProfileBtn").onclick = async ()=>{
 
-document.getElementById("saveProfileBtn").onclick = async () => {
-  const transformData = pendingTransform
-    ? JSON.stringify(pendingTransform)
-    : (savedTransform ? JSON.stringify(savedTransform) : null);
+  console.log("=== SAVE PROFILE START ===");
 
-  await saveProfileToSheet({
-    name: user.displayName,
-    email: user.email,
-    phone: userPhoneInput.value,
-    college: userCollegeInput.value,
-    photo: userPhoto.src,
-    transform: transformData
-  });
+  const finalPhotoURL = auth.currentUser.photoURL;  // keep original uploaded image URL
 
-  savedTransform = pendingTransform || savedTransform; // ← IMPORTANT
+  // Save profile with transform only
+  try{
+    const saveRes = await fetch(scriptURL,{
+      method:"POST",
+      mode: "no-cors",
+      body:JSON.stringify({
+        type:"saveProfile",
+        email:auth.currentUser.email,
+        phone:userPhoneInput.value,
+        college:userCollegeInput.value,
+        photo:finalPhotoURL,
+        transform: pendingTransform 
+          ? JSON.stringify(pendingTransform) 
+          : savedTransform 
+            ? JSON.stringify(savedTransform) 
+            : null
+      })
+    });
+
+    console.log("saveProfile status:", saveRes.status);
+    console.log("saveProfile response:", await saveRes.text());
+
+  }catch(err){
+    console.error("❌ Save profile request failed:", err);
+    showToast("Save Failed","error");
+    return;
+  }
+
+  showToast("Profile Updated","success");
+  savedTransform = pendingTransform || savedTransform; // update locally
   pendingTransform = null;
-
-  phoneSpan.textContent = userPhoneInput.value || "-";
-  collegeSpan.textContent = userCollegeInput.value || "-";
-
-  showToast("Profile updated!", "success");
-  setEditMode(false, { container, uploadOptions, userPhoto, editActions });
+  previewPhotoSrc = null;
+  setTimeout(()=>location.reload(),800);
 };
-
-
 
   /* Logout */
   const logout = async () => {
@@ -617,10 +628,3 @@ window.addEventListener("load", ()=>{
       }
     });
 });
-
-
-
-
-
-
-
