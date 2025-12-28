@@ -175,6 +175,19 @@ qrBox.addEventListener("click", () => {
 onAuthStateChanged(auth, async (user) => {
   if (!user) return (window.location.href = "index.html");
 // 🔥 Load cached data instantly without waiting server
+
+
+  const container = document.querySelector(".profile-container");
+  userPhoto = document.getElementById("userPhoto");
+  const uploadPhotoInput = document.getElementById("uploadPhoto");
+  const uploadOptions = document.getElementById("uploadOptions");
+  const driveUploadBtn = document.getElementById("driveUploadBtn");
+
+  const userNameEl = document.getElementById("userName");
+  const userEmailEl = document.getElementById("userEmail");
+  const userPhoneInput = document.getElementById("userPhone");
+  const userCollegeInput = document.getElementById("userCollege");
+  const passesList = document.getElementById("passesList");
 const cached = getCachedProfile(user.email);
 
 if(cached){
@@ -189,19 +202,6 @@ if(cached){
         renderProfilePhoto(cached.photo, cached.transform);
     }
 }
-
-  const container = document.querySelector(".profile-container");
-  userPhoto = document.getElementById("userPhoto");
-  const uploadPhotoInput = document.getElementById("uploadPhoto");
-  const uploadOptions = document.getElementById("uploadOptions");
-  const driveUploadBtn = document.getElementById("driveUploadBtn");
-
-  const userNameEl = document.getElementById("userName");
-  const userEmailEl = document.getElementById("userEmail");
-  const userPhoneInput = document.getElementById("userPhone");
-  const userCollegeInput = document.getElementById("userCollege");
-  const passesList = document.getElementById("passesList");
-
   const editActions = document.getElementById("editActions");
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
@@ -283,8 +283,45 @@ function setEditMode(on, ctx) {
   originalProfile = { phone: userPhoneInput.value, college: userCollegeInput.value };
 
   /* Load passes */
-  const passes = await fetchUserPasses(user.email);
-  renderPasses(passes, passesList, user.email);
+  /* ==========================================================
+   🚀 Pass Loader with Cache + Multi-Device Sync
+========================================================== */
+
+// 1️⃣ Load cached passes instantly (fast UI, even offline)
+const cachedPasses = getCachedPasses(user.email);
+if(cachedPasses){
+  renderPasses(cachedPasses, passesList, user.email);
+}
+
+// 2️⃣ Fetch fresh passes from backend & update
+(async()=>{
+  try{
+      const fresh = await fetchUserPasses(user.email);
+
+      if(JSON.stringify(fresh) !== JSON.stringify(cachedPasses)){
+          cachePasses(user.email, fresh);         // update local cache
+          renderPasses(fresh, passesList, user.email);
+          console.log("🔄 Passes synced from cloud");
+      }
+  }catch(e){
+      console.warn("Fetch failed (offline?)",e);
+  }
+})();
+/* 🔁 Background sync every 60 seconds */
+setInterval(async ()=>{
+  try{
+      const fresh = await fetchUserPasses(user.email);
+      const cached = getCachedPasses(user.email);
+
+      if(JSON.stringify(fresh) !== JSON.stringify(cached)){
+          cachePasses(user.email, fresh);
+          renderPasses(fresh, passesList, user.email);
+      }
+  }catch(err){
+      console.log("Sync error",err);
+  }
+},60000);
+
 
   /* Edit toggle */
   document.getElementById("editPen").onclick = () => {
@@ -460,14 +497,37 @@ document.getElementById("saveProfileBtn").onclick = async () => {
 
 };
 
+document.addEventListener("visibilitychange", async ()=>{
+    if(document.visibilityState === "visible"){       // user comes back to tab
+        try{
+            const fresh = await fetchUserPasses(user.email);
+            const cached = getCachedPasses(user.email);
+
+            if(JSON.stringify(fresh) !== JSON.stringify(cached)){
+                cachePasses(user.email, fresh);
+                renderPasses(fresh, passesList, user.email);
+            }
+        }catch(e){}
+    }
+});
 
 
 
   /* Logout */
   const logout = async () => {
+    const email = auth.currentUser?.email;
+    if(email){
+  clearProfileCache(email);
+  clearPassCache(email);
+}
+   // 🧹 delete cached profile
+    sessionStorage.clear();               // 🧹 clear dashboard role cache
+    localStorage.removeItem("pravaah_profile_" + email); // extra safety
+
     await signOut(auth);
     window.location.href = "index.html";
-  };
+};
+
   logoutDesktop.onclick = logout;
   logoutMobile.onclick = logout;
 });
@@ -742,6 +802,23 @@ function getCachedProfile(email) {
 function clearProfileCache(email) {
   localStorage.removeItem("pravaah_profile_" + email);
 }
+/* ==========================================================
+   📌 LOCAL PASS CACHE SYSTEM
+========================================================== */
+
+function cachePasses(email, passes){
+  localStorage.setItem("pravaah_passes_" + email, JSON.stringify(passes));
+}
+
+function getCachedPasses(email){
+  const data = localStorage.getItem("pravaah_passes_" + email);
+  return data ? JSON.parse(data) : null;
+}
+
+function clearPassCache(email){
+  localStorage.removeItem("pravaah_passes_" + email);
+}
+
 
 
 
