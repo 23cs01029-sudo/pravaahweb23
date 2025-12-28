@@ -28,6 +28,31 @@ function showToast(message, type = "info") {
     setTimeout(() => toast.remove(), 500);
   }, 3000);
 }
+let activeToast = null;
+
+function showPersistentToast(message, type = "info") {
+  if (activeToast) activeToast.remove();
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type} show`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  activeToast = toast;
+}
+
+function updatePersistentToast(message, type = "info") {
+  if (!activeToast) return;
+  activeToast.className = `toast ${type} show`;
+  activeToast.textContent = message;
+}
+
+function closePersistentToast() {
+  if (activeToast) {
+    activeToast.remove();
+    activeToast = null;
+  }
+}
 
 /* ---------- State ---------- */
 let isEditing = false;
@@ -237,59 +262,55 @@ function setEditMode(on, ctx) {
     uploadPhotoInput.click();
   };
 
-  uploadPhotoInput.onchange = (e) => {
+uploadPhotoInput.onchange = (e) => {
   if (!e.target.files.length) return;
 
   const file = e.target.files[0];
   const reader = new FileReader();
 
   reader.onload = () => {
-    try {
-      showToast("Uploading photo...", "info");
+    const previewSrc = reader.result;
+    const base64 = previewSrc.split(",")[1];
 
-      const base64 = reader.result.split(",")[1];
+    // 🔒 1. Show persistent uploading toast
+    showPersistentToast("Uploading photo… please wait", "info");
 
-      // 🔒 Fire-and-forget upload (NO headers, NO response)
-      fetch(scriptURL, {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify({
-          type: "photoUpload",
-          email: user.email,
-          mimetype: file.type,
-          file: base64
-        })
-      });
+    // 🔒 2. Fire backend upload (do NOT wait)
+    fetch(scriptURL, {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify({
+        type: "photoUpload",
+        email: user.email,
+        mimetype: file.type,
+        file: base64
+      })
+    });
 
-      // ✅ Step 1: show LOCAL preview immediately
-      const previewSrc = reader.result;
-      userPhoto.src = previewSrc;
-      originalPhotoSrc = previewSrc;
-      previewPhotoSrc = previewSrc;
+    // 🔒 3. Set preview but DO NOT open editor yet
+    userPhoto.src = previewSrc;
+    originalPhotoSrc = previewSrc;
+    previewPhotoSrc = previewSrc;
 
-      pendingTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
-      savedTransform = null;
+    pendingTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
+    savedTransform = null;
 
-      showToast("Preparing photo editor…", "info");
+    // 🔒 4. Wait for browser to fully decode image
+    userPhoto.onload = () => {
+      userPhoto.classList.add("has-photo");
 
-      // ✅ Step 2: wait until browser fully decodes image
-      userPhoto.onload = () => {
-        userPhoto.classList.add("has-photo");
-
-        // extra safety delay (prevents canvas race)
-        setTimeout(() => {
-          openEditor();
-        }, 300);
-      };
-
-    } catch (err) {
-      console.error(err);
-      showToast("Photo upload failed", "error");
-    }
+      // extra delay = GPU + canvas safety
+      setTimeout(() => {
+        updatePersistentToast("Photo ready for editing", "success");
+        openEditor();               // ✅ SAFE NOW
+        setTimeout(closePersistentToast, 1200);
+      }, 400);
+    };
   };
 
   reader.readAsDataURL(file);
 };
+
 
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
@@ -482,19 +503,20 @@ canvas.onmouseup=()=>drag=false;
 
 
 /* Apply Preview */
-cropApply.onclick=()=>{
-    pendingTransform={
-      x:offset.x,y:offset.y,
-      zoom:scaleV,
-      rotation:(rotV*180/Math.PI)%360
-    };
+cropApply.onclick = () => {
+  pendingTransform = {
+    x: offset.x,
+    y: offset.y,
+    zoom: scaleV,
+    rotation: (rotV * 180 / Math.PI) % 360
+  };
 
-    previewPhotoSrc = canvas.toDataURL("image/png");
-    document.getElementById("userPhoto").src=previewPhotoSrc;
+  renderProfilePhoto(originalPhotoSrc, pendingTransform);
 
-    editor.classList.add("hidden");
-    showToast("Photo ready — click SAVE PROFILE to store","info");
+  editor.classList.add("hidden");
+  showToast("Preview ready — click SAVE PROFILE", "info");
 };
+
 
 /* Cancel Edit */
 cropCancel.onclick=()=>{
@@ -574,25 +596,50 @@ function getTouchDistance(t){
 }
 
 
-/* -------- Load transform on startup -------- */
-window.addEventListener("load", ()=>{
-  fetch(`${scriptURL}?type=profile&email=${auth.currentUser?.email}`)
-    .then(r=>r.json())
-    .then(p=>{
-      if(p?.transform){
-        savedTransform = typeof p.transform==="string"
-          ? JSON.parse(p.transform)
-          : p.transform;
+function renderProfilePhoto(photoUrl, transform) {
+  const canvas = document.getElementById("profileCanvas");
+  const ctx = canvas.getContext("2d");
 
-        let img = document.getElementById("userPhoto");
-        img.style.transform = 
-          `translate(-50%,-50%) 
-           translate(${savedTransform.x}px,${savedTransform.y}px) 
-           scale(${savedTransform.zoom}) 
-           rotate(${savedTransform.rotation}deg)`;
-      }
-    });
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = photoUrl + "?t=" + Date.now();
+
+  img.onload = () => {
+    const R = canvas.width / 2;
+
+    const baseFit = Math.max(
+      (R * 2) / img.width,
+      (R * 2) / img.height
+    );
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+
+    ctx.translate(R + transform.x, R + transform.y);
+    ctx.rotate(transform.rotation * Math.PI / 180);
+    ctx.scale(baseFit * transform.zoom, baseFit * transform.zoom);
+
+    ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+    ctx.restore();
+  };
+}
+window.addEventListener("load", async () => {
+  const res = await fetch(
+    `${scriptURL}?type=profile&email=${encodeURIComponent(auth.currentUser.email)}`
+  );
+  const p = await res.json();
+
+  if (!p?.photo || !p?.transform) return;
+
+  savedTransform = typeof p.transform === "string"
+    ? JSON.parse(p.transform)
+    : p.transform;
+
+  renderProfilePhoto(p.photo, savedTransform);
 });
+
+
 
 
 
