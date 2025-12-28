@@ -200,27 +200,28 @@ renderLogs();   // ⬅ show history below participants
 /* ============== RENDER LOG HISTORY (FILTERED FOR THIS PASS) ================= */
 function renderLogs(){
   if(!logs || !logs.length){
-    document.getElementById("logsList").innerHTML =
-      `<p style="opacity:.6">No activity recorded yet.</p>`;
+    logsList.innerHTML = `<p style="opacity:.6">No logs yet</p>`;
     return;
   }
 
-  // 🔥 Filter only for participants of this Pass
   const emails = participants.map(p=>p.Email);
   const filtered = logs.filter(l => emails.includes(l.Email));
 
-  document.getElementById("logsList").innerHTML =
+  logsList.innerHTML =
     filtered.slice().reverse().map(l=>`
       <div style="padding:8px;border-bottom:1px solid rgba(0,255,255,.25)">
         <b>${l.Name}</b>
-        <span style="color:${l.Action==='ENTRY'?'#00ffcc':'#ff6b6b'}">
-          (${l.Action})
-        </span><br>
-        <small>${new Date(l.Time).toLocaleString('en-IN',{hour12:true})}</small><br>
-        <small>Scanner: ${l.Scanner}</small>
+        <span style="color:${l.Action==='ENTRY'?'#00ffcc':'#ff6b6b'}">(${l.Action})</span><br>
+
+        <small>
+          📅 ${new Date(l.Timestamp).toLocaleString("en-IN",{hour12:true})}
+        </small><br>
+
+        <small>🔹 Scanned By: ${l["Scanned By"] || "Unknown"}</small>
       </div>
     `).join("");
 }
+
 
 
 /* -------- BUTTONS -------- */
