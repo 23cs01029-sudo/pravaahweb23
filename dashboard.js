@@ -79,11 +79,38 @@ let REFRESH_TIMER = null;
 onAuthStateChanged(auth, async (user) => {
   if (!user) return location.href = "login.html";
 
-  const roleRes = await fetch(`${API}?type=role&email=${encodeURIComponent(user.email)}`);
-  const roleObj = await roleRes.json();
+  // 1️⃣ Load cached role instantly (no lag)
+const cachedRole = getCachedRole(user.email);
+if(cachedRole){
+  CURRENT_ROLE = cachedRole.role;
+  IS_PRIMARY   = cachedRole.isPrimary;
+  adminEmailEl.textContent = user.email;
+  adminRoleEl.textContent =
+    CURRENT_ROLE === "SuperAccount" && IS_PRIMARY
+      ? "SuperAccount (Primary)"
+      : CURRENT_ROLE;
 
-  CURRENT_ROLE = roleObj?.role || "USER";
-  IS_PRIMARY = roleObj?.isPrimary === true;
+  applyRoleVisibility(); // UI visible without waiting
+}
+
+// 2️⃣ Fetch fresh role from server
+const roleRes = await fetch(`${API}?type=role&email=${encodeURIComponent(user.email)}`);
+const roleObj = await roleRes.json();
+
+CURRENT_ROLE = roleObj?.role || "USER";
+IS_PRIMARY = roleObj?.isPrimary === true;
+
+// Update cache for future instant load
+cacheRole(user.email, roleObj);
+
+// Live update UI after fetch
+adminRoleEl.textContent =
+  CURRENT_ROLE === "SuperAccount" && IS_PRIMARY
+    ? "SuperAccount (Primary)"
+    : CURRENT_ROLE;
+
+applyRoleVisibility();
+
 
   if (!["Admin", "SuperAdmin", "SuperAccount"].includes(CURRENT_ROLE)) {
     alert("Access denied");
@@ -451,7 +478,8 @@ document.getElementById("logoutDesktop").onclick = logout;
 document.getElementById("logoutMobile").onclick = logout;
 
 async function logout() {
-  clearDashboardCache();          // 🧹 clear stats
+  clearDashboardCache();  
+   clearRoleCache(email); // 🧹 clear stats
   localStorage.removeItem("pravaah_dashboard"); 
   await signOut(auth);
   location.href = "login.html";
@@ -475,4 +503,20 @@ function getCachedDashboard(){
 
 function clearDashboardCache(){
   localStorage.removeItem("pravaah_dashboard");
+}
+/* ============================================================
+   📌 LOCAL CACHE SYSTEM FOR ADMIN ROLE (Instant UI Load)
+============================================================ */
+
+function cacheRole(email, roleObj){
+  localStorage.setItem("pravaah_role_" + email, JSON.stringify(roleObj));
+}
+
+function getCachedRole(email){
+  let r = localStorage.getItem("pravaah_role_" + email);
+  return r ? JSON.parse(r) : null;
+}
+
+function clearRoleCache(email){
+  localStorage.removeItem("pravaah_role_" + email);
 }
