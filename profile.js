@@ -30,6 +30,16 @@ function showToast(message, type = "info") {
 }
 let activeToast = null;
 let userPhoto = null;
+function applyTransformToMainPhoto(t) {
+  if (!t || !userPhoto) return;
+
+  userPhoto.style.transform = `
+    translate(-50%, -50%)
+    translate(${t.x}px, ${t.y}px)
+    scale(${t.zoom})
+    rotate(${t.rotation}deg)
+  `;
+}
 
 function showPersistentToast(message, type = "info") {
   if (activeToast) activeToast.remove();
@@ -182,16 +192,7 @@ onAuthStateChanged(auth, async (user) => {
   const logoutMobile = document.getElementById("logoutMobile");
 const cameraBtn = document.getElementById("cameraBtn"); // <-- FIX
 cameraBtn.style.display = "none"; // hidden until edit enabled
-function applyTransformToMainPhoto(t) {
-  if (!t || !userPhoto) return;
 
-  userPhoto.style.transform = `
-    translate(-50%, -50%)
-    translate(${t.x}px, ${t.y}px)
-    scale(${t.zoom})
-    rotate(${t.rotation}deg)
-  `;
-}
 
   /* Prefill */
   /* Prefill basic info */
@@ -227,15 +228,6 @@ if (p?.transform) {
   };
 }
 
-function applyTransformToMainPhoto(t) {
-  if (!userPhoto) return;
-
-  userPhoto.style.transform =
-    `translate(-50%, -50%)
-     translate(${t.x}px, ${t.y}px)
-     scale(${t.zoom})
-     rotate(${t.rotation}deg)`;
-}
 
 
 
@@ -676,6 +668,7 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
 
 
 
