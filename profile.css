@@ -719,3 +719,33 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   pointer-events: auto;
   cursor: pointer;
 }
+/* 🔒 Hidden render canvas (logic only, no UI) */
+#profileCanvas {
+  display: none;
+}
+/* Prevent editor flash before ready */
+.editor.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+/* 🟡 Preview state (before SAVE) */
+.profile-container.is-edit .profile-photo.preview img {
+  outline: 3px dashed #ffcc00;
+  outline-offset: 6px;
+}
+
+.profile-container.is-edit .profile-photo.preview::after {
+  content: "PREVIEW";
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: #ffcc00;
+  letter-spacing: 1px;
+}
+/* 🔑 JS controls all transforms */
+.profile-photo img {
+  transform: translate(-50%, -50%) !important;
+}
+
