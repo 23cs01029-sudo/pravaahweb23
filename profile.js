@@ -287,14 +287,13 @@ uploadPhotoInput.onchange = (e) => {
   const file = e.target.files[0];
   const reader = new FileReader();
 
+  showPersistentToast("Uploading photo…", "info");
+
   reader.onload = () => {
     const previewSrc = reader.result;
     const base64 = previewSrc.split(",")[1];
 
-    // 🔒 1. Show persistent uploading toast
-    showPersistentToast("Uploading photo… please wait", "info");
-
-    // 🔒 2. Fire backend upload (do NOT wait)
+    // Backend upload (silent - because no-cors)
     fetch(scriptURL, {
       method: "POST",
       mode: "no-cors",
@@ -306,16 +305,31 @@ uploadPhotoInput.onchange = (e) => {
       })
     });
 
-    // 🔒 3. Set preview but DO NOT open editor yet
+    // Show preview on img and canvas
     userPhoto.src = previewSrc;
+    renderProfilePhoto(previewSrc, { x:0, y:0, zoom:1, rotation:0 });
+
     originalPhotoSrc = previewSrc;
     previewPhotoSrc = previewSrc;
-
-    pendingTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
+    pendingTransform = { x:0, y:0, zoom:1, rotation:0 };
     savedTransform = null;
+
+    ////// ⭐ AUTO-OPEN EDITOR ⭐ //////
+    setTimeout(() => {
+      closePersistentToast();
+      img2.src = previewSrc;
+      img2.onload = () => {
+        baseScaleCalc();
+        redraw();
+        editor.classList.remove("hidden"); // show editor window
+      };
+      showToast("Crop/Zoom/Rotate → Press Done ✔", "success");
+    }, 900);
   };
+
   reader.readAsDataURL(file);
 };
+
 cameraBtn.onclick = () => {
   if (!isEditing) return showToast("Click ✏️ Edit first", "info");
   openEditor();
@@ -648,4 +662,5 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
 
