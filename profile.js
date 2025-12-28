@@ -278,7 +278,7 @@ setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
   try {
     const r = await fetch(scriptURL,{
   method:"POST",
-  headers:{ "Content-Type":"application/json" },
+  mode:"no-cors",
   body: JSON.stringify(payload)
 });
 
@@ -628,4 +628,5 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
