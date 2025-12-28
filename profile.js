@@ -51,6 +51,7 @@ async function saveProfileToSheet(profile) {
 }
 
 
+
 /* ---------- Field Text ---------- */
 function ensureFieldSpan(input, id) {
   let span = document.getElementById(id);
@@ -284,19 +285,19 @@ setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
 
     log("Upload response status:", r.status);
 
-    const out = await r.json();
-    log("Upload response JSON:", out);
-if (out.ok) {
-  // 🔥 Cache-busted URL so browser reloads image
-  const finalPhoto = out.photo + "&t=" + Date.now();
+    await fetch(scriptURL, {
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify(payload)
+});
 
-  // 1️⃣ Update image immediately
-  userPhoto.src = finalPhoto;
+// ✅ use local preview (already base64)
+await updateProfile(user, {
+  photoURL: userPhoto.src
+});
 
-  // 2️⃣ Persist in Firebase (CRITICAL FIX)
-  await updateProfile(user, {
-    photoURL: finalPhoto
-  });
+showToast("Photo uploaded", "success");
+
 
   // 3️⃣ Hide placeholder text once image loads
   userPhoto.onload = () => {
@@ -361,46 +362,28 @@ else {
 
   showToast("Photo updated!", "success");
 };
-document.getElementById("saveProfileBtn").onclick = async ()=>{
+document.getElementById("saveProfileBtn").onclick = async () => {
+  await saveProfileToSheet({
+    name: auth.currentUser.displayName,
+    email: auth.currentUser.email,
+    phone: userPhoneInput.value,
+    college: userCollegeInput.value,
+    photo: auth.currentUser.photoURL,
+    transform: pendingTransform
+      ? JSON.stringify(pendingTransform)
+      : savedTransform
+      ? JSON.stringify(savedTransform)
+      : null
+  });
 
-  console.log("=== SAVE PROFILE START ===");
-
-  const finalPhotoURL = auth.currentUser.photoURL;  // keep original uploaded image URL
-
-  // Save profile with transform only
-  try{
-    const saveRes = await fetch(scriptURL,{
-      method:"POST",
-      mode: "no-cors",
-      body:JSON.stringify({
-        type:"saveProfile",
-        email:auth.currentUser.email,
-        phone:userPhoneInput.value,
-        college:userCollegeInput.value,
-        photo:finalPhotoURL,
-        transform: pendingTransform 
-          ? JSON.stringify(pendingTransform) 
-          : savedTransform 
-            ? JSON.stringify(savedTransform) 
-            : null
-      })
-    });
-
-    console.log("saveProfile status:", saveRes.status);
-    console.log("saveProfile response:", await saveRes.text());
-
-  }catch(err){
-    console.error("❌ Save profile request failed:", err);
-    showToast("Save Failed","error");
-    return;
-  }
-
-  showToast("Profile Updated","success");
-  savedTransform = pendingTransform || savedTransform; // update locally
+  savedTransform = pendingTransform || savedTransform;
   pendingTransform = null;
   previewPhotoSrc = null;
-  setTimeout(()=>location.reload(),800);
+
+  showToast("Profile Updated", "success");
+  setTimeout(() => location.reload(), 700);
 };
+
 
   /* Logout */
   const logout = async () => {
@@ -628,5 +611,6 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
