@@ -337,12 +337,19 @@ setInterval(async ()=>{
   collegeSpan.textContent = originalProfile.college || "-";
 
   // revert photo & transform fully
-  if (lastSavedPhoto) {
-      userPhoto.src = lastSavedPhoto;
-      renderProfilePhoto(lastSavedPhoto, lastSavedTransform);
-  } else {
-      renderProfilePhoto(originalPhotoSrc, savedTransform);
-  }
+  // 🔥 FULL CORRECT RESTORE LOGIC
+if (pendingTransform || previewPhotoSrc) {
+    // restore last actual saved DP (from cache/sheet)
+    const profile = getCachedProfile(user.email);
+    if(profile?.photo){
+        userPhoto.src = profile.photo;
+        renderProfilePhoto(profile.photo, profile.transform || {x:0,y:0,zoom:1,rotation:0});
+    }
+} else {
+    // no new upload → restore old values
+    renderProfilePhoto(originalPhotoSrc, savedTransform);
+}
+
 
   setEditMode(false, { container, uploadOptions, userPhoto, editActions });
   showToast("Edit cancelled", "info");
@@ -915,6 +922,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
