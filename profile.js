@@ -214,13 +214,11 @@ userNameEl.textContent = user.displayName || "PRAVAAH User";
 userEmailEl.textContent = user.email;
 
 /* Default photo first */
-userPhoto.src = "default-avatar.png";
-
 /* Load profile from Sheet */
 const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
 const p = await res.json();
 
-/* Load stored data */
+/* If profile exists from sheet */
 if (p?.email) {
   userPhoneInput.value = p.phone || "";
   userCollegeInput.value = p.college || "";
@@ -231,7 +229,6 @@ if (p?.email) {
     renderProfilePhoto(userPhoto.src, savedTransform);
   }
 
-  // 🟡 Update local cache
   cacheProfile({
     email:user.email,
     name:user.displayName,
@@ -240,6 +237,12 @@ if (p?.email) {
     photo:p.photo,
     transform:p.transform ? JSON.parse(p.transform) : null
   });
+}
+
+/* If no photo then show default */
+if (!userPhoto.src || userPhoto.src.includes("default-avatar")) {
+  userPhoto.src = p?.photo || "default-avatar.png";
+  renderProfilePhoto(userPhoto.src, savedTransform || {x:0,y:0,zoom:1,rotation:0});
 }
 
 
@@ -844,6 +847,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
