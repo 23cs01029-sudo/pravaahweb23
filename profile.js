@@ -38,7 +38,6 @@ let originalProfile = { phone: "", college: "" };
 async function saveProfileToSheet(profile) {
   await fetch(scriptURL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       type: "saveProfile",
       name: profile.name || "",
@@ -280,7 +279,6 @@ setTimeout(()=>openEditor(),300);   // ⭐ AUTO OPEN EDITOR
   try {
     const r = await fetch(scriptURL,{
   method:"POST",
-  headers:{ "Content-Type":"application/json" },
   body: JSON.stringify(payload)
 });
 
@@ -619,6 +617,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
