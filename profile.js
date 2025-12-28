@@ -188,7 +188,13 @@ onAuthStateChanged(auth, async (user) => {
   const userPhoneInput = document.getElementById("userPhone");
   const userCollegeInput = document.getElementById("userCollege");
   const passesList = document.getElementById("passesList");
-const cached = getCachedProfile(user.email);
+
+  const editActions = document.getElementById("editActions");
+  const logoutDesktop = document.getElementById("logoutDesktop");
+  const logoutMobile = document.getElementById("logoutMobile");
+const cameraBtn = document.getElementById("cameraBtn"); // <-- FIX
+cameraBtn.style.display = "none"; // hidden until edit enabled
+   const cached = getCachedProfile(user.email);
 
 if(cached){
     userPhoto.src = cached.photo || "default-avatar.png";
@@ -202,11 +208,6 @@ if(cached){
         renderProfilePhoto(cached.photo, cached.transform);
     }
 }
-  const editActions = document.getElementById("editActions");
-  const logoutDesktop = document.getElementById("logoutDesktop");
-  const logoutMobile = document.getElementById("logoutMobile");
-const cameraBtn = document.getElementById("cameraBtn"); // <-- FIX
-cameraBtn.style.display = "none"; // hidden until edit enabled
   /* Prefill */
   /* Prefill basic info */
 userNameEl.textContent = user.displayName || "PRAVAAH User";
@@ -434,25 +435,50 @@ function openEditor() {
   }
 
   const fileId = match[1];
-  const cdnUrl = `https://lh3.googleusercontent.com/d/${fileId}=w512-h512`;
+  const cdnUrl = `https://lh3.googleusercontent.com/d/${fileId}=w1024-h1024`;
 
-  // ✅ Update UI
+  // 🔥 Update UI instantly like device upload
   userPhoto.src = cdnUrl;
   originalPhotoSrc = cdnUrl;
   previewPhotoSrc = cdnUrl;
+  pendingTransform = { x:0, y:0, zoom:1, rotation:0 };
+  savedTransform = null;
 
-  // ✅ Save ONLY to Sheets
+  renderProfilePhoto(cdnUrl, pendingTransform);
+
+  // 🌟 Open editor just like device upload
+  setTimeout(() => {
+    img2.src = cdnUrl + "?t=" + Date.now();
+    img2.onload = () => {
+      baseScaleCalc();
+      clampXY();
+      redraw();
+      editor.classList.remove("hidden");
+    };
+  }, 400);
+
+  // SAVE to Sheet + Cache
   await saveProfileToSheet({
     name: userNameEl.textContent,
     email: user.email,
     phone: userPhoneInput.value,
     college: userCollegeInput.value,
-    photo: cdnUrl
+    photo: cdnUrl,
+    transform: JSON.stringify(pendingTransform)
   });
 
+  cacheProfile({
+    email:user.email,
+    name:userNameEl.textContent,
+    phone:userPhoneInput.value,
+    college:userCollegeInput.value,
+    photo:cdnUrl,
+    transform:pendingTransform
+  });
 
-  showToast("Photo updated", "success");
+  showToast("Drive image applied — adjust & Save ✔", "success");
 };
+
 
 document.getElementById("saveProfileBtn").onclick = async () => {
   await saveProfileToSheet({
@@ -818,6 +844,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
