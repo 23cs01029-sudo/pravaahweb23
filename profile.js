@@ -249,10 +249,10 @@ function setEditMode(on, ctx) {
 
       const base64 = reader.result.split(",")[1];
 
-      // ✅ 1. Upload FIRST (wait for backend)
-      const res = await fetch(scriptURL, {
+      // 🔒 Fire-and-forget upload (NO HEADERS)
+      fetch(scriptURL, {
         method: "POST",
-        mode:"no-cors",
+        mode: "no-cors",
         body: JSON.stringify({
           type: "photoUpload",
           email: user.email,
@@ -261,28 +261,22 @@ function setEditMode(on, ctx) {
         })
       });
 
-      const out = await res.json();
+      // ✅ PREVIEW LOCALLY (SAFE)
+      const localPreview = reader.result;
+      userPhoto.src = localPreview;
+      originalPhotoSrc = localPreview;
+      previewPhotoSrc = localPreview;
 
-      if (!out.ok || !out.photo) {
-        throw new Error(out.error || "Upload failed");
-      }
-
-      // ✅ 2. Update UI with FINAL Drive image
-      userPhoto.src = out.photo;
-      originalPhotoSrc = out.photo;
-      previewPhotoSrc = out.photo;
-
-      // ✅ 3. Reset transform safely
       pendingTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
       savedTransform = null;
 
-      // ✅ 4. Open editor ONLY after image loads
+      // ✅ Open editor AFTER image loads
       userPhoto.onload = () => {
         userPhoto.classList.add("has-photo");
         setTimeout(openEditor, 150);
       };
 
-      showToast("Photo uploaded", "success");
+      showToast("Photo uploaded. Click SAVE PROFILE", "success");
 
     } catch (err) {
       console.error(err);
@@ -292,8 +286,6 @@ function setEditMode(on, ctx) {
 
   reader.readAsDataURL(file);
 };
-
-
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
@@ -585,6 +577,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
