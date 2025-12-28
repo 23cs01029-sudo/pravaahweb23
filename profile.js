@@ -208,62 +208,66 @@ if(cached){
         renderProfilePhoto(cached.photo, cached.transform);
     }
 }
-  /* Prefill */
-  /* Prefill basic info */
+/* ===============================
+   🚀 FAST LOAD — CACHE FIRST
+===============================*/
 userNameEl.textContent = user.displayName || "PRAVAAH User";
 userEmailEl.textContent = user.email;
 
-/* Default photo first */
-/* Load profile from Sheet */
-const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
-const p = await res.json();
+const cachedProfile = getCachedProfile(user.email);
+if(cachedProfile){
+    userPhoneInput.value = cachedProfile.phone || "";
+    userCollegeInput.value = cachedProfile.college || "";
+    userPhoto.src = cachedProfile.photo || "default-avatar.png";
 
-/* If profile exists from sheet */
-if (p?.email) {
-  userPhoneInput.value = p.phone || "";
-  userCollegeInput.value = p.college || "";
-  if (p.photo) userPhoto.src = p.photo;
-
-  if(p.transform){
-    savedTransform = JSON.parse(p.transform);
-    renderProfilePhoto(userPhoto.src, savedTransform);
-  }
-
-  cacheProfile({
-    email:user.email,
-    name:user.displayName,
-    phone:p.phone,
-    college:p.college,
-    photo:p.photo,
-    transform:p.transform ? JSON.parse(p.transform) : null
-  });
+    if(cachedProfile.transform){
+        savedTransform = cachedProfile.transform;
+        renderProfilePhoto(cachedProfile.photo,cachedProfile.transform);
+    }
 }
 
-/* If no photo then show default */
-if (!userPhoto.src || userPhoto.src.includes("default-avatar")) {
-  userPhoto.src = p?.photo || "default-avatar.png";
-  renderProfilePhoto(userPhoto.src, savedTransform || {x:0,y:0,zoom:1,rotation:0});
+/* ===============================
+   🔄 LIVE FETCH — ALWAYS UPDATE if sheet changed
+===============================*/
+let p=null;
+try{
+    const r = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
+    p = await r.json();
+
+    if(p?.email){
+        userPhoneInput.value = p.phone || "";
+        userCollegeInput.value = p.college || "";
+        if(p.photo) userPhoto.src = p.photo;
+
+        if(p.transform){
+            savedTransform = JSON.parse(p.transform);
+            renderProfilePhoto(p.photo,savedTransform);
+        }
+
+        cacheProfile({
+            email:user.email,
+            name:user.displayName,
+            phone:p.phone,
+            college:p.college,
+            photo:p.photo,
+            transform:p.transform?JSON.parse(p.transform):null
+        });
+    }
+}catch(e){ console.log("Offline, loading from cache"); }
+
+/* ===============================
+   If new user — show default
+===============================*/
+if(!p?.photo && !cachedProfile){
+    userPhoto.src="default-avatar.png";
+    renderProfilePhoto("default-avatar.png",{x:0,y:0,zoom:1,rotation:0});
 }
 
-
-/* Apply transform if exists */
-if (p?.transform) {
-  savedTransform = typeof p.transform === "string" ? JSON.parse(p.transform) : p.transform;
-}
-
-/* When image loads, draw on canvas */
-userPhoto.onload = () => {
-
-  if (savedTransform) {
-    renderProfilePhoto(userPhoto.src, savedTransform);
-  } else {
-    renderProfilePhoto(userPhoto.src, {x:0,y:0,zoom:1,rotation:0});
-  }
+/* Ensure transform only after image fully loads */
+userPhoto.onload = ()=>{
+    renderProfilePhoto(userPhoto.src,savedTransform||{x:0,y:0,zoom:1,rotation:0});
 };
-
-/* Default for fresh users */
-if (!p?.photo) {
-  renderProfilePhoto("default-avatar.png", {x:0,y:0,zoom:1,rotation:0});
+enderProfilePhoto("default-avatar.png", {x:0,y:0,zoom:1,rotation:0});
 }
 
 function setEditMode(on, ctx) {
@@ -847,6 +851,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
