@@ -66,16 +66,17 @@
 
         <!-- 🖼️ PHOTO AREA -->
         <div class="profile-photo" id="photoArea">
-          <div class="photo-wrapper">
-            <img id="userPhoto" src="default-avatar.png" alt="Profile Photo" />
-            <div class="photo-overlay" id="cameraBtn">
-  <i class="fa-solid fa-camera"></i>
+         <div class="photo-wrapper">
+  <img id="userPhoto" src="default-avatar.png" alt="Profile Photo" />
+  <div class="photo-overlay" id="cameraBtn">
+    <i class="fa-solid fa-camera"></i>
+  </div>
+
+  <button id="editPen" class="edit-pen">
+    <i class="fa-solid fa-pen"></i>
+  </button>
 </div>
 
-            <button id="editPen" class="edit-pen" title="Edit profile">
-              <i class="fa-solid fa-pen"></i>
-            </button>
-          </div>
 
           <input type="file" id="uploadPhoto" accept="image/*" hidden />
 
@@ -198,6 +199,6 @@
     </div>
   </div>
 </div>
-<canvas id="profileCanvas" width="260" height="260" hidden></canvas>
+
 </body>
 </html>
