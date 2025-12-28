@@ -600,6 +600,19 @@ canvas.addEventListener("touchstart",(e)=>{
 
 },{passive:false});
 
+/* ======================
+   Desktop Scroll Zoom
+====================== */
+canvas.addEventListener("wheel", (e) => {
+  e.preventDefault();
+
+  const zoomSpeed = 0.0015; // adjust smoothness
+  scaleV += -e.deltaY * zoomSpeed;
+  scaleV = Math.max(1, Math.min(scaleV, 3)); // same limits
+
+  clampXY();
+  redraw();
+},{passive:false});
 
 canvas.addEventListener("touchmove",(e)=>{
     e.preventDefault();
@@ -671,6 +684,7 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
 
 
 
