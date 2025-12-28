@@ -278,8 +278,9 @@ function setEditMode(on, ctx) {
     });
 
     await updateProfile(user, {
-      photoURL: userPhoto.src
-    });
+      photoURL: p.photo || auth.currentUser.photoURL
+   });
+
 
     userPhoto.onload = () => {
       userPhoto.classList.add("has-photo");
@@ -590,6 +591,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
