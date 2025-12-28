@@ -500,39 +500,13 @@ cropCancel.onclick=()=>{
 };
 
 
-  document.getElementById("saveProfileBtn").onclick = async ()=>{
+document.getElementById("saveProfileBtn").onclick = async ()=>{
 
-  const finalPhotoURL = auth.currentUser.photoURL; // keep original upload URL
+  console.log("=== SAVE PROFILE START ===");
 
-  try{
-    const saveRes = await fetch(scriptURL,{
-      method:"POST",
-      headers:{ "Content-Type":"application/json"},
-      body:JSON.stringify({
-        type:"saveProfile",
-        email:auth.currentUser.email,
-        phone:userPhoneInput.value,
-        college:userCollegeInput.value,
-        photo:finalPhotoURL,                  // same original image
-        transform: pendingTransform ? JSON.stringify(pendingTransform) : savedTransform ? JSON.stringify(savedTransform) : null
-      })
-    });
+  const finalPhotoURL = auth.currentUser.photoURL;  // keep original uploaded image URL
 
-    showToast("Profile Updated","success");
-    setTimeout(()=>location.reload(),800);
-
-  }catch(err){
-    showToast("Save Failed","error");
-  }
-};
-
-
-  // -------------------------
-  // 2. Save profile fields + photo + transform
-  // -------------------------
-
-  console.log("Saving profile...");
-
+  // Save profile with transform only
   try{
     const saveRes = await fetch(scriptURL,{
       method:"POST",
@@ -543,7 +517,11 @@ cropCancel.onclick=()=>{
         phone:userPhoneInput.value,
         college:userCollegeInput.value,
         photo:finalPhotoURL,
-        transform:savedTransform ? JSON.stringify(savedTransform) : null
+        transform: pendingTransform 
+          ? JSON.stringify(pendingTransform) 
+          : savedTransform 
+            ? JSON.stringify(savedTransform) 
+            : null
       })
     });
 
@@ -557,8 +535,12 @@ cropCancel.onclick=()=>{
   }
 
   showToast("Profile Updated","success");
+  savedTransform = pendingTransform || savedTransform; // update locally
+  pendingTransform = null;
+  previewPhotoSrc = null;
   setTimeout(()=>location.reload(),800);
 };
+
 
 
 /* Drag Move (Mouse) */
@@ -646,8 +628,6 @@ window.addEventListener("load", ()=>{
       }
     });
 });
-
-
 
 
 
