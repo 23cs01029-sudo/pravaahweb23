@@ -194,20 +194,7 @@ onAuthStateChanged(auth, async (user) => {
   const logoutMobile = document.getElementById("logoutMobile");
 const cameraBtn = document.getElementById("cameraBtn"); // <-- FIX
 cameraBtn.style.display = "none"; // hidden until edit enabled
-   const cached = getCachedProfile(user.email);
-
-if(cached){
-    userPhoto.src = cached.photo || "default-avatar.png";
-    savedTransform = cached.transform || null;
-
-    userPhoneInput.value  = cached.phone || "";
-    userCollegeInput.value = cached.college || "";
-    userNameEl.textContent = cached.name || user.displayName || "User";
-
-    if(cached.transform){
-        renderProfilePhoto(cached.photo, cached.transform);
-    }
-}
+   
 /* ===============================
    🚀 FAST LOAD — CACHE FIRST
 ===============================*/
@@ -267,8 +254,7 @@ if(!p?.photo && !cachedProfile){
 userPhoto.onload = ()=>{
     renderProfilePhoto(userPhoto.src,savedTransform||{x:0,y:0,zoom:1,rotation:0});
 };
-enderProfilePhoto("default-avatar.png", {x:0,y:0,zoom:1,rotation:0});
-}
+
 
 function setEditMode(on, ctx) {
   isEditing = on;
@@ -851,6 +837,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
