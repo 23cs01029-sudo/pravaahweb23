@@ -237,19 +237,19 @@ function setEditMode(on, ctx) {
     uploadPhotoInput.click();
   };
 
-  uploadPhotoInput.onchange = async (e) => {
+  uploadPhotoInput.onchange = (e) => {
   if (!e.target.files.length) return;
 
   const file = e.target.files[0];
   const reader = new FileReader();
 
-  reader.onload = async () => {
+  reader.onload = () => {
     try {
       showToast("Uploading photo...", "info");
 
       const base64 = reader.result.split(",")[1];
 
-      // 🔒 Fire-and-forget upload (NO HEADERS)
+      // 🔒 Fire-and-forget upload (NO headers, NO response)
       fetch(scriptURL, {
         method: "POST",
         mode: "no-cors",
@@ -261,22 +261,26 @@ function setEditMode(on, ctx) {
         })
       });
 
-      // ✅ PREVIEW LOCALLY (SAFE)
-      const localPreview = reader.result;
-      userPhoto.src = localPreview;
-      originalPhotoSrc = localPreview;
-      previewPhotoSrc = localPreview;
+      // ✅ Step 1: show LOCAL preview immediately
+      const previewSrc = reader.result;
+      userPhoto.src = previewSrc;
+      originalPhotoSrc = previewSrc;
+      previewPhotoSrc = previewSrc;
 
       pendingTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
       savedTransform = null;
 
-      // ✅ Open editor AFTER image loads
+      showToast("Preparing photo editor…", "info");
+
+      // ✅ Step 2: wait until browser fully decodes image
       userPhoto.onload = () => {
         userPhoto.classList.add("has-photo");
-        setTimeout(openEditor, 150);
-      };
 
-      showToast("Photo uploaded. Click SAVE PROFILE", "success");
+        // extra safety delay (prevents canvas race)
+        setTimeout(() => {
+          openEditor();
+        }, 300);
+      };
 
     } catch (err) {
       console.error(err);
@@ -286,6 +290,7 @@ function setEditMode(on, ctx) {
 
   reader.readAsDataURL(file);
 };
+
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
@@ -330,7 +335,7 @@ document.getElementById("saveProfileBtn").onclick = async () => {
     email: user.email,
     phone: userPhoneInput.value,
     college: userCollegeInput.value,
-    photo: userPhoto.src, // ✅ FINAL SOURCE OF TRUTH
+    photo: userPhoto.src, // FINAL truth
     transform: pendingTransform
       ? JSON.stringify(pendingTransform)
       : savedTransform
@@ -338,12 +343,23 @@ document.getElementById("saveProfileBtn").onclick = async () => {
       : null
   });
 
-  savedTransform = pendingTransform || savedTransform;
+  // ✅ persist transform
+  if (pendingTransform) {
+    savedTransform = pendingTransform;
+  }
   pendingTransform = null;
   previewPhotoSrc = null;
 
+  // ✅ EXIT EDIT MODE
+  isEditing = false;
+  setEditMode(false, { container, uploadOptions, userPhoto, editActions });
+
+  // ✅ RESET outlines / editor
+  editor.classList.add("hidden");
+
   showToast("Profile Updated", "success");
 };
+
 
 
 
@@ -577,6 +593,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
