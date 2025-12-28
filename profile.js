@@ -211,10 +211,12 @@ if (p?.transform) {
     ? JSON.parse(p.transform)
     : p.transform;
 
-  originalPhotoSrc = userPhoto.src;
-
-  applyTransformToMainPhoto(savedTransform);
+  userPhoto.onload = () => {
+    userPhoto.classList.add("has-photo");
+    applyTransformToMainPhoto(savedTransform);
+  };
 }
+
 function applyTransformToMainPhoto(t) {
   if (!userPhoto) return;
 
@@ -549,11 +551,13 @@ cropApply.onclick = () => {
     rotation: (rotV * 180 / Math.PI) % 360
   };
 
-  renderProfilePhoto(originalPhotoSrc, pendingTransform);
+  // ✅ APPLY PREVIEW DIRECTLY TO PROFILE IMAGE
+  applyTransformToMainPhoto(pendingTransform);
 
   editor.classList.add("hidden");
   showToast("Preview ready — click SAVE PROFILE", "info");
 };
+
 
 
 /* Cancel Edit */
@@ -662,6 +666,7 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
 
 
 
