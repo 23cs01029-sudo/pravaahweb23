@@ -364,9 +364,7 @@ if (pendingTransform || previewPhotoSrc) {
 
 uploadPhotoInput.onchange = (e) => {
   if (!e.target.files.length) return;
-// store previous state before replacing (for cancel restore)
-lastSavedPhoto = userPhoto.src;
-lastSavedTransform = savedTransform;
+
 
   const file = e.target.files[0];
   const reader = new FileReader();
@@ -441,9 +439,6 @@ function openEditor() {
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
   if (!isEditing) return showToast("Tap ✏️ to edit", "info");
-// store previous state before replacing
-lastSavedPhoto = userPhoto.src;
-lastSavedTransform = savedTransform;
 
   const link = prompt("Paste Google Drive image link");
   if (!link) return;
@@ -485,15 +480,6 @@ lastSavedTransform = savedTransform;
     college: userCollegeInput.value,
     photo: cdnUrl,
     transform: JSON.stringify(pendingTransform)
-  });
-
-  cacheProfile({
-    email:user.email,
-    name:userNameEl.textContent,
-    phone:userPhoneInput.value,
-    college:userCollegeInput.value,
-    photo:cdnUrl,
-    transform:pendingTransform
   });
 
   showToast("Drive image applied — adjust & Save ✔", "success");
@@ -540,7 +526,9 @@ document.getElementById("saveProfileBtn").onclick = async () => {
   photo:userPhoto.src,
   transform:savedTransform
 });
-
+// store previous state before replacing
+lastSavedPhoto = userPhoto.src;
+lastSavedTransform = savedTransform;
 };
 
 document.addEventListener("visibilitychange", async ()=>{
@@ -922,6 +910,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
