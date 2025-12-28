@@ -277,9 +277,16 @@ function setEditMode(on, ctx) {
       body: JSON.stringify(payload)
     });
 
-    await updateProfile(user, {
-      photoURL: p.photo || auth.currentUser.photoURL
-   });
+    // ⬇ Save directly to Google Sheet instead of Firebase
+await saveProfileToSheet({
+  name: user.displayName,
+  email: user.email,
+  phone: userPhoneInput.value,
+  college: userCollegeInput.value,
+  photo: userPhoto.src, // THIS SAVES THE NEW PHOTO
+  transform: pendingTransform ? JSON.stringify(pendingTransform) : null
+});
+
 
 
     userPhoto.onload = () => {
@@ -591,6 +598,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
