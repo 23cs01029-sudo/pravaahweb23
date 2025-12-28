@@ -649,6 +649,37 @@ document.getElementById("zoomInBtn").onclick = ()=>{
     zoomRange.value = scaleV;
     clampXY(); redraw();
 };
+/* ===================================================
+   HOLD TO ZOOM — Smooth Instagram-style
+=================================================== */
+
+const zoomInBtn  = document.getElementById("zoomInBtn");
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+
+let zoomHoldInterval = null;
+const zoomStep = 0.03;    // step size per zoom tick
+const holdSpeed = 55;     // lower = faster zoom
+
+function holdZoom(delta){
+  clearInterval(zoomHoldInterval);
+  zoomHoldInterval = setInterval(()=>{
+    scaleV = Math.max(1, Math.min(3, scaleV + delta));
+    zoomRange.value = scaleV;
+    clampXY(); redraw();
+  }, holdSpeed);
+}
+
+function stopHold(){ clearInterval(zoomHoldInterval); }
+
+/* ---- Mouse Hold ---- */
+zoomInBtn.onmousedown  = ()=> holdZoom(+zoomStep);
+zoomOutBtn.onmousedown = ()=> holdZoom(-zoomStep);
+document.addEventListener("mouseup", stopHold);
+
+/* ---- Mobile Hold ---- */
+zoomInBtn.ontouchstart  = (e)=>{ e.preventDefault(); holdZoom(+zoomStep); }
+zoomOutBtn.ontouchstart = (e)=>{ e.preventDefault(); holdZoom(-zoomStep); }
+zoomInBtn.ontouchend = zoomOutBtn.ontouchend = stopHold;
 
 /* Rotate */
 rotateBtn2.onclick=()=>{ rotV+=Math.PI/2; redraw(); }
@@ -682,11 +713,22 @@ cropApply.onclick = () => {
 
 
 /* Cancel Edit */
-cropCancel.onclick=()=>{
-   document.getElementById("userPhoto").src=originalPhotoSrc;
-   pendingTransform=null; previewPhotoSrc=null;
-   editor.classList.add("hidden");
+/* Cancel Edit */
+cropCancel.onclick = () => {
+  pendingTransform = null;
+  previewPhotoSrc = null;
+  editor.classList.add("hidden");
+
+  // Restore original saved transform view
+  if (savedTransform) {
+      renderProfilePhoto(originalPhotoSrc, savedTransform);
+  } else {
+      renderProfilePhoto(originalPhotoSrc, { x:0, y:0, zoom:1, rotation:0 });
+  }
+
+  showToast("Changes discarded", "info");
 };
+
 
 
 
@@ -851,6 +893,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
