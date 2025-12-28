@@ -244,32 +244,55 @@ function setEditMode(on, ctx) {
   const reader = new FileReader();
 
   reader.onload = async () => {
-    // 1️⃣ Preview locally
-    userPhoto.src = reader.result;
-    previewPhotoSrc = reader.result;
-    pendingTransform = { x:0, y:0, zoom:1, rotation:0 };
+    try {
+      showToast("Uploading photo...", "info");
 
-    setTimeout(openEditor, 300);
+      const base64 = reader.result.split(",")[1];
 
-    // 2️⃣ Upload to Drive via Apps Script
-    const base64 = reader.result.split(",")[1];
+      // ✅ 1. Upload FIRST (wait for backend)
+      const res = await fetch(scriptURL, {
+        method: "POST",
+        mode:"no-cors",
+        body: JSON.stringify({
+          type: "photoUpload",
+          email: user.email,
+          mimetype: file.type,
+          file: base64
+        })
+      });
 
-    await fetch(scriptURL, {
-      method: "POST",
-      mode: "no-cors",
-      body: JSON.stringify({
-        type: "photoUpload",
-        email: user.email,
-        mimetype: file.type,
-        file: base64
-      })
-    });
+      const out = await res.json();
 
-    showToast("Photo uploaded. Click SAVE PROFILE", "info");
+      if (!out.ok || !out.photo) {
+        throw new Error(out.error || "Upload failed");
+      }
+
+      // ✅ 2. Update UI with FINAL Drive image
+      userPhoto.src = out.photo;
+      originalPhotoSrc = out.photo;
+      previewPhotoSrc = out.photo;
+
+      // ✅ 3. Reset transform safely
+      pendingTransform = { x: 0, y: 0, zoom: 1, rotation: 0 };
+      savedTransform = null;
+
+      // ✅ 4. Open editor ONLY after image loads
+      userPhoto.onload = () => {
+        userPhoto.classList.add("has-photo");
+        setTimeout(openEditor, 150);
+      };
+
+      showToast("Photo uploaded", "success");
+
+    } catch (err) {
+      console.error(err);
+      showToast("Photo upload failed", "error");
+    }
   };
 
   reader.readAsDataURL(file);
 };
+
 
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
@@ -334,7 +357,6 @@ document.getElementById("saveProfileBtn").onclick = async () => {
   previewPhotoSrc = null;
 
   showToast("Profile Updated", "success");
-  setTimeout(() => location.reload(), 700);
 };
 
 
@@ -418,7 +440,11 @@ cameraBtn.onclick = () => {
   if (!isEditing) return showToast("Click ✏️ Edit first", "info");
   openEditor();
 };
-function openEditor(){
+function openEditor() {
+  if (!userPhoto.src || userPhoto.src.includes("default-avatar")) {
+    showToast("Upload a photo first", "info");
+    return;
+  }
   originalPhotoSrc = document.getElementById("userPhoto").src;
   img2.src = originalPhotoSrc + "?t=" + Date.now();
 
@@ -564,6 +590,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
