@@ -321,16 +321,14 @@ else {
 };
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
-  driveUploadBtn.onclick = async () => {
+driveUploadBtn.onclick = async () => {
   if (!isEditing) return showToast("Tap ✏️ to edit", "info");
 
   const link = prompt("Paste Google Drive image link");
   if (!link) return;
 
   // 🔍 Extract file ID from ANY Drive link format
-  const match = link.match(
-    /(?:id=|\/d\/)([-\w]{25,})/
-  );
+  const match = link.match(/(?:id=|\/d\/)([-\w]{25,})/);
 
   if (!match) {
     showToast("Invalid Google Drive link", "error");
@@ -339,34 +337,40 @@ else {
 
   const fileId = match[1];
 
-  // ✅ Convert to IMAGE CDN (works everywhere)
-  const cdnUrl = `https://lh3.googleusercontent.com/d/${fileId}=w512-h512`;
+  // 🔥 Best CDN viewable universal link
+  const cdnUrl = `https://lh3.googleusercontent.com/d/${fileId}=w1024-h1024`;
 
-  // 1️⃣ Preview immediately
+  // Show immediately
   userPhoto.src = cdnUrl;
 
-  // 2️⃣ Save to Firebase (important)
+  // Save crop state reset (because new image loaded)
+  savedTransform = null;
+  pendingTransform = null;
+
+  // Save to Firebase profile
   await updateProfile(user, { photoURL: cdnUrl });
 
-  // 3️⃣ Save to Sheet
+  // Save to Sheet including transform null
   await saveProfileToSheet({
     name: user.displayName,
     email: user.email,
     phone: userPhoneInput.value,
     college: userCollegeInput.value,
-    photo: cdnUrl
+    photo: cdnUrl,
+    transform: null
   });
 
   userPhoto.onload = () => {
     userPhoto.classList.add("has-photo");
   };
 
-  showToast("Photo updated!", "success");
+  showToast("Photo updated from Drive!", "success");
 };
+
 document.getElementById("saveProfileBtn").onclick = async () => {
-  const transformData = savedTransform
-    ? JSON.stringify(savedTransform)
-    : null;
+  const transformData = pendingTransform
+    ? JSON.stringify(pendingTransform)
+    : (savedTransform ? JSON.stringify(savedTransform) : null);
 
   await saveProfileToSheet({
     name: user.displayName,
@@ -374,16 +378,19 @@ document.getElementById("saveProfileBtn").onclick = async () => {
     phone: userPhoneInput.value,
     college: userCollegeInput.value,
     photo: userPhoto.src,
-    transform: transformData     // ⬅ added properly
+    transform: transformData
   });
 
-  // UI update
+  savedTransform = pendingTransform || savedTransform; // ← IMPORTANT
+  pendingTransform = null;
+
   phoneSpan.textContent = userPhoneInput.value || "-";
   collegeSpan.textContent = userCollegeInput.value || "-";
 
   showToast("Profile updated!", "success");
   setEditMode(false, { container, uploadOptions, userPhoto, editActions });
 };
+
 
 
   /* Logout */
@@ -612,6 +619,7 @@ window.addEventListener("load", ()=>{
       }
     });
 });
+
 
 
 
