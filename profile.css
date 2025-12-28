@@ -744,8 +744,6 @@ textarea.editable-input { resize: none; line-height: 1.35; min-height: 38px; }
   color: #ffcc00;
   letter-spacing: 1px;
 }
-/* 🔑 JS controls all transforms */
-.profile-photo img {
-  transform: translate(-50%, -50%) !important;
-}
+
+
 
