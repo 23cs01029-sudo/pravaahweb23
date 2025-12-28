@@ -29,18 +29,6 @@ function showToast(message, type = "info") {
   }, 3000);
 }
 let activeToast = null;
-let userPhoto = null;
-function applyTransformToMainPhoto(t) {
-  if (!t || !userPhoto) return;
-
-  userPhoto.style.transform = `
-    translate(-50%, -50%)
-    translate(${t.x}px, ${t.y}px)
-    scale(${t.zoom})
-    rotate(${t.rotation}deg)
-  `;
-}
-
 function showPersistentToast(message, type = "info") {
   if (activeToast) activeToast.remove();
 
@@ -176,7 +164,6 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) return (window.location.href = "index.html");
 
   const container = document.querySelector(".profile-container");
-  userPhoto = document.getElementById("userPhoto");
   const uploadPhotoInput = document.getElementById("uploadPhoto");
   const uploadOptions = document.getElementById("uploadOptions");
   const driveUploadBtn = document.getElementById("driveUploadBtn");
@@ -214,21 +201,15 @@ if (p?.email) {
 
   // ✅ Priority 1: Sheet photo (Drive)
   if (p.photo) {
-    userPhoto.src = p.photo;
-  }
+  renderProfilePhoto(p.photo, savedTransform);
+}
+
 }
 if (p?.transform) {
   savedTransform = typeof p.transform === "string"
     ? JSON.parse(p.transform)
     : p.transform;
 }
-userPhoto.addEventListener("load", () => {
-  userPhoto.classList.add("has-photo");
-
-  if (savedTransform) {
-    applyTransformToMainPhoto(savedTransform);
-  }
-});
 
 function setEditMode(on, ctx) {
   isEditing = on;
@@ -304,7 +285,7 @@ uploadPhotoInput.onchange = (e) => {
     });
 
     // 🔒 3. Set preview but DO NOT open editor yet
-    userPhoto.src = previewSrc;
+    renderProfilePhoto(previewSrc, null);
     originalPhotoSrc = previewSrc;
     previewPhotoSrc = previewSrc;
 
@@ -390,7 +371,7 @@ document.getElementById("saveProfileBtn").onclick = async () => {
     savedTransform = pendingTransform;
   }
    if (savedTransform) {
-  applyTransformToMainPhoto(savedTransform);
+  renderProfilePhoto(profile.photo, savedTransform);
 }
   pendingTransform = null;
   previewPhotoSrc = null;
@@ -525,7 +506,8 @@ cropApply.onclick = () => {
   };
 
   // ✅ APPLY PREVIEW DIRECTLY TO PROFILE IMAGE
-  applyTransformToMainPhoto(pendingTransform);
+  renderProfilePhoto(originalPhotoSrc, pendingTransform);
+
 
   editor.classList.add("hidden");
   showToast("Preview ready — click SAVE PROFILE", "info");
