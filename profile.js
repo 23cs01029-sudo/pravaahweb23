@@ -192,8 +192,6 @@ onAuthStateChanged(auth, async (user) => {
   const logoutMobile = document.getElementById("logoutMobile");
 const cameraBtn = document.getElementById("cameraBtn"); // <-- FIX
 cameraBtn.style.display = "none"; // hidden until edit enabled
-
-
   /* Prefill */
   /* Prefill basic info */
 userNameEl.textContent = user.displayName || "PRAVAAH User";
@@ -203,34 +201,34 @@ userEmailEl.textContent = user.email;
 userPhoto.src = "default-avatar.png";
 
 /* Load profile from Sheet */
-const res = await fetch(
-  `${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`
-);
+const res = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
 const p = await res.json();
 
+/* Load stored data */
 if (p?.email) {
   userPhoneInput.value = p.phone || "";
   userCollegeInput.value = p.college || "";
+  if (p.photo) userPhoto.src = p.photo;         // <--- FIRST LOAD IMG
+}
 
-  // ✅ Priority 1: Sheet photo (Drive)
-  if (p.photo) {
-    userPhoto.src = p.photo;
-  }
-}
+/* Apply transform if exists */
 if (p?.transform) {
-  savedTransform = typeof p.transform === "string"
-    ? JSON.parse(p.transform)
-    : p.transform;
+  savedTransform = typeof p.transform === "string" ? JSON.parse(p.transform) : p.transform;
 }
-userPhoto.addEventListener("load", () => {
-  userPhoto.classList.add("has-photo");
+
+/* When image loads, draw on canvas */
+userPhoto.onload = () => {
 
   if (savedTransform) {
-    renderProfilePhoto(p.photo, savedTransform);
+    renderProfilePhoto(userPhoto.src, savedTransform);
+  } else {
+    renderProfilePhoto(userPhoto.src, {x:0,y:0,zoom:1,rotation:0});
   }
-});
+};
+
+/* Default for fresh users */
 if (!p?.photo) {
-  renderProfilePhoto("default-avatar.png", { x:0, y:0, zoom:1, rotation:0 });
+  renderProfilePhoto("default-avatar.png", {x:0,y:0,zoom:1,rotation:0});
 }
 
 function setEditMode(on, ctx) {
@@ -662,5 +660,6 @@ function renderProfilePhoto(photoUrl, transform) {
     ctx.restore();
   };
 }
+
 
 
