@@ -68,6 +68,10 @@ body{
 
   <div class="box" id="passInfo"></div>
   <div class="box" id="participantsBox"></div>
+  <div class="box" id="logBox">
+  <h3 style="margin:0 0 10px;color:#00ffcc;">Gate Activity Log</h3>
+  <div id="logsList" style="max-height:260px;overflow-y:auto;font-size:.9rem"></div>
+</div>
 
   <div class="actions">
     <button class="btn entry" disabled onclick="submitAction('ENTRY')">ALLOW ENTRY</button>
@@ -190,7 +194,34 @@ function render(){
       </div>`;
     }).join("");
   updateButtons();
+renderLogs();   // ⬅ show history below participants
+
 }
+/* ============== RENDER LOG HISTORY (FILTERED FOR THIS PASS) ================= */
+function renderLogs(){
+  if(!logs || !logs.length){
+    document.getElementById("logsList").innerHTML =
+      `<p style="opacity:.6">No activity recorded yet.</p>`;
+    return;
+  }
+
+  // 🔥 Filter only for participants of this Pass
+  const emails = participants.map(p=>p.Email);
+  const filtered = logs.filter(l => emails.includes(l.Email));
+
+  document.getElementById("logsList").innerHTML =
+    filtered.slice().reverse().map(l=>`
+      <div style="padding:8px;border-bottom:1px solid rgba(0,255,255,.25)">
+        <b>${l.Name}</b>
+        <span style="color:${l.Action==='ENTRY'?'#00ffcc':'#ff6b6b'}">
+          (${l.Action})
+        </span><br>
+        <small>${new Date(l.Time).toLocaleString('en-IN',{hour12:true})}</small><br>
+        <small>Scanner: ${l.Scanner}</small>
+      </div>
+    `).join("");
+}
+
 
 /* -------- BUTTONS -------- */
 function updateButtons(){
@@ -241,7 +272,9 @@ async function submitAction(action){
     statusBox.textContent =
       `✅ Gate logs updated — ${action==="ENTRY"?"Entry allowed":"Exit marked"}`;
 
-    loadData();
+    await loadData();   // refresh whole UI including logs
+renderLogs();
+
 
   }catch(err){
     alert("Failed to update gate logs");
