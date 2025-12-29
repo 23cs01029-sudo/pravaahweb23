@@ -445,7 +445,9 @@ uploadPhotoInput.onchange = (e) => {
     originalPhotoSrc = previewSrc;
     previewPhotoSrc = previewSrc;
 pendingTransform = {x:0,y:0,zoom:1,rotation:0};
-savedTransform = {x:0,y:0,zoom:1,rotation:0};   // default for new image
+savedTransform = savedTransform || null;        // keep previous saved
+zoomRange.value = 1;
+ // default for new image
 renderProfilePhoto(previewSrc, pendingTransform);
 
 
@@ -470,20 +472,23 @@ cameraBtn.onclick = () => {
   openEditor();
 };
 function openEditor() {
-  if (!userPhoto.src || userPhoto.src.includes("default-avatar")) {
+  let photoToUse = previewPhotoSrc || userPhoto.src;   // <— VERY IMPORTANT
+
+  if (!photoToUse || photoToUse.includes("default-avatar")) {
     showToast("Upload a photo first", "info");
     return;
   }
-  originalPhotoSrc = document.getElementById("userPhoto").src;
-  img2.src = originalPhotoSrc + "?t=" + Date.now();
+
+  img2.src = photoToUse + "?t=" + Date.now();
 
   img2.onload = () => {
-    scaleV = savedTransform?.zoom || 1;
-rotV   = (savedTransform?.rotation || 0) * Math.PI/180;
-offset.x = savedTransform?.x || 0;
-offset.y = savedTransform?.y || 0;
-zoomRange.value = scaleV;   // 🔥 slider will show actual value
+    // restore values depending on state
+    scaleV = pendingTransform?.zoom || savedTransform?.zoom || 1;
+    rotV   = ((pendingTransform?.rotation || savedTransform?.rotation || 0) * Math.PI/180);
+    offset.x = pendingTransform?.x || savedTransform?.x || 0;
+    offset.y = pendingTransform?.y || savedTransform?.y || 0;
 
+    zoomRange.value = scaleV;              // slider always correct
 
     baseScaleCalc();
     clampXY();
@@ -491,6 +496,7 @@ zoomRange.value = scaleV;   // 🔥 slider will show actual value
     editor.classList.remove("hidden");
   };
 }
+
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
   if (!isEditing) return showToast("Tap ✏️ to edit", "info");
@@ -785,33 +791,32 @@ cropApply.onclick = () => {
 cropCancel.onclick = () => {
   editor.classList.add("hidden");
 
-  // Case 1: New uploaded photo exists but not saved yet → show uploaded image back
-  if(previewPhotoSrc && pendingTransform!==null){
+  // Case 1: New image uploaded this session
+  if(previewPhotoSrc){
       userPhoto.src = previewPhotoSrc;
       pendingTransform = {x:0,y:0,zoom:1,rotation:0};
       zoomRange.value = 1;
 
       renderProfilePhoto(previewPhotoSrc, pendingTransform);
-      showToast("Crop discarded — showing uploaded image", "info");
-  }
-  else{
-      // Case 2: No new upload → revert to last saved DP
-      const cached = getCachedProfile(currentUserEmail);
-      if(cached?.photo){
-          savedTransform = cached.transform || {x:0,y:0,zoom:1,rotation:0};
-          userPhoto.src = cached.photo;
-          renderProfilePhoto(cached.photo,savedTransform);
-      } else {
-          userPhoto.src = "default-avatar.png";
-          savedTransform = {x:0,y:0,zoom:1,rotation:0};
-          renderProfilePhoto("default-avatar.png",savedTransform);
-      }
-      showToast("Restored saved profile", "info");
+      showToast("Crop cancelled — showing uploaded image", "info");
+      return;   // <— THIS RETURNS AND DOES NOT CLEAR PREVIEW!!
   }
 
-  // Clear editor session state
-  pendingTransform = null;
+  // Case 2: No new upload → restore last saved profile
+  const cached = getCachedProfile(currentUserEmail);
+  if(cached?.photo){
+      userPhoto.src = cached.photo;
+      savedTransform = cached.transform || {x:0,y:0,zoom:1,rotation:0};
+      renderProfilePhoto(cached.photo, savedTransform);
+  } else {
+      userPhoto.src="default-avatar.png";
+      savedTransform = {x:0,y:0,zoom:1,rotation:0};
+      renderProfilePhoto("default-avatar.png",savedTransform);
+  }
+
+  showToast("Restored saved profile", "info");
 };
+
 
 
 
@@ -978,6 +983,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
