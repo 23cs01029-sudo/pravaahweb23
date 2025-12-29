@@ -163,6 +163,7 @@ fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
     if (!rows || !rows.length) throw new Error("Invalid Pass");
 
     const p = rows[0];
+loadPhoto(p.Email);
 
     document.getElementById("name").innerText = p.Name || "—";
     document.getElementById("college").innerText = p.College || "—";
@@ -181,6 +182,28 @@ fetch(`${API_BASE}?type=searchPass&query=${encodeURIComponent(paymentId)}`)
     box.className = "status invalid";
     box.innerText = err.message;
   });
+/* ================= LOAD PHOTO (Cache -> Server -> Default) ================= */
+function loadPhoto(email){
+  const img = document.getElementById("photo");
+
+  // 1️⃣ Show cached instantly if exists
+  const cached = localStorage.getItem("pravaah_public_dp_" + email);
+  if(cached){
+    img.src = cached;
+  } else {
+    img.src = "default-avatar.png";   // <-- fallback default image
+  }
+
+  // 2️⃣ Fetch latest from server (auto updates)
+  fetch(`/api/pravaah?type=profile&email=${encodeURIComponent(email)}`)
+    .then(r=>r.json())
+    .then(p=>{
+      const final = (p.photo && p.photo.trim() !== "") ? p.photo : "default-avatar.png";
+      img.src = final;
+      localStorage.setItem("pravaah_public_dp_" + email, final);
+    })
+    .catch(()=>console.log("Offline – using cache/default"));
+}
 
 /* ================= VALIDATION ================= */
 function validatePass(p) {
