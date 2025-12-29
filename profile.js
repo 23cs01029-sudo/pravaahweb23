@@ -444,9 +444,11 @@ function openEditor() {
 
   img2.onload = () => {
     scaleV = savedTransform?.zoom || 1;
-    rotV   = (savedTransform?.rotation || 0) * Math.PI/180;
-    offset.x = savedTransform?.x || 0;
-    offset.y = savedTransform?.y || 0;
+rotV   = (savedTransform?.rotation || 0) * Math.PI/180;
+offset.x = savedTransform?.x || 0;
+offset.y = savedTransform?.y || 0;
+zoomRange.value = scaleV;   // 🔥 slider will show actual value
+
 
     baseScaleCalc();
     clampXY();
@@ -931,6 +933,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
