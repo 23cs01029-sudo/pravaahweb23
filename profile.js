@@ -785,36 +785,34 @@ cropApply.onclick = () => {
 cropCancel.onclick = () => {
   editor.classList.add("hidden");
 
-  // If a new img was uploaded this session (but not Saved)
-  if(previewPhotoSrc && !savedTransform){ 
-      // show uploaded image back to main preview – default zoom/pos
+  // Case 1: New uploaded photo exists but not saved yet → show uploaded image back
+  if(previewPhotoSrc && pendingTransform!==null){
       userPhoto.src = previewPhotoSrc;
       pendingTransform = {x:0,y:0,zoom:1,rotation:0};
+      zoomRange.value = 1;
+
       renderProfilePhoto(previewPhotoSrc, pendingTransform);
-
-      showToast("Crop cancelled — showing uploaded photo", "info");
-  } 
-  else {
-      // Restore last saved public DP from cache
+      showToast("Crop discarded — showing uploaded image", "info");
+  }
+  else{
+      // Case 2: No new upload → revert to last saved DP
       const cached = getCachedProfile(currentUserEmail);
-
       if(cached?.photo){
           savedTransform = cached.transform || {x:0,y:0,zoom:1,rotation:0};
           userPhoto.src = cached.photo;
           renderProfilePhoto(cached.photo,savedTransform);
       } else {
-          userPhoto.src="default-avatar.png";
-          savedTransform={x:0,y:0,zoom:1,rotation:0};
+          userPhoto.src = "default-avatar.png";
+          savedTransform = {x:0,y:0,zoom:1,rotation:0};
           renderProfilePhoto("default-avatar.png",savedTransform);
       }
-
       showToast("Restored saved profile", "info");
   }
 
-  // reset editing states
-  pendingTransform=null;
-  zoomRange.value = 1;
+  // Clear editor session state
+  pendingTransform = null;
 };
+
 
 
 /* Drag Move (Mouse) */
@@ -980,6 +978,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
