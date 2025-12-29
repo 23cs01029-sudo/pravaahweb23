@@ -250,10 +250,11 @@ if(cachedProfile){
    🔄 LIVE FETCH — ALWAYS UPDATE if sheet changed
 ===============================*/
 let p=null;
+   
 try{
     const r = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
     p = await r.json();
-
+if(isEditing) return;  // ⛔ cloud cannot override current editing preview
     if(p?.email){
     userPhoneInput.value = p.phone || "";
     userCollegeInput.value = p.college || "";
@@ -342,6 +343,7 @@ if(cachedPasses){
 })();
 /* 🔁 Background sync every 60 seconds */
 setInterval(async ()=>{
+  if(isEditing) return;        // 🛑 stop sync if editing photo
   try{
       const fresh = await fetchUserPasses(user.email);
       const cached = getCachedPasses(user.email);
@@ -356,6 +358,7 @@ setInterval(async ()=>{
 },60000);
 /* 🔁 Profile Auto-Sync every 60 sec */
 setInterval(async ()=>{
+  if(isEditing) return;         // ⛔ prevent cache overwrite mid-edit
   try{
       const r = await fetch(`${scriptURL}?type=profile&email=${encodeURIComponent(user.email)}`);
       const newP = await r.json();
@@ -595,6 +598,7 @@ document.getElementById("saveProfileBtn").onclick = async () => {
 
 
 document.addEventListener("visibilitychange", async ()=>{
+    if(isEditing) return;        // 🔒 stops update when user is editing
     if(document.visibilityState === "visible"){       // user comes back to tab
         try{
             const fresh = await fetchUserPasses(user.email);
@@ -992,6 +996,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
