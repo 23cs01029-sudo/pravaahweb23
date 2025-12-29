@@ -197,41 +197,39 @@ function loadPhoto(email){
       
       ctx.clearRect(0,0,110,110);
       ctx.save();
-      ctx.translate(R+(transform?.x||0), R+(transform?.y||0));
-      ctx.rotate(((transform?.rotation||0)*Math.PI)/180);
-      ctx.scale(baseFit*(transform?.zoom||1), baseFit*(transform?.zoom||1));
+      ctx.translate(R+(transform.x||0), R+(transform.y||0));
+      ctx.rotate((transform.rotation||0) * Math.PI/180);
+      ctx.scale(baseFit*(transform.zoom||1), baseFit*(transform.zoom||1));
       ctx.drawImage(imgObj,-imgObj.width/2,-imgObj.height/2);
       ctx.restore();
 
       img.src = canvas.toDataURL("image/png");
   }
 
-  // Always show default first
-  img.src = "default-avatar.png";
+  img.src = "default-avatar.png"; // show placeholder first
 
-  // Always fetch fresh from backend
   fetch(`/api/pravaah?type=profile&email=${encodeURIComponent(email)}`)
-    .then(r=>r.json())
-    .then(p=>{
-        if(!p || !p.photo){
+    .then(r => r.text())
+    .then(raw=>{
+        let p;
+        try{ p = JSON.parse(raw); }
+        catch{ return; }
+
+        if(!p.photo){
             img.src="default-avatar.png";
             return;
         }
 
-        const photo = p.photo;
-        const transform = p.transform ? JSON.parse(p.transform) : {x:0,y:0,zoom:1,rotation:0};
+        const transform = p.transform || {x:0,y:0,zoom:1,rotation:0};
 
         const imgObj = new Image();
         imgObj.crossOrigin="anonymous";
-        imgObj.src = photo;
-
+        imgObj.src = p.photo;
         imgObj.onload = ()=> render(imgObj, transform);
     })
-    .catch(()=>{
-        console.log("Unable to fetch — no cache fallback since disabled.");
-        img.src="default-avatar.png"; // offline fallback only
-    });
+    .catch(()=>img.src="default-avatar.png");
 }
+
 
 
 
