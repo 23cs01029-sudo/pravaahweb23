@@ -71,6 +71,7 @@ let originalProfile = { phone: "", college: "" };
 // ⭐ Stores last saved state when user uploads new photo (for cancel restore)
 let lastSavedPhoto = null;
 let lastSavedTransform = null;
+let currentUserEmail = null;
 
 
 /* ---------- Save Profile ---------- */
@@ -197,7 +198,8 @@ onAuthStateChanged(auth, async (user) => {
   const logoutMobile = document.getElementById("logoutMobile");
 const cameraBtn = document.getElementById("cameraBtn"); // <-- FIX
 cameraBtn.style.display = "none"; // hidden until edit enabled
-   
+   currentUserEmail = user.email;   // ⭐ store user for global use
+
 /* ===============================
    🚀 FAST LOAD — CACHE FIRST
 ===============================*/
@@ -746,14 +748,13 @@ cropApply.onclick = () => {
 cropCancel.onclick = () => {
   editor.classList.add("hidden");
 
-  const cached = getCachedProfile(user.email);
+  const cached = getCachedProfile(currentUserEmail);
 
   if (cached?.photo) {
       userPhoto.src = cached.photo;
 
-      // 🔥 FIX — now apply transform instantly
       let T = cached.transform || {x:0,y:0,zoom:1,rotation:0};
-      savedTransform = T;                      // keep for session
+      savedTransform = T;
       renderProfilePhoto(cached.photo, T);
   } else {
       userPhoto.src = "default-avatar.png";
@@ -761,12 +762,12 @@ cropCancel.onclick = () => {
       renderProfilePhoto("default-avatar.png", savedTransform);
   }
 
-  // reset unsaved changes
   previewPhotoSrc = null;
   pendingTransform = null;
 
   showToast("Changes discarded — restored previous profile", "info");
 };
+
 /* Drag Move (Mouse) */
 canvas.onmousedown = e => { drag=true; startPos={x:e.offsetX-offset.x,y:e.offsetY-offset.y}; }
 canvas.onmousemove = e => { 
@@ -930,6 +931,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
