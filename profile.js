@@ -314,28 +314,56 @@ function setEditMode(on, ctx) {
 /* ======================================================
 ⏳ AUTO DISCARD EDIT MODE AFTER 5 MIN
 ====================================================== */
+/* ======================================================
+⏳ AUTO DISCARD EDIT MODE AFTER 5 MIN (Soft-Reload Restore)
+====================================================== */
 let editTimeout = null;
 
 function startEditTimeout(){
     clearTimeout(editTimeout);
-    editTimeout = setTimeout(()=>{
-        if(isEditing){
-            pendingTransform=null;
-            previewPhotoSrc=null;
-            scaleV=1; offset={x:0,y:0};
-            zoomRange.value=1;
 
+    editTimeout = setTimeout(()=>{
+
+        if(isEditing){
+
+            // Restore last saved profile from cache/sheet
             const cached = getCachedProfile(currentUserEmail);
+
             if(cached?.photo){
-                userPhoto.src=cached.photo;
-                renderProfilePhoto(cached.photo,cached.transform||{x:0,y:0,zoom:1,rotation:0});
+                savedTransform = cached.transform || {x:0,y:0,zoom:1,rotation:0};
+                userPhoto.src = cached.photo;
+                renderProfilePhoto(cached.photo, savedTransform);
+            } else {
+                userPhoto.src = "default-avatar.png";
+                renderProfilePhoto("default-avatar.png",{x:0,y:0,zoom:1,rotation:0});
             }
-            editor.classList.add("hidden");
-            isEditing=false;
-            showToast("Edit cancelled due to inactivity", "error");
+
+            // RESET workspace like soft reload
+            pendingTransform = null;
+            previewPhotoSrc = null;
+            scaleV = 1;
+            offset = {x:0, y:0};
+            zoomRange.value = 1;
+
+            // close editor if open
+            if(!editor.classList.contains("hidden")){
+                editor.classList.add("hidden");
+            }
+
+            // Exit edit mode UI
+            setEditMode(false, {
+                container: document.querySelector(".profile-container"),
+                uploadOptions: document.getElementById("uploadOptions"),
+                userPhoto: document.getElementById("userPhoto"),
+                editActions: document.getElementById("editActions")
+            });
+
+            showToast("⏳ Editing cancelled due to inactivity", "error");
         }
-    },5*60*1000); // 5min
+
+    }, 5 * 60 * 1000);  // 5 minutes
 }
+
   const phoneSpan = ensureFieldSpan(userPhoneInput, "userPhoneText");
   const collegeSpan = ensureFieldSpan(userCollegeInput, "userCollegeText");
 
@@ -1031,6 +1059,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
