@@ -120,6 +120,23 @@ body {
   font-size: 0.75rem;
   opacity: 0.6;
 }
+.photo {
+  width: 110px;      /* 👈 actual displayed size */
+  height: 110px;
+  border-radius: 50%;
+  border: 2px solid cyan;
+  overflow: hidden;
+  margin: 0 auto 12px;
+
+  /* 🔥 shrink 260px processed image down without losing transform accuracy */
+  transform: scale(0.42);  /* ← 110/260 ≈ 0.42 */
+  transform-origin: center;
+}
+.photo img {
+  width: 260px;    /* keep full resolution */
+  height: 260px;
+  object-fit: cover;
+}
 
 </style>
 </head>
