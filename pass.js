@@ -199,9 +199,10 @@ function renderSelectionArea() {
     <div style="text-align:center;margin-top:18px;">
       <h3>Number of Participants</h3>
       <div class="custom-number-box">
-        <button class="num-btn" id="decPart">−</button>
-        <input type="number" id="numParticipants" value="0" min="0" max="10">
-        <button class="num-btn" id="incPart">+</button>
+        <button type="button" class="num-btn" id="decPart">−</button>
+<input type="number" id="numParticipants" value="0" min="0" max="10">
+<button type="button" class="num-btn" id="incPart">+</button>
+
       </div>
     </div>
 
@@ -248,9 +249,10 @@ function renderSelectionArea() {
     <div style="text-align:center;margin-top:18px;">
       <h3>Number of Participants</h3>
       <div class="custom-number-box">
-        <button class="num-btn" id="decPart">−</button>
-        <input type="number" id="numParticipants" value="0" min="0" max="10">
-        <button class="num-btn" id="incPart">+</button>
+        <button type="button" class="num-btn" id="decPart">−</button>
+<input type="number" id="numParticipants" value="0" min="0" max="10">
+<button type="button" class="num-btn" id="incPart">+</button>
+
       </div>
     </div>
 
@@ -289,9 +291,10 @@ function renderSelectionArea() {
     <div style="text-align:center;margin-top:18px;">
       <h3>Number of Participants</h3>
       <div class="custom-number-box">
-        <button class="num-btn" id="decPart">−</button>
-        <input type="number" id="numParticipants" value="0" min="0" max="10">
-        <button class="num-btn" id="incPart">+</button>
+        <button type="button" class="num-btn" id="decPart">−</button>
+<input type="number" id="numParticipants" value="0" min="0" max="10">
+<button type="button" class="num-btn" id="incPart">+</button>
+
       </div>
     </div>
 
@@ -309,9 +312,10 @@ function renderSelectionArea() {
     <div style="text-align:center;margin-top:18px;">
       <h3>Number of Participants</h3>
       <div class="custom-number-box">
-        <button class="num-btn" id="decPart">−</button>
-        <input type="number" id="numParticipants" value="0" min="0" max="10">
-        <button class="num-btn" id="incPart">+</button>
+        <button type="button" class="num-btn" id="decPart">−</button>
+<input type="number" id="numParticipants" value="0" min="0" max="10">
+<button type="button" class="num-btn" id="incPart">+</button>
+
       </div>
     </div>
 
@@ -717,6 +721,7 @@ const matchedParticipant = participants.find(p =>
 
   rzp.open();
 });
+
 
 
 
