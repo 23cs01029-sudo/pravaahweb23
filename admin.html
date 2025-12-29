@@ -145,8 +145,20 @@ async function loadData(){
       fetch(`${API}?type=gatelogs&paymentId=${paymentId}`).then(r=>r.json())
     ]);
     if(!p.length) throw Error("Invalid pass");
-    passData=p[0];participants=p;logs=l||[];
-    resolveState();render();
+    // p contains multiple rows for same Payment ID
+passData = p[0]; // main info from first row
+
+// Convert raw sheet row objects into clean participant objects
+participants = p.map(r => ({
+  Name:     r["Name"],
+  Email:    r["Email"],
+  Phone:    r["Phone"],
+  College:  r["College"]
+}));
+
+logs = l || [];
+resolveState();
+render();
   }catch(e){
     statusBox.className="status invalid";
     statusBox.textContent="❌ "+e.message;
