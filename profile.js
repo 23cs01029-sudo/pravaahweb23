@@ -199,6 +199,29 @@ onAuthStateChanged(auth, async (user) => {
 const cameraBtn = document.getElementById("cameraBtn"); // <-- FIX
 cameraBtn.style.display = "none"; // hidden until edit enabled
    currentUserEmail = user.email;   // ⭐ store user for global use
+/* ======================================================
+  🔥 FRONTEND LIVE UPDATE FROM CACHE (No refresh needed)
+======================================================*/
+
+window.addEventListener("storage", e => {
+  if(e.key === "pravaah_profile_" + currentUserEmail){
+      const data = JSON.parse(e.newValue);
+
+      console.log("⚡ Live profile update received from cache");
+
+      if(data.photo){
+          userPhoto.src = data.photo;
+          renderProfilePhoto(data.photo, data.transform || {x:0,y:0,zoom:1,rotation:0});
+      }
+
+      userPhoneInput.value = data.phone || "";
+      userCollegeInput.value = data.college || "";
+
+      // update UI text spans also
+      document.getElementById("userPhoneText").textContent = data.phone || "-";
+      document.getElementById("userCollegeText").textContent = data.college || "-";
+  }
+});
 
 /* ===============================
    🚀 FAST LOAD — CACHE FIRST
@@ -210,7 +233,13 @@ const cachedProfile = getCachedProfile(user.email);
 if(cachedProfile){
     userPhoneInput.value = cachedProfile.phone || "";
     userCollegeInput.value = cachedProfile.college || "";
-    userPhoto.src = cachedProfile.photo || "default-avatar.png";
+
+    const finalCachedPhoto = (cachedProfile.photo && cachedProfile.photo.trim() !== "")
+        ? cachedProfile.photo
+        : "default-avatar.png";
+
+    userPhoto.src = finalCachedPhoto;
+
 
     if(cachedProfile.transform){
         savedTransform = cachedProfile.transform;
@@ -227,24 +256,30 @@ try{
     p = await r.json();
 
     if(p?.email){
-        userPhoneInput.value = p.phone || "";
-        userCollegeInput.value = p.college || "";
-        if(p.photo) userPhoto.src = p.photo;
+    userPhoneInput.value = p.phone || "";
+    userCollegeInput.value = p.college || "";
 
-        if(p.transform){
-            savedTransform = JSON.parse(p.transform);
-            renderProfilePhoto(p.photo,savedTransform);
-        }
+    const finalPhoto = (p.photo && p.photo.trim() !== "") ? p.photo : "default-avatar.png";
 
-        cacheProfile({
-            email:user.email,
-            name:user.displayName,
-            phone:p.phone,
-            college:p.college,
-            photo:p.photo,
-            transform:p.transform?JSON.parse(p.transform):null
-        });
+    userPhoto.src = finalPhoto;
+
+    if(p.transform){
+        savedTransform = JSON.parse(p.transform);
+        renderProfilePhoto(finalPhoto, savedTransform);
+    } else {
+        savedTransform = {x:0,y:0,zoom:1,rotation:0};
+        renderProfilePhoto(finalPhoto, savedTransform);
     }
+
+    cacheProfile({
+        email:user.email,
+        name:user.displayName,
+        phone:p.phone,
+        college:p.college,
+        photo:finalPhoto,
+        transform:savedTransform
+    });
+}
 }catch(e){ console.log("Offline, loading from cache"); }
 
 /* ===============================
@@ -750,25 +785,37 @@ cropApply.onclick = () => {
 cropCancel.onclick = () => {
   editor.classList.add("hidden");
 
-  const cached = getCachedProfile(currentUserEmail);
+  // If a new img was uploaded this session (but not Saved)
+  if(previewPhotoSrc && !savedTransform){ 
+      // show uploaded image back to main preview – default zoom/pos
+      userPhoto.src = previewPhotoSrc;
+      pendingTransform = {x:0,y:0,zoom:1,rotation:0};
+      renderProfilePhoto(previewPhotoSrc, pendingTransform);
 
-  if (cached?.photo) {
-      userPhoto.src = cached.photo;
+      showToast("Crop cancelled — showing uploaded photo", "info");
+  } 
+  else {
+      // Restore last saved public DP from cache
+      const cached = getCachedProfile(currentUserEmail);
 
-      let T = cached.transform || {x:0,y:0,zoom:1,rotation:0};
-      savedTransform = T;
-      renderProfilePhoto(cached.photo, T);
-  } else {
-      userPhoto.src = "default-avatar.png";
-      savedTransform = {x:0,y:0,zoom:1,rotation:0};
-      renderProfilePhoto("default-avatar.png", savedTransform);
+      if(cached?.photo){
+          savedTransform = cached.transform || {x:0,y:0,zoom:1,rotation:0};
+          userPhoto.src = cached.photo;
+          renderProfilePhoto(cached.photo,savedTransform);
+      } else {
+          userPhoto.src="default-avatar.png";
+          savedTransform={x:0,y:0,zoom:1,rotation:0};
+          renderProfilePhoto("default-avatar.png",savedTransform);
+      }
+
+      showToast("Restored saved profile", "info");
   }
 
-  previewPhotoSrc = null;
-  pendingTransform = null;
-
-  showToast("Changes discarded — restored previous profile", "info");
+  // reset editing states
+  pendingTransform=null;
+  zoomRange.value = 1;
 };
+
 
 /* Drag Move (Mouse) */
 canvas.onmousedown = e => { drag=true; startPos={x:e.offsetX-offset.x,y:e.offsetY-offset.y}; }
@@ -933,6 +980,8 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
+
 
 
 
