@@ -183,7 +183,6 @@ loadPhoto(p.Email);
     box.innerText = err.message;
   });
 /* ================= LOAD PHOTO (Cache -> Server -> Default) ================= */
-/* ================= LOAD PHOTO WITH TRANSFORM SUPPORT ================= */
 function loadPhoto(email){
   const img = document.getElementById("photo");
 
@@ -205,14 +204,20 @@ function loadPhoto(email){
       ctx.restore();
 
       img.src = canvas.toDataURL("image/png");
+
+      // 🔥 SAVE CACHE PROPERLY (photo + transform)
+      localStorage.setItem("pravaah_public_dp_" + email, JSON.stringify({
+          photo: img.src,
+          transform: transform
+      }));
   }
 
-  // 1️⃣ Show cached preview instantly
-  const cached = localStorage.getItem("pravaah_public_dp_" + email);
-  if(cached) img.src = cached;
+  // 1️⃣ Load instant from cache if exists
+  const cached = JSON.parse(localStorage.getItem("pravaah_public_dp_" + email) || "{}");
+  if(cached.photo) img.src = cached.photo;
   else img.src = "default-avatar.png";
 
-  // 2️⃣ Fetch fresh photo + transform from server
+  // 2️⃣ Fetch from server for updated photo+transform
   fetch(`/api/pravaah?type=profile&email=${encodeURIComponent(email)}`)
     .then(r=>r.json())
     .then(p=>{
@@ -225,12 +230,16 @@ function loadPhoto(email){
         imgObj.crossOrigin="anonymous";
         imgObj.src = photo;
 
-        imgObj.onload = ()=>{
-            render(imgObj, transform);
-            localStorage.setItem("pravaah_public_dp_" + email, img.src);
-        }
+        imgObj.onload = ()=> render(imgObj, transform);
     })
-    .catch(()=>console.log("Offline – cached/default used"));
+    .catch(()=>{
+        console.log("Offline – using cached");
+        if(cached.photo && cached.transform){
+            const imgObj = new Image();
+            imgObj.onload = ()=> render(imgObj, cached.transform);
+            imgObj.src = cached.photo;
+        }
+    });
 }
 
 
