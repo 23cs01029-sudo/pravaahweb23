@@ -183,27 +183,56 @@ loadPhoto(p.Email);
     box.innerText = err.message;
   });
 /* ================= LOAD PHOTO (Cache -> Server -> Default) ================= */
+/* ================= LOAD PHOTO WITH TRANSFORM SUPPORT ================= */
 function loadPhoto(email){
   const img = document.getElementById("photo");
 
-  // 1️⃣ Show cached instantly if exists
-  const cached = localStorage.getItem("pravaah_public_dp_" + email);
-  if(cached){
-    img.src = cached;
-  } else {
-    img.src = "default-avatar.png";   // <-- fallback default image
+  const canvas = document.createElement("canvas");
+  canvas.width = 110;
+  canvas.height = 110;
+  const ctx = canvas.getContext("2d");
+
+  function render(imgObj, transform){
+      const R = canvas.width/2;
+      const baseFit = Math.max(canvas.width/imgObj.width , canvas.height/imgObj.height);
+      
+      ctx.clearRect(0,0,110,110);
+      ctx.save();
+      ctx.translate(R+(transform?.x||0), R+(transform?.y||0));
+      ctx.rotate(((transform?.rotation||0)*Math.PI)/180);
+      ctx.scale(baseFit*(transform?.zoom||1), baseFit*(transform?.zoom||1));
+      ctx.drawImage(imgObj,-imgObj.width/2,-imgObj.height/2);
+      ctx.restore();
+
+      img.src = canvas.toDataURL("image/png");
   }
 
-  // 2️⃣ Fetch latest from server (auto updates)
+  // 1️⃣ Show cached preview instantly
+  const cached = localStorage.getItem("pravaah_public_dp_" + email);
+  if(cached) img.src = cached;
+  else img.src = "default-avatar.png";
+
+  // 2️⃣ Fetch fresh photo + transform from server
   fetch(`/api/pravaah?type=profile&email=${encodeURIComponent(email)}`)
     .then(r=>r.json())
     .then(p=>{
-      const final = (p.photo && p.photo.trim() !== "") ? p.photo : "default-avatar.png";
-      img.src = final;
-      localStorage.setItem("pravaah_public_dp_" + email, final);
+        if(!p || !p.photo){ img.src="default-avatar.png"; return; }
+
+        const photo = p.photo;
+        const transform = p.transform ? JSON.parse(p.transform) : {x:0,y:0,zoom:1,rotation:0};
+
+        const imgObj = new Image();
+        imgObj.crossOrigin="anonymous";
+        imgObj.src = photo;
+
+        imgObj.onload = ()=>{
+            render(imgObj, transform);
+            localStorage.setItem("pravaah_public_dp_" + email, img.src);
+        }
     })
-    .catch(()=>console.log("Offline – using cache/default"));
+    .catch(()=>console.log("Offline – cached/default used"));
 }
+
 
 /* ================= VALIDATION ================= */
 function validatePass(p) {
