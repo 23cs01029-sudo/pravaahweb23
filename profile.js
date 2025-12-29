@@ -474,12 +474,17 @@ cameraBtn.onclick = () => {
 function openEditor() {
   let photoToUse = previewPhotoSrc || userPhoto.src;
 
-  if(!photoToUse){
-      showToast("Upload a photo first", "info");
-      return;
+  if (!photoToUse) {
+    showToast("Upload a photo first", "info");
+    return;
   }
 
-  img2.src = photoToUse + "?v=" + Date.now();
+  // 🔥 Handle base64 & normal URL differently
+  if(photoToUse.startsWith("data:image")){
+      img2.src = photoToUse;                    // ❗ no timestamp for base64
+  } else {
+      img2.src = photoToUse + "?v=" + Date.now();  // cache bust for http/https only
+  }
 
   img2.onload = () => {
     scaleV = pendingTransform?.zoom || savedTransform?.zoom || 1;
@@ -496,6 +501,7 @@ function openEditor() {
     editor.classList.remove("hidden");
   };
 }
+
 
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
@@ -987,6 +993,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
