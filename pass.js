@@ -153,8 +153,6 @@ passCards.forEach((c) => {
     includeStarNite = false;
 
     participantsCount = 0;
-    numInput.value = 0;
-
     renderSelectionArea();
   });
 });
@@ -605,7 +603,11 @@ payBtn.addEventListener("click", async () => {
   if (paying) return;
   paying = true;
 
-  const numInputLocal = document.getElementById("numParticipants"); // <--- FIX
+  const numInputLocal = document.getElementById("numParticipants");
+if(!numInputLocal){
+   alert("Please select pass and number of participants first.");
+   paying=false; return;
+}// <--- FIX
   participantsCount = parseInt(numInputLocal?.value) || 0;
 
   if (participantsCount <= 0) {
@@ -715,6 +717,7 @@ const matchedParticipant = participants.find(p =>
 
   rzp.open();
 });
+
 
 
 
