@@ -403,19 +403,6 @@ uploadPhotoInput.onchange = (e) => {
   reader.onload = () => {
     const previewSrc = reader.result;
     const base64 = previewSrc.split(",")[1];
-
-    // Backend upload (silent - because no-cors)
-    fetch(scriptURL, {
-      method: "POST",
-      mode: "no-cors",
-      body: JSON.stringify({
-        type: "photoUpload",
-        email: user.email,
-        mimetype: file.type,
-        file: base64
-      })
-    });
-
     // Show preview on img and canvas
     userPhoto.src = previewSrc;
     renderProfilePhoto(previewSrc, { x:0, y:0, zoom:1, rotation:0 });
@@ -506,49 +493,55 @@ function openEditor() {
 
 
 document.getElementById("saveProfileBtn").onclick = async () => {
+
+  // ⬇️ Upload only when saving
+  if(previewPhotoSrc){
+    const base64 = previewPhotoSrc.split(",")[1];
+    await fetch(scriptURL,{
+      method:"POST",
+      mode:"no-cors",
+      body:JSON.stringify({
+        type:"photoUpload",
+        email:user.email,
+        file:base64,
+        mimetype:"image/jpeg"
+      })
+    });
+  }
+
   await saveProfileToSheet({
-    name: userNameEl.textContent,
-    email: user.email,
-    phone: userPhoneInput.value,
-    college: userCollegeInput.value,
-    photo: userPhoto.src, // FINAL truth
-    transform: pendingTransform
+    name:userNameEl.textContent,
+    email:user.email,
+    phone:userPhoneInput.value,
+    college:userCollegeInput.value,
+    photo:userPhoto.src,
+    transform:pendingTransform
       ? JSON.stringify(pendingTransform)
       : savedTransform
       ? JSON.stringify(savedTransform)
       : null
   });
 
-  // ✅ persist transform
-  if (pendingTransform) {
-    savedTransform = pendingTransform;
-  }
-   if (savedTransform) {
-  renderProfilePhoto(originalPhotoSrc, savedTransform);
-}
-  pendingTransform = null;
-  previewPhotoSrc = null;
+  if(pendingTransform) savedTransform=pendingTransform;
 
-  // ✅ EXIT EDIT MODE
-  isEditing = false;
-  setEditMode(false, { container, uploadOptions, userPhoto, editActions });
-
-  // ✅ RESET outlines / editor
+  pendingTransform=null;
+  previewPhotoSrc=null;
   editor.classList.add("hidden");
+  isEditing=false;
+  setEditMode(false,{container,uploadOptions,userPhoto,editActions});
+
+  cacheProfile({
+    email:user.email,
+    name:userNameEl.textContent,
+    phone:userPhoneInput.value,
+    college:userCollegeInput.value,
+    photo:userPhoto.src,
+    transform:savedTransform
+  });
 
   showToast("Profile Updated", "success");
-   cacheProfile({
-  email:user.email,
-  name:userNameEl.textContent,
-  phone:userPhoneInput.value,
-  college:userCollegeInput.value,
-  photo:userPhoto.src,
-  transform:savedTransform
-});
-// store previous state before replacing
-lastSavedPhoto = userPhoto.src;
-lastSavedTransform = savedTransform;
 };
+
 
 document.addEventListener("visibilitychange", async ()=>{
     if(document.visibilityState === "visible"){       // user comes back to tab
@@ -937,6 +930,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
