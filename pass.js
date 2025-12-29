@@ -187,22 +187,32 @@ function renderSelectionArea() {
 
   /* ---------- DAY PASS ---------- */
   if (currentPassType === "Day Pass") {
-    participantForm.innerHTML = `
-      <div class="participant-card">
-        <h4>Choose Day</h4>
-        <div class="day-selector-row">
-
-          <button type="button" class="day-card" data-day="day0">DAY 0</button>
-          <button type="button" class="day-card" data-day="day1">DAY 1</button>
-          <button type="button" class="day-card" data-day="day2">DAY 2</button>
-          <button type="button" class="day-card" data-day="day3">DAY 3</button>
-
-        </div>
+      participantForm.innerHTML = `
+    <div class="participant-card">
+      <h4>Choose Day</h4>
+      <div class="day-selector-row">
+        <button type="button" class="day-card" data-day="day0">DAY 0</button>
+        <button type="button" class="day-card" data-day="day1">DAY 1</button>
+        <button type="button" class="day-card" data-day="day2">DAY 2</button>
+        <button type="button" class="day-card" data-day="day3">DAY 3</button>
       </div>
+    </div>
 
-      <div id="dayEventsContainer"></div>
-      <div id="participantsContainerPlaceholder"></div>
-    `;
+    <!-- EVENTS FIRST -->
+    <div id="dayEventsContainer"></div>
+
+    <!-- THEN PARTICIPANTS -->
+    <div style="text-align:center;margin-top:18px;">
+      <h3>Number of Participants</h3>
+      <div class="custom-number-box">
+        <button class="num-btn" id="decPart">−</button>
+        <input type="number" id="numParticipants" value="0" min="0" max="10">
+        <button class="num-btn" id="incPart">+</button>
+      </div>
+    </div>
+
+    <div id="participantsContainerPlaceholder"></div>
+  `;
 
     document.querySelectorAll(".day-card").forEach((btn) =>
   btn.addEventListener("click", () => {
@@ -226,20 +236,32 @@ function renderSelectionArea() {
   /* ---------- VISITOR PASS ---------- */
   if (currentPassType === "Visitor Pass") {
     participantForm.innerHTML = `
-      <div class="participant-card">
-        <h4>Select Days</h4>
-        <div class="visitor-days-col">
-          <button type="button" class="visitor-day-card" data-day="day0">DAY 0</button>
-          <button type="button" class="visitor-day-card" data-day="day1">DAY 1</button>
-          <button type="button" class="visitor-day-card" data-day="day2">DAY 2</button>
-          <button type="button" class="visitor-day-card" data-day="day3">DAY 3</button>
-        </div>
+    <div class="participant-card">
+      <h4>Select Days</h4>
+      <div class="visitor-days-col">
+        <button type="button" class="visitor-day-card" data-day="day0">DAY 0</button>
+        <button type="button" class="visitor-day-card" data-day="day1">DAY 1</button>
+        <button type="button" class="visitor-day-card" data-day="day2">DAY 2</button>
+        <button type="button" class="visitor-day-card" data-day="day3">DAY 3</button>
       </div>
+    </div>
 
-      <div id="visitorEventsContainer"></div>
-      <div id="visitorStarContainer"></div>
-      <div id="participantsContainerPlaceholder"></div>
-    `;
+    <!-- EVENTS FIRST -->
+    <div id="visitorEventsContainer"></div>
+    <div id="visitorStarContainer"></div>
+
+    <!-- PARTICIPANTS NEXT -->
+    <div style="text-align:center;margin-top:18px;">
+      <h3>Number of Participants</h3>
+      <div class="custom-number-box">
+        <button class="num-btn" id="decPart">−</button>
+        <input type="number" id="numParticipants" value="0" min="0" max="10">
+        <button class="num-btn" id="incPart">+</button>
+      </div>
+    </div>
+
+    <div id="participantsContainerPlaceholder"></div>
+  `;
 
     document.querySelectorAll(".visitor-day-card").forEach((btn) =>
       btn.addEventListener("click", () => {
@@ -264,10 +286,23 @@ function renderSelectionArea() {
   /* ---------- FEST PASS ---------- */
   if (currentPassType === "Fest Pass") {
     participantForm.innerHTML = `
-      <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
-      <div id="festEventsContainer"></div>
-      <div id="participantsContainerPlaceholder"></div>
-    `;
+    <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
+
+    <!-- EVENTS FIRST -->
+    <div id="festEventsContainer"></div>
+
+    <!-- PARTICIPANTS BELOW -->
+    <div style="text-align:center;margin-top:18px;">
+      <h3>Number of Participants</h3>
+      <div class="custom-number-box">
+        <button class="num-btn" id="decPart">−</button>
+        <input type="number" id="numParticipants" value="0" min="0" max="10">
+        <button class="num-btn" id="incPart">+</button>
+      </div>
+    </div>
+
+    <div id="participantsContainerPlaceholder"></div>
+  `;
 
     renderFestEvents();
   }
@@ -275,12 +310,19 @@ function renderSelectionArea() {
   /* ---------- STARNITE PASS ---------- */
   if (currentPassType === "Starnite Pass") {
     participantForm.innerHTML = `
-      <div class="participant-card">
-        <h4>Starnite Pass</h4>
-        <p>Standalone entry</p>
+    <div class="participant-card"><h4>Starnite Pass</h4></div>
+
+    <div style="text-align:center;margin-top:18px;">
+      <h3>Number of Participants</h3>
+      <div class="custom-number-box">
+        <button class="num-btn" id="decPart">−</button>
+        <input type="number" id="numParticipants" value="0" min="0" max="10">
+        <button class="num-btn" id="incPart">+</button>
       </div>
-      <div id="participantsContainerPlaceholder"></div>
-    `;
+    </div>
+
+    <div id="participantsContainerPlaceholder"></div>
+  `;
   }
 
   calculateTotal();
@@ -669,6 +711,7 @@ const matchedParticipant = participants.find(p =>
 
   rzp.open();
 });
+
 
 
 
