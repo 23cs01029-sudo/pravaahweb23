@@ -472,30 +472,31 @@ cameraBtn.onclick = () => {
   openEditor();
 };
 function openEditor() {
-  let photoToUse = previewPhotoSrc || userPhoto.src;   // <— VERY IMPORTANT
+  let photoToUse = previewPhotoSrc || userPhoto.src;
 
-  if (!photoToUse || photoToUse.includes("default-avatar")) {
-    showToast("Upload a photo first", "info");
-    return;
+  if(!photoToUse){
+      showToast("Upload a photo first", "info");
+      return;
   }
 
-  img2.src = photoToUse + "?t=" + Date.now();
+  img2.src = photoToUse + "?v=" + Date.now();
 
   img2.onload = () => {
-    // restore values depending on state
     scaleV = pendingTransform?.zoom || savedTransform?.zoom || 1;
     rotV   = ((pendingTransform?.rotation || savedTransform?.rotation || 0) * Math.PI/180);
     offset.x = pendingTransform?.x || savedTransform?.x || 0;
     offset.y = pendingTransform?.y || savedTransform?.y || 0;
 
-    zoomRange.value = scaleV;              // slider always correct
+    zoomRange.value = scaleV;
 
     baseScaleCalc();
     clampXY();
     redraw();
+
     editor.classList.remove("hidden");
   };
 }
+
 
   /* -------- DRIVE PHOTO UPLOAD -------- */
   driveUploadBtn.onclick = async () => {
@@ -791,31 +792,34 @@ cropApply.onclick = () => {
 cropCancel.onclick = () => {
   editor.classList.add("hidden");
 
-  // Case 1: New image uploaded this session
+  // If user uploaded a photo but didn't save — revert to new image (not old DB)
   if(previewPhotoSrc){
-      userPhoto.src = previewPhotoSrc;
-      pendingTransform = {x:0,y:0,zoom:1,rotation:0};
+      pendingTransform = null;       // 🔥 clears only transform
+      scaleV = 1; offset={x:0,y:0};  // reset transform for fresh editor
       zoomRange.value = 1;
 
-      renderProfilePhoto(previewPhotoSrc, pendingTransform);
-      showToast("Crop cancelled — showing uploaded image", "info");
-      return;   // <— THIS RETURNS AND DOES NOT CLEAR PREVIEW!!
+      userPhoto.src = previewPhotoSrc;
+      renderProfilePhoto(previewPhotoSrc,{x:0,y:0,zoom:1,rotation:0});
+
+      showToast("Cancelled — showing uploaded image", "info");
+      return;  // STOP HERE (do not restore DB photo)
   }
 
-  // Case 2: No new upload → restore last saved profile
+  // Otherwise restore last saved DB photo
   const cached = getCachedProfile(currentUserEmail);
+
   if(cached?.photo){
-      userPhoto.src = cached.photo;
       savedTransform = cached.transform || {x:0,y:0,zoom:1,rotation:0};
+      userPhoto.src = cached.photo;
       renderProfilePhoto(cached.photo, savedTransform);
   } else {
-      userPhoto.src="default-avatar.png";
-      savedTransform = {x:0,y:0,zoom:1,rotation:0};
-      renderProfilePhoto("default-avatar.png",savedTransform);
+      userPhoto.src = "default-avatar.png";
+      renderProfilePhoto("default-avatar.png",{x:0,y:0,zoom:1,rotation:0});
   }
 
   showToast("Restored saved profile", "info");
 };
+
 
 
 
@@ -983,6 +987,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
