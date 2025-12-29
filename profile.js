@@ -307,10 +307,35 @@ function setEditMode(on, ctx) {
   ctx.userPhoto.style.outline = on ? "2px dashed cyan" : "none";
   ctx.userPhoto.style.outlineOffset = "6px";
 
-  document.getElementById("cameraBtn").style.display = on ? "flex" : "none";  // ⭐ camera visible only in edit mode
+  document.getElementById("cameraBtn").style.display = on ? "flex" : "none";  // ⭐ camera visible only in edit mode4
+   if(on) startEditTimeout();
+   else clearTimeout(editTimeout);
 }
+/* ======================================================
+⏳ AUTO DISCARD EDIT MODE AFTER 5 MIN
+====================================================== */
+let editTimeout = null;
 
+function startEditTimeout(){
+    clearTimeout(editTimeout);
+    editTimeout = setTimeout(()=>{
+        if(isEditing){
+            pendingTransform=null;
+            previewPhotoSrc=null;
+            scaleV=1; offset={x:0,y:0};
+            zoomRange.value=1;
 
+            const cached = getCachedProfile(currentUserEmail);
+            if(cached?.photo){
+                userPhoto.src=cached.photo;
+                renderProfilePhoto(cached.photo,cached.transform||{x:0,y:0,zoom:1,rotation:0});
+            }
+            editor.classList.add("hidden");
+            isEditing=false;
+            showToast("Edit cancelled due to inactivity", "error");
+        }
+    },5*60*1000); // 5min
+}
   const phoneSpan = ensureFieldSpan(userPhoneInput, "userPhoneText");
   const collegeSpan = ensureFieldSpan(userCollegeInput, "userCollegeText");
 
@@ -631,8 +656,18 @@ document.addEventListener("visibilitychange", async ()=>{
 
   logoutDesktop.onclick = logout;
   logoutMobile.onclick = logout;
-});
+   function scheduleMidnightLogout(){
+    const now=new Date();
+    const next=new Date();
+    next.setHours(24,0,0,0);
 
+    setTimeout(()=>{
+        logout();  // auto logout exact 12AM
+        setInterval(logout,24*60*60*1000);
+    },next-now);
+}
+scheduleMidnightLogout();
+});
 /* ---------- Toast CSS ---------- */
 const style = document.createElement("style");
 style.innerHTML = `
@@ -996,6 +1031,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
