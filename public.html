@@ -204,24 +204,19 @@ function loadPhoto(email){
       ctx.restore();
 
       img.src = canvas.toDataURL("image/png");
-
-      // 🔥 SAVE CACHE PROPERLY (photo + transform)
-      localStorage.setItem("pravaah_public_dp_" + email, JSON.stringify({
-          photo: img.src,
-          transform: transform
-      }));
   }
 
-  // 1️⃣ Load instant from cache if exists
-  const cached = JSON.parse(localStorage.getItem("pravaah_public_dp_" + email) || "{}");
-  if(cached.photo) img.src = cached.photo;
-  else img.src = "default-avatar.png";
+  // Always show default first
+  img.src = "default-avatar.png";
 
-  // 2️⃣ Fetch from server for updated photo+transform
+  // Always fetch fresh from backend
   fetch(`/api/pravaah?type=profile&email=${encodeURIComponent(email)}`)
     .then(r=>r.json())
     .then(p=>{
-        if(!p || !p.photo){ img.src="default-avatar.png"; return; }
+        if(!p || !p.photo){
+            img.src="default-avatar.png";
+            return;
+        }
 
         const photo = p.photo;
         const transform = p.transform ? JSON.parse(p.transform) : {x:0,y:0,zoom:1,rotation:0};
@@ -233,14 +228,11 @@ function loadPhoto(email){
         imgObj.onload = ()=> render(imgObj, transform);
     })
     .catch(()=>{
-        console.log("Offline – using cached");
-        if(cached.photo && cached.transform){
-            const imgObj = new Image();
-            imgObj.onload = ()=> render(imgObj, cached.transform);
-            imgObj.src = cached.photo;
-        }
+        console.log("Unable to fetch — no cache fallback since disabled.");
+        img.src="default-avatar.png"; // offline fallback only
     });
 }
+
 
 
 /* ================= VALIDATION ================= */
