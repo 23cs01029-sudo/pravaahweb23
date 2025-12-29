@@ -204,10 +204,10 @@ cameraBtn.style.display = "none"; // hidden until edit enabled
 ======================================================*/
 
 window.addEventListener("storage", e => {
+  if(isEditing) return; // prevent UI override during editor mode
+
   if(e.key === "pravaah_profile_" + currentUserEmail){
       const data = JSON.parse(e.newValue);
-
-      console.log("⚡ Live profile update received from cache");
 
       if(data.photo){
           userPhoto.src = data.photo;
@@ -216,12 +216,11 @@ window.addEventListener("storage", e => {
 
       userPhoneInput.value = data.phone || "";
       userCollegeInput.value = data.college || "";
-
-      // update UI text spans also
       document.getElementById("userPhoneText").textContent = data.phone || "-";
       document.getElementById("userCollegeText").textContent = data.college || "-";
   }
 });
+
 
 /* ===============================
    🚀 FAST LOAD — CACHE FIRST
@@ -993,6 +992,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
