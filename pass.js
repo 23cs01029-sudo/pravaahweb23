@@ -44,10 +44,6 @@ const selectionArea = document.getElementById("selectionArea");
 const selectedPassTxt = document.getElementById("selectedPass");
 const participantForm = document.getElementById("participantForm");
 
-const numInput = document.getElementById("numParticipants");
-const decBtn = document.getElementById("decPart");
-const incBtn = document.getElementById("incPart");
-
 const totalAmountEl = document.getElementById("totalAmount");
 const payBtn = document.getElementById("payBtn");
 if (payBtn) payBtn.setAttribute("type", "button");
@@ -324,9 +320,38 @@ function renderSelectionArea() {
     <div id="participantsContainerPlaceholder"></div>
   `;
   }
-
+attachParticipantControls(); 
   calculateTotal();
 
+}
+function attachParticipantControls(){
+  const numInputLocal = document.getElementById("numParticipants");
+  const incLocal = document.getElementById("incPart");
+  const decLocal = document.getElementById("decPart");
+
+  if(!numInputLocal || !incLocal || !decLocal) return; // prevent crash
+
+  incLocal.addEventListener("click", () => {
+    let v = +numInputLocal.value || 0;
+    if (v < 10) v++;
+    numInputLocal.value = v;
+    buildParticipantForms(v);
+  });
+
+  decLocal.addEventListener("click", () => {
+    let v = +numInputLocal.value || 0;
+    if (v > 0) v--;
+    numInputLocal.value = v;
+    buildParticipantForms(v);
+  });
+
+  numInputLocal.addEventListener("input", () => {
+    let v = +numInputLocal.value || 0;
+    if (v < 0) v = 0;
+    if (v > 10) v = 10;
+    numInputLocal.value = v;
+    buildParticipantForms(v);
+  });
 }
 
 /* =======================================
@@ -502,30 +527,6 @@ function buildParticipantForms(count) {
   calculateTotal();
 }
 
-
-/* =======================================
-      PARTICIPANT COUNTER
-======================================= */
-incBtn.addEventListener("click", () => {
-  let v = +numInput.value || 0;
-  if (v < 10) numInput.value = ++v;
-  buildParticipantForms(v);
-});
-
-decBtn.addEventListener("click", () => {
-  let v = +numInput.value || 0;
-  if (v > 0) numInput.value = --v;
-  buildParticipantForms(v);
-});
-
-numInput.addEventListener("input", () => {
-  let v = +numInput.value || 0;
-  if (v < 0) v = 0;
-  if (v > 10) v = 10;
-  numInput.value = v;
-  buildParticipantForms(v);
-});
-
 /* =======================================
       PRICE CALCULATION
       Total = base × participants 
@@ -604,12 +605,15 @@ payBtn.addEventListener("click", async () => {
   if (paying) return;
   paying = true;
 
-  participantsCount = parseInt(numInput.value) || 0;
+  const numInputLocal = document.getElementById("numParticipants"); // <--- FIX
+  participantsCount = parseInt(numInputLocal?.value) || 0;
+
   if (participantsCount <= 0) {
     alert("Please add at least 1 participant.");
     paying = false;
     return;
   }
+
 
   const cards = [...document.querySelectorAll("#participantsContainerPlaceholder .participant-card")];
 
@@ -711,6 +715,7 @@ const matchedParticipant = participants.find(p =>
 
   rzp.open();
 });
+
 
 
 
