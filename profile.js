@@ -405,12 +405,12 @@ uploadPhotoInput.onchange = (e) => {
     const base64 = previewSrc.split(",")[1];
     // Show preview on img and canvas
     userPhoto.src = previewSrc;
-    renderProfilePhoto(previewSrc, { x:0, y:0, zoom:1, rotation:0 });
-
     originalPhotoSrc = previewSrc;
     previewPhotoSrc = previewSrc;
-    pendingTransform = { x:0, y:0, zoom:1, rotation:0 };
-    savedTransform = null;
+pendingTransform = {x:0,y:0,zoom:1,rotation:0};
+savedTransform = {x:0,y:0,zoom:1,rotation:0};   // default for new image
+renderProfilePhoto(previewSrc, pendingTransform);
+
 
     ////// ⭐ AUTO-OPEN EDITOR ⭐ //////
     setTimeout(() => {
@@ -472,10 +472,10 @@ function openEditor() {
   userPhoto.src = cdnUrl;
   originalPhotoSrc = cdnUrl;
   previewPhotoSrc = cdnUrl;
-  pendingTransform = { x:0, y:0, zoom:1, rotation:0 };
-  savedTransform = null;
+  pendingTransform = {x:0,y:0,zoom:1,rotation:0};
+savedTransform = pendingTransform;
+renderProfilePhoto(cdnUrl, pendingTransform);
 
-  renderProfilePhoto(cdnUrl, pendingTransform);
 
   // 🌟 Open editor just like device upload
   setTimeout(() => {
@@ -746,32 +746,27 @@ cropApply.onclick = () => {
 cropCancel.onclick = () => {
   editor.classList.add("hidden");
 
-  const cached = getCachedProfile(user.email); // last saved truth
+  const cached = getCachedProfile(user.email);
 
   if (cached?.photo) {
       userPhoto.src = cached.photo;
-      renderProfilePhoto(cached.photo, cached.transform || {x:0,y:0,zoom:1,rotation:0});
+
+      // 🔥 FIX — now apply transform instantly
+      let T = cached.transform || {x:0,y:0,zoom:1,rotation:0};
+      savedTransform = T;                      // keep for session
+      renderProfilePhoto(cached.photo, T);
   } else {
       userPhoto.src = "default-avatar.png";
-      renderProfilePhoto("default-avatar.png", {x:0,y:0,zoom:1,rotation:0});
+      savedTransform = {x:0,y:0,zoom:1,rotation:0};
+      renderProfilePhoto("default-avatar.png", savedTransform);
   }
 
   // reset unsaved changes
   previewPhotoSrc = null;
   pendingTransform = null;
 
-  showToast("Photo reverted — unsaved changes discarded", "info");
+  showToast("Changes discarded — restored previous profile", "info");
 };
-
-
-
-
-
-
-
-
-
-
 /* Drag Move (Mouse) */
 canvas.onmousedown = e => { drag=true; startPos={x:e.offsetX-offset.x,y:e.offsetY-offset.y}; }
 canvas.onmousemove = e => { 
@@ -820,10 +815,12 @@ canvas.addEventListener("wheel", (e) => {
 
   const zoomSpeed = 0.0015; // adjust smoothness
   scaleV += -e.deltaY * zoomSpeed;
-  scaleV = Math.max(1, Math.min(scaleV, 3)); // same limits
+scaleV = Math.max(1, Math.min(scaleV, 3));
 
-  clampXY();
-  redraw();
+zoomRange.value = scaleV.toFixed(2);   // sync slider with scroll zoom
+
+clampXY(); redraw();
+
 },{passive:false});
 
 canvas.addEventListener("touchmove",(e)=>{
@@ -835,11 +832,14 @@ canvas.addEventListener("touchmove",(e)=>{
         let dist = getDist(e.touches);
         let change = dist - lastZoomDist;
 
-        scaleV += change * 0.004;               // Zoom Speed 🔥
-        scaleV = Math.max(1, Math.min(scaleV, 3));   // Limit zoom 1x → 3x
+        scaleV += change * 0.004;
+scaleV = Math.max(1, Math.min(scaleV, 3));
 
-        lastZoomDist = dist;
-        clampXY(); redraw();
+zoomRange.value = scaleV.toFixed(2);   // <-- slider updates realtime 🔥
+
+lastZoomDist = dist;
+clampXY(); redraw();
+
     }
 
     // Drag
@@ -930,6 +930,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
