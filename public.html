@@ -120,26 +120,6 @@ body {
   font-size: 0.75rem;
   opacity: 0.6;
 }
-.photo {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  border: 2px solid cyan;
-  overflow: hidden;
-  margin: 0 auto 12px;
-  position: relative;
-}
-
-.photo img {
-  width: 260px;
-  height: 260px;
-  object-fit: cover;
-
-  /* 👇 SCALE IMAGE DOWN TO FIT ◀ IMPORTANT FIX */
-  transform: scale(0.42);
-  transform-origin: center;
-}
-
 
 </style>
 </head>
@@ -205,70 +185,53 @@ loadPhoto(p.Email);
   });
 /* ================= LOAD PHOTO (Cache -> Server -> Default) ================= */
 function loadPhoto(email){
-  console.log("⚡ loadPhoto called for:", email);  // <--- ADDED
-
   const img = document.getElementById("photo");
-  console.log("IMG TAG FOUND?", img !== null);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 110;
+  canvas.height = 110;
+  const ctx = canvas.getContext("2d");
+
+  function render(imgObj, transform){
+      const R = canvas.width/2;
+      const baseFit = Math.max(canvas.width/imgObj.width , canvas.height/imgObj.height);
+      
+      ctx.clearRect(0,0,110,110);
+      ctx.save();
+      ctx.translate(R+(transform.x||0), R+(transform.y||0));
+      ctx.rotate((transform.rotation||0) * Math.PI/180);
+      ctx.scale(baseFit*(transform.zoom||1), baseFit*(transform.zoom||1));
+      ctx.drawImage(imgObj,-imgObj.width/2,-imgObj.height/2);
+      ctx.restore();
+
+      img.src = canvas.toDataURL("image/png");
+  }
+
+  img.src = "default-avatar.png"; // show placeholder first
 
   fetch(`/api/pravaah?type=profile&email=${encodeURIComponent(email)}`)
     .then(r => r.text())
-    .then(raw => {
-        console.log("🔍 RAW RESPONSE:", raw);
-
+    .then(raw=>{
         let p;
-        try { p = JSON.parse(raw); }
-        catch(err){
-            console.log("❌ JSON parse failed");
-            return;
-        }
-
-        console.log("📷 PHOTO URL:", p.photo);
-        console.log("🧩 TRANSFORM:", p.transform);
+        try{ p = JSON.parse(raw); }
+        catch{ return; }
 
         if(!p.photo){
-            console.log("❌ No photo found in DB");
             img.src="default-avatar.png";
             return;
         }
 
-        const t = p.transform ? JSON.parse(p.transform) : {x:0,y:0,zoom:1,rotation:0};
-        console.log("🔧 Transform Parsed:", t);
-
-        const canvas = document.createElement("canvas");
-        canvas.width = 260;
-        canvas.height = 260;
-        const ctx = canvas.getContext("2d");
+        const transform = p.transform || {x:0,y:0,zoom:1,rotation:0};
 
         const imgObj = new Image();
         imgObj.crossOrigin="anonymous";
         imgObj.src = p.photo;
-
-        imgObj.onload = ()=>{
-            console.log("✔ IMAGE LOADED SUCCESS");
-            render();
-        }
-
-        imgObj.onerror = ()=>{
-            console.log("❌ IMAGE LOAD FAILED");
-        }
-
-        function render(){
-            const R = 130;
-            const baseFit = Math.max(canvas.width/imgObj.width , canvas.height/imgObj.height);
-
-            ctx.clearRect(0,0,260,260);
-            ctx.save();
-            ctx.translate(R+(t.x||0), R+(t.y||0));
-            ctx.rotate(((t.rotation||0)*Math.PI)/180);
-            ctx.scale(baseFit*(t.zoom||1), baseFit*(t.zoom||1));
-            ctx.drawImage(imgObj,-imgObj.width/2,-imgObj.height/2);
-            ctx.restore();
-
-            img.src = canvas.toDataURL("image/png");
-            console.log("🟢 DP APPLIED TO IMG TAG");
-        }
+        imgObj.onload = ()=> render(imgObj, transform);
     })
+    .catch(()=>img.src="default-avatar.png");
 }
+
+
 
 
 /* ================= VALIDATION ================= */
