@@ -1591,10 +1591,7 @@ video:-webkit-full-screen {
 }
 
 
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(var(--distance)); }
-}
+
 
 
 
