@@ -193,7 +193,41 @@ if (firstDayEl) {
 
 
 
+  
+
+
+  /* ---------- SWIPE SUPPORT ---------- */
+
+  let startX = 0;
+
+  lightbox.addEventListener("touchstart", (e) => {
+    startX = e.changedTouches[0].clientX;
+  });
+
+  lightbox.addEventListener("touchend", (e) => {
+    let endX = e.changedTouches[0].clientX;
+
+    if (startX - endX > 60) rightArrow.click();
+    if (endX - startX > 60) leftArrow.click();
+  });
   /* ===========================================================
+   🔁 HIGHLIGHTS — INFINITE AUTO SCROLL (FINAL FIX)
+=========================================================== */
+
+const track = document.querySelector(".slider-track");
+if (track) {
+
+  const highlightSlides = Array.from(track.children);
+  let totalWidth = 0;
+  const gap = 30; // must match CSS gap
+  /* 1️⃣ Clone slides for seamless loop */
+highlightSlides.forEach(slide => {
+  const clone = slide.cloneNode(true);
+  clone.classList.add("clone");
+  track.appendChild(clone);
+});
+
+/* ===========================================================
      🔵 LIGHTBOX SYSTEM — FIXED & FINAL
   =========================================================== */
 
@@ -286,40 +320,6 @@ if (firstDayEl) {
   lightbox.addEventListener("click", (e) => {
     if (e.target === lightbox) lightbox.classList.add("hidden");
   });
-
-
-  /* ---------- SWIPE SUPPORT ---------- */
-
-  let startX = 0;
-
-  lightbox.addEventListener("touchstart", (e) => {
-    startX = e.changedTouches[0].clientX;
-  });
-
-  lightbox.addEventListener("touchend", (e) => {
-    let endX = e.changedTouches[0].clientX;
-
-    if (startX - endX > 60) rightArrow.click();
-    if (endX - startX > 60) leftArrow.click();
-  });
-  /* ===========================================================
-   🔁 HIGHLIGHTS — INFINITE AUTO SCROLL (FINAL FIX)
-=========================================================== */
-
-const track = document.querySelector(".slider-track");
-if (track) {
-
-  const highlightSlides = Array.from(track.children);
-  let totalWidth = 0;
-  const gap = 30; // must match CSS gap
-  /* 1️⃣ Clone slides for seamless loop */
-highlightSlides.forEach(slide => {
-  const clone = slide.cloneNode(true);
-  clone.classList.add("clone");
-  track.appendChild(clone);
-});
-
-
 highlightSlides.forEach(slide => {
   totalWidth += slide.offsetWidth + gap;
 });
@@ -336,6 +336,7 @@ highlightSlides.forEach(slide => {
 }
 
 });
+
 
 
 
