@@ -1378,3 +1378,185 @@ footer {
 .hidden {
   display: none !important;
 }
+/* ===============================
+   🎯 HIGHLIGHTS — BIG RECTANGLE
+================================ */
+.slide {
+  width: 400px;
+  height: 230px;
+}
+
+.slide img {
+  object-fit: contain;   /* full image visible */
+  background: black;
+}
+
+/* Mobile highlights */
+@media (max-width: 650px) {
+  .slide {
+    width: 300px;
+    height: 170px;
+  }
+}
+
+
+/* ===============================
+   🎬 AFTERMOVIE + THEME VIDEO
+   HOME PAGE FIT FIX
+================================ */
+
+/* Normal view (inside page) */
+.video-wrapper video {
+  object-fit: contain;   /* show full video */
+  background: black;     /* black bars if needed */
+}
+
+/* ===============================
+   🖥️ FULLSCREEN VIDEO FIX
+================================ */
+
+/* When user clicks fullscreen */
+video:fullscreen,
+video:-webkit-full-screen {
+  object-fit: contain;
+  background: black;
+}
+
+/* ===============================
+   📱 MOBILE FULLSCREEN VIDEO FIX
+================================ */
+@media (max-width: 650px) {
+  video:fullscreen,
+  video:-webkit-full-screen {
+    object-fit: contain;
+    background: black;
+  }
+}
+
+
+/* ===============================
+   🖼️ LIGHTBOX IMAGE FULL FIT
+================================ */
+.lightbox img {
+  object-fit: contain;
+  background: black;
+  max-width: 90%;
+  max-height: 80vh;
+}
+
+/* Mobile lightbox */
+@media (max-width: 650px) {
+  .lightbox img {
+    width: 100%;
+    max-height: 60vh;
+    object-fit: contain;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+/* =========================================================
+   🎬 AFTERMOVIE / THEME VIDEO — BOX MATCH VIDEO EXACTLY
+   ========================================================= */
+
+/* Let the outer box size itself by video */
+.aftermovie {
+  height: auto !important;
+  aspect-ratio: 16 / 9;   /* 🔑 match video ratio */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Video wrapper should NOT force height */
+.video-wrapper {
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+}
+
+/* Video fills wrapper exactly */
+.video-wrapper video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: black;
+}
+
+/* ===============================
+   📱 MOBILE FIX — SAME BEHAVIOR
+================================ */
+@media (max-width: 650px) {
+  .aftermovie {
+    width: 95%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-wrapper {
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-wrapper video {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* =========================================================
+   🔁 HIGHLIGHTS — FIX IMAGE CUT + INFINITE LOOP STOP
+   ========================================================= */
+
+/* 🔧 Ensure slide height is respected */
+
+
+/* =========================================================
+
+/* =========================================
+   🔥 HARD OVERRIDE — HIGHLIGHTS IMAGE FIX
+   ========================================= */
+
+
+/* =========================================
+   📱 MOBILE — ALWAYS SHOW TITLE + ZOOM ICON
+   ========================================= */
+@media (max-width: 650px) {
+
+  /* Always show title bar */
+  .slide::after {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    background: rgba(0,0,0,0.65);
+    font-size: 0.95rem;
+  }
+
+  /* Always show magnify icon */
+  .zoom-icon {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+  }
+}
+/* FIX: let image decide height */
+.slide {
+  width: 430px;
+  height: auto;                 /* 🔑 remove fixed height */
+  aspect-ratio: 16 / 9;         /* consistent card ratio */
+  background: black;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;          /* full image visible */
+  background: black;
+}
+@media (max-width: 650px) {
+  .slide {
+    width: 300px;
+    aspect-ratio: 16 / 9;
+  }
+}
