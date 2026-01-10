@@ -119,17 +119,29 @@ const ctx=canvas.getContext("2d");
 
 function scanLoop(){
   if(!scanning || locked || !video.videoWidth) return;
-  canvas.width=video.videoWidth;
-  canvas.height=video.videoHeight;
-  ctx.drawImage(video,0,0);
-  const img=ctx.getImageData(0,0,canvas.width,canvas.height);
-  const code=jsQR(img.data,img.width,img.height);
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  ctx.drawImage(video, 0, 0);
+
+  // 🔵 Crop center area (matches scan box)
+  const cropSize = Math.min(canvas.width, canvas.height) * 0.6;
+  const x = (canvas.width - cropSize) / 2;
+  const y = (canvas.height - cropSize) / 2;
+
+  const img = ctx.getImageData(x, y, cropSize, cropSize);
+
+  const code = jsQR(img.data, img.width, img.height, {
+    inversionAttempts: "attemptBoth"
+  });
+
   if(code){
     try{
-      const pid=new URL(code.data).searchParams.get("paymentId");
+      const url = new URL(code.data);
+      const pid = url.searchParams.get("paymentId");
       if(pid){
-        locked=true;
-        detectedPaymentId=pid;
+        locked = true;
+        detectedPaymentId = pid;
         stopCamera();
         loadProfile(pid);
         showActions();
@@ -137,8 +149,11 @@ function scanLoop(){
       }
     }catch{}
   }
-  requestAnimationFrame(scanLoop);
+
+  // 🔵 Scan at ~15 FPS (important)
+  setTimeout(() => requestAnimationFrame(scanLoop), 66);
 }
+
 
 /* ---------------- LOAD PROFILE ---------------- */
 function loadProfile(pid){
