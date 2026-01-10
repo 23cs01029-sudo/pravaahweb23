@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ===================== CALENDAR + FEED ===================== */
-
   const monthYear = document.getElementById("monthYear");
   const calendar = document.getElementById("calendar");
   const prevMonth = document.getElementById("prevMonth");
@@ -11,180 +9,273 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentDate = new Date();
 
   const feedsByDate = {
-    "2025-12-11": Array(11).fill({
-      img: "DSC09133.JPG",
-      name: "Pravaah",
-      text: "2nd Edition",
-      time: "11:59"
-    })
+    "2025-12-11": [
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
+      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
+    ]
   };
 
   const defaultFeed = [
     { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
   ];
 
+
+
+  /* ---------------------- FEED RENDER ---------------------- */
   function renderFeed(dateKey) {
     if (!feedList) return;
 
-    feedList.innerHTML = "";
-    const data = feedsByDate[dateKey] || defaultFeed;
+    feedList.classList.add("fade-out");
 
-    data.forEach(feed => {
-      const item = document.createElement("div");
-      item.className = "feed-item";
-      item.innerHTML = `
-        <img src="${feed.img}">
-        <div class="feed-details">
-          <h4>${feed.name}</h4>
-          <p>${feed.text}</p>
-        </div>
-        <div class="feed-time">${feed.time}</div>
-      `;
-      feedList.appendChild(item);
-    });
+    setTimeout(() => {
+      feedList.innerHTML = "";
+      const data = feedsByDate[dateKey] || defaultFeed;
+
+      data.forEach(feed => {
+        const item = document.createElement("div");
+        item.className = "feed-item";
+
+        item.innerHTML = `
+          <img src="${feed.img}" alt="${feed.name}">
+          <div class="feed-details">
+            <h4>${feed.name}</h4>
+            <p>${feed.text}</p>
+          </div>
+          <div class="feed-time">${feed.time}</div>
+        `;
+
+        feedList.appendChild(item);
+      });
+
+      feedList.classList.remove("fade-out");
+      feedList.classList.add("fade-in");
+
+      setTimeout(() => feedList.classList.remove("fade-in"), 450);
+    }, 250);
   }
 
-  function renderCalendar(date) {
+
+
+  /* ---------------------- CALENDAR RENDER ---------------------- */
+
+  function renderCalendar(date, transition = false) {
     if (!calendar) return;
 
     const year = date.getFullYear();
     const month = date.getMonth();
 
-    monthYear.textContent =
-      `${date.toLocaleString("default", { month: "long" })} ${year}`;
+    if (transition) calendar.classList.add("fade-out");
 
-    calendar.innerHTML = "";
+    setTimeout(() => {
+      monthYear.textContent =
+        `${date.toLocaleString("default", { month: "long" })} ${year}`;
 
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    for (let i = 0; i < firstDay; i++) {
-      calendar.appendChild(document.createElement("div"));
-    }
+      calendar.innerHTML = "";
 
-    for (let i = 1; i <= daysInMonth; i++) {
-      const day = document.createElement("div");
-      day.className = "day";
-      day.textContent = i;
+      for (let i = 0; i < firstDay; i++) {
+        calendar.appendChild(document.createElement("div"));
+      }
 
-      day.addEventListener("click", () => {
-        document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
-        day.classList.add("selected");
+      for (let i = 1; i <= daysInMonth; i++) {
+        const day = document.createElement("div");
+        day.classList.add("day");
+        day.textContent = i;
 
-        const key =
-          `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
-        renderFeed(key);
-      });
+        const today = new Date();
+        if (
+          i === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
+        ) {
+          day.classList.add("today");
+        }
 
-      calendar.appendChild(day);
-    }
+        day.addEventListener("click", () => {
+          document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+          day.classList.add("selected");
+
+          const key =
+            `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+          renderFeed(key);
+        });
+
+        calendar.appendChild(day);
+      }
+
+      if (transition) {
+        calendar.classList.remove("fade-out");
+        calendar.classList.add("fade-in");
+        setTimeout(() => calendar.classList.remove("fade-in"), 450);
+      }
+    }, transition ? 250 : 0);
   }
+
 
   prevMonth?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar(currentDate);
+    renderCalendar(currentDate, true);
   });
 
   nextMonth?.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar(currentDate);
+    renderCalendar(currentDate, true);
   });
 
   renderCalendar(currentDate);
+
   renderFeed(
     `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`
   );
 
-  /* ===================== VIDEO SWITCH ===================== */
+
+
+  /* ---------------------- VIDEO SWITCH ---------------------- */
 
   const mainVideo = document.getElementById("mainVideo");
-  document.getElementById("aftermovieBtn")?.addEventListener("click", () => {
+  const aftermovieBtn = document.getElementById("aftermovieBtn");
+  const themeBtn = document.getElementById("themeBtn");
+
+  aftermovieBtn?.addEventListener("click", () => {
     mainVideo.src = "aftermovie.mp4";
-  });
-  document.getElementById("themeBtn")?.addEventListener("click", () => {
-    mainVideo.src = "themevideo.mp4";
+    aftermovieBtn.classList.add("active");
+    themeBtn.classList.remove("active");
   });
 
-  /* ===================== MOBILE MENU ===================== */
+  themeBtn?.addEventListener("click", () => {
+    mainVideo.src = "themevideo.mp4";
+    themeBtn.classList.add("active");
+    aftermovieBtn.classList.remove("active");
+  });
+
+
+
+  /* ---------------------- MOBILE NAV MENU ---------------------- */
 
   const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
 
-  menuToggle?.addEventListener("click", e => {
-    e.stopPropagation();
-    menu.classList.toggle("active");
-  });
+  if (menuToggle && menu) {
+    menuToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.classList.toggle("active");
+    });
 
-  document.addEventListener("click", e => {
-    if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
-      menu.classList.remove("active");
-    }
-  });
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && !menuToggle.contains(e.target)) {
+        menu.classList.remove("active");
+      }
+    });
 
-  /* ===================== HIGHLIGHTS SLIDER ===================== */
+    menu.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => menu.classList.remove("active"));
+    });
+  }
 
-  const track = document.querySelector(".slider-track");
-  if (!track) return;
 
-  const originalSlides = Array.from(track.children);
-  originalSlides.forEach(slide => {
-    const clone = slide.cloneNode(true);
-    clone.classList.add("clone");
-    track.appendChild(clone);
-  });
 
-  let totalWidth = 0;
-  originalSlides.forEach(slide => {
-    totalWidth += slide.offsetWidth + 30;
-  });
+  /* ===========================================================
+     🔵 LIGHTBOX SYSTEM — FIXED & FINAL
+  =========================================================== */
 
-  track.style.setProperty("--distance", `-${totalWidth}px`);
-  track.style.setProperty("--duration", `${totalWidth / 100}s`);
+  /* Get ORIGINAL slides only (no duplicates) */
+  const slides = document.querySelectorAll(".slide");
 
-  /* ===================== LIGHTBOX ===================== */
+  let galleryImages = Array.from(slides).map((slide, index) => {
+    const img = slide.querySelector("img");
 
-  const slides = document.querySelectorAll(".slide:not(.clone)");
-
-  const galleryImages = Array.from(slides).map((slide, index) => {
-    slide.dataset.index = index;
     return {
-      src: slide.querySelector("img").src,
-      title: slide.dataset.title,
-      desc: slide.dataset.desc
+      src: img.src,
+      title: slide.getAttribute("data-title"),
+      desc: "Experience the Chronicles of Time — PRAVAAH 2K25.",
+      index
     };
   });
 
   let currentIndex = 0;
 
+
+  /* ---------- Inject Lightbox HTML ---------- */
   const lightbox = document.getElementById("lightbox");
+
+  lightbox.innerHTML = `
+    <div class="lightbox-top">
+      <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
+      <a id="downloadIcon" class="download-icon" download>
+        <i class="fa-solid fa-download"></i>
+      </a>
+    </div>
+
+    <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
+
+    <img id="lightboxImg">
+
+    <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
+
+    <div class="lightbox-info">
+      <h3 id="lightboxTitle"></h3>
+      <p id="lightboxDesc"></p>
+    </div>
+  `;
+
   const lbImg = document.getElementById("lightboxImg");
   const lbTitle = document.getElementById("lightboxTitle");
   const lbDesc = document.getElementById("lightboxDesc");
+  const downloadIcon = document.getElementById("downloadIcon");
+
   const closeBtn = document.querySelector(".close-lightbox");
   const leftArrow = document.querySelector(".lb-arrow.left");
   const rightArrow = document.querySelector(".lb-arrow.right");
 
+
+
+  /* ---------- FUNCTIONS ---------- */
+
   function showSlide(index) {
-    if (!galleryImages[index]) return;
-    lbImg.src = galleryImages[index].src;
-    lbTitle.textContent = galleryImages[index].title;
-    lbDesc.textContent = galleryImages[index].desc;
-    lightbox.classList.remove("hidden");
+    lbImg.style.opacity = 0;
+
+    setTimeout(() => {
+      const item = galleryImages[index];
+
+      lbImg.src = item.src;
+      lbTitle.textContent = item.title;
+      lbDesc.textContent = item.desc;
+
+      downloadIcon.href = item.src;
+      downloadIcon.setAttribute("download", item.title.replace(/\s+/g, "_"));
+
+      lbImg.style.opacity = 1;
+    }, 200);
   }
 
   function openLightbox(index) {
     currentIndex = index;
     showSlide(index);
+    lightbox.classList.remove("hidden");
   }
 
-  document.querySelectorAll(".slide:not(.clone) .zoom-icon").forEach(icon => {
-    icon.addEventListener("click", e => {
-      e.stopPropagation();
-      openLightbox(Number(icon.closest(".slide").dataset.index));
-    });
-  });
+
+  /* ---------- EVENT LISTENERS ---------- */
 
   closeBtn.addEventListener("click", () => lightbox.classList.add("hidden"));
+
+  document.querySelectorAll(".zoom-icon").forEach((icon, i) => {
+    icon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openLightbox(i);  // FIXED INDEXING
+    });
+  });
 
   leftArrow.addEventListener("click", () => {
     currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
@@ -196,17 +287,23 @@ document.addEventListener("DOMContentLoaded", () => {
     showSlide(currentIndex);
   });
 
-  /* ===================== SWIPE SUPPORT ===================== */
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) lightbox.classList.add("hidden");
+  });
+
+
+  /* ---------- SWIPE SUPPORT ---------- */
 
   let startX = 0;
-  lightbox.addEventListener("touchstart", e => {
+
+  lightbox.addEventListener("touchstart", (e) => {
     startX = e.changedTouches[0].clientX;
   });
 
-  lightbox.addEventListener("touchend", e => {
-    const endX = e.changedTouches[0].clientX;
+  lightbox.addEventListener("touchend", (e) => {
+    let endX = e.changedTouches[0].clientX;
+
     if (startX - endX > 60) rightArrow.click();
     if (endX - startX > 60) leftArrow.click();
   });
-
 });
