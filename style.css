@@ -1583,12 +1583,7 @@ video:-webkit-full-screen {
     width: 300px;
   }
 }
-.slider-track {
-  display: flex;
-  gap: 30px;
-  width: max-content;
-  animation: marquee var(--duration, 30s) linear infinite;
-}
+
 
 
 
