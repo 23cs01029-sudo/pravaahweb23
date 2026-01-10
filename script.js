@@ -190,7 +190,8 @@ document.addEventListener("DOMContentLoaded", () => {
   =========================================================== */
 
   /* Get ORIGINAL slides only (no duplicates) */
-  const slides = document.querySelectorAll(".slide");
+ const slides = document.querySelectorAll(".slide:not(.clone)");
+
 
   let galleryImages = Array.from(slides).map((slide, index) => {
     const img = slide.querySelector("img");
@@ -207,6 +208,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* ---------- Inject Lightbox HTML ---------- */
+  const lightbox = document.getElementById("lightbox");
+
     const lbImg = document.getElementById("lightboxImg");
   const lbTitle = document.getElementById("lightboxTitle");
   const lbDesc = document.getElementById("lightboxDesc");
@@ -295,9 +298,12 @@ if (track) {
   let totalWidth = 0;
   const gap = 30; // must match CSS gap
   /* 1️⃣ Clone slides for seamless loop */
-  highlightSlides.forEach(slide => {
-  track.appendChild(slide.cloneNode(true));
+highlightSlides.forEach(slide => {
+  const clone = slide.cloneNode(true);
+  clone.classList.add("clone");
+  track.appendChild(clone);
 });
+
 
 highlightSlides.forEach(slide => {
   totalWidth += slide.offsetWidth + gap;
@@ -315,6 +321,7 @@ highlightSlides.forEach(slide => {
 }
 
 });
+
 
 
 
