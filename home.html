@@ -24,6 +24,13 @@
 </head>
 
 <body style="color:#F5F8FA; font-family:'Exo 2', sans-serif;">
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.querySelector(".slider-track");
+  const slides = Array.from(track.children);
+  slides.forEach(slide => track.appendChild(slide.cloneNode(true)));
+});
+</script>
  <!-- NAVBAR -->
   <nav>
     <a href="https://www.iitbbs.ac.in/" class="iitbbs-logo" target="_blank">
@@ -97,40 +104,31 @@
     <div class="highlights-carousel">
       <div class="slider-track">
 
-        <div class="slide"
-     data-title="Opening Ceremony"
-     data-desc="The grand inauguration of PRAVAAH 2K25 with lights, music and energy.">
-  <img src="DSC09133.JPG">
-  <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-</div>
+        <!-- 🎯 Magnify icon added -->
+        <div class="slide" data-title="Opening Ceremony">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        </div>
 
-<div class="slide"
-     data-title="Cultural Night"
-     data-desc="A spectacular night filled with dance, music and performances.">
-  <img src="DSC09134.JPG">
-  <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-</div>
+        <div class="slide" data-title="Cultural Night">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        </div>
 
-<div class="slide"
-     data-title="Tech Expo"
-     data-desc="Innovative projects and futuristic ideas showcased by students.">
-  <img src="DSC09135.JPG">
-  <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-</div>
+        <div class="slide" data-title="Tech Expo">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        </div>
 
-<div class="slide"
-     data-title="Sports Gala"
-     data-desc="High-energy sports events showcasing teamwork and spirit.">
-  <img src="DSC09136.JPG">
-  <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-</div>
+        <div class="slide" data-title="Sports Gala">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        </div>
 
-<div class="slide"
-     data-title="Prize Distribution"
-     data-desc="Celebrating winners and unforgettable achievements of PRAVAAH 2K25.">
-  <img src="DSC09137.JPG">
-  <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-</div>
+        <div class="slide" data-title="Prize Distribution">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        </div>
 
       </div>
     </div>
@@ -226,26 +224,6 @@
     <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
 
 </div>
-<script type="module">
-  import { getAuth, signOut } from
-    "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-  const auth = getAuth();
-
-  const logoutDesktop = document.getElementById("logoutDesktop");
-  const logoutMobile = document.getElementById("logoutMobile");
-
-  function logoutUser() {
-    signOut(auth)
-      .then(() => {
-        window.location.href = "index.html";
-      })
-      .catch(err => console.error("Logout error:", err));
-  }
-
-  logoutDesktop?.addEventListener("click", logoutUser);
-  logoutMobile?.addEventListener("click", logoutUser);
-</script>
 
 </body>
 </html>
