@@ -1,12 +1,15 @@
 /* ============================================================
-   PRAVAAH — EVENTS PAGE SCRIPT (Optimized + Theme Consistent)
+   PRAVAAH — EVENTS PAGE SCRIPT (Cleaned & Final)
    Handles:
    ✔ Mobile Navbar Toggle
-   ✔ Category Switching (Tech / Cultural / Workshop)
+   ✔ Category Switching (Technopreneurship / Cultural)
+   ✔ Logout (Desktop + Mobile)
 ============================================================ */
+
 import { auth } from "./auth.js";
-import { onAuthStateChanged, signOut } 
+import { signOut } 
   from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
 // ------------------------------------------------------------
 // 🌐 MOBILE NAVBAR TOGGLE
 // ------------------------------------------------------------
@@ -27,13 +30,17 @@ if (menuToggle && menu) {
     }
   });
 
-  // Close on clicking a link
+  // Close on clicking any link
   menu.querySelectorAll("a").forEach(link => {
-    link.addEventListener("click", () => menu.classList.remove("active"));
+    link.addEventListener("click", () => {
+      menu.classList.remove("active");
+    });
   });
 }
 
-
+// ------------------------------------------------------------
+// 🔒 LOGOUT HANDLING
+// ------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const logoutDesktop = document.getElementById("logoutDesktop");
   const logoutMobile = document.getElementById("logoutMobile");
@@ -42,38 +49,33 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       await signOut(auth);
       window.location.href = "index.html";
-    } catch (e) {
+    } catch (err) {
       alert("Logout failed");
-      console.error(e);
+      console.error(err);
     }
   };
 
   logoutDesktop?.addEventListener("click", logout);
   logoutMobile?.addEventListener("click", logout);
 });
+
 // ------------------------------------------------------------
-// 🎭 EVENT CATEGORY CONTROLS
+// 🎭 EVENT CATEGORY CONTROLS (NO WORKSHOPS)
 // ------------------------------------------------------------
 const techBtn = document.getElementById("techBtn");
 const cultBtn = document.getElementById("cultBtn");
-const workBtn = document.getElementById("workBtn");
 
 const techSection = document.querySelector(".tech-events");
 const cultSection = document.querySelector(".cult-events");
-const workSection = document.querySelector(".work-events");
 
-
-// Reset all tabs + buttons
+// Reset tabs + buttons
 function resetTabs() {
   techSection.classList.remove("active");
   cultSection.classList.remove("active");
-  workSection.classList.remove("active");
 
   techBtn.classList.remove("active");
   cultBtn.classList.remove("active");
-  workBtn.classList.remove("active");
 }
-
 
 // ------------------------------------------------------------
 // 🧠 Technopreneurship
@@ -83,10 +85,8 @@ techBtn.addEventListener("click", () => {
   techSection.classList.add("active");
   techBtn.classList.add("active");
 
-  // subtle animation
   techSection.style.animation = "fadeIn 0.45s ease";
 });
-
 
 // ------------------------------------------------------------
 // 🎭 Cultural
@@ -99,31 +99,23 @@ cultBtn.addEventListener("click", () => {
   cultSection.style.animation = "fadeIn 0.45s ease";
 });
 
-
 // ------------------------------------------------------------
-// 🛠 Workshops
-// ------------------------------------------------------------
-workBtn.addEventListener("click", () => {
-  resetTabs();
-  workSection.classList.add("active");
-  workBtn.classList.add("active");
-
-  workSection.style.animation = "fadeIn 0.45s ease";
-});
-
-
-
-// ------------------------------------------------------------
-// ✨ Small Fade Animation (auto used above)
+// ✨ Fade Animation (Injected Once)
 // ------------------------------------------------------------
 document.head.insertAdjacentHTML(
   "beforeend",
-  `<style>
+  `
+  <style>
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-  </style>`
+  </style>
+  `
 );
-
-
