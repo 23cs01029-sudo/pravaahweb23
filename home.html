@@ -1,55 +1,37 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PRAVAAH — Events</title>
+  <title>PRAVAAH — Chronicles of Time</title>
 
-  <!-- MAIN THEME CSS -->
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="events.css" />
+  <!-- ⭐ PRAVAAH Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;600&family=Goldman:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- ICONS -->
+  <!-- ⭐ FIXED FONT AWESOME -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script type="module">
+  import { initAuth } from "./auth.js";
+  initAuth(); 
+</script>
+
+<script type="module" src="script.js" defer></script>
 </head>
 
-<body style="font-family:'Exo 2', sans-serif;">
-
-  <!-- 🔒 FIREBASE AUTH -->
-  <script type="module">
-    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
-      authDomain: "pravaah-55b1d.firebaseapp.com",
-      projectId: "pravaah-55b1d",
-      storageBucket: "pravaah-55b1d.appspot.com",
-      messagingSenderId: "287687647267",
-      appId: "1:287687647267:web:7aecd603ee202779b89196"
-    };
-
-    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    const auth = getAuth(app);
-
-    onAuthStateChanged(auth, user => { if (!user) window.location.href = "index.html"; });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const logoutDesktop = document.getElementById("logoutDesktop");
-      const logoutMobile = document.getElementById("logoutMobile");
-
-      const logout = async () => {
-        try { await signOut(auth); window.location.href = "index.html"; }
-        catch (err) { alert("Logout failed: " + err.message); }
-      };
-
-      logoutDesktop?.addEventListener("click", logout);
-      logoutMobile?.addEventListener("click", logout);
-    });
-  </script>
-
-  <!-- ⭐ NAVBAR (Same as Home) -->
+<body style="color:#F5F8FA; font-family:'Exo 2', sans-serif;">
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.querySelector(".slider-track");
+  const slides = Array.from(track.children);
+  slides.forEach(slide => track.appendChild(slide.cloneNode(true)));
+});
+</script>
+ <!-- NAVBAR -->
   <nav>
     <a href="https://www.iitbbs.ac.in/" class="iitbbs-logo" target="_blank">
       <img src="iitbbs-logo.png">
@@ -60,8 +42,8 @@
     <div class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></div>
 
     <ul id="menu" style="font-family:'Rajdhani';">
-      <li><a href="home.html"class="active">Home</a></li>
-      <li><a href="events.html" >Events</a></li>
+      <li><a href="home.html" class="active">Home</a></li>
+      <li><a href="events.html">Events</a></li>
       <li><a href="registrationPravaah.html">Register</a></li>
       <li><a href="accommodation.html">Accommodation</a></li>
       <li><a href="photogallery.html">Gallery</a></li>
@@ -78,159 +60,99 @@
     <button class="logout-btn" id="logoutDesktop">Logout</button>
   </nav>
 
-  <!-- ⭐ PAGE HEADING -->
-  <div class="pg-heading"
-    style="font-family:'Oranienbaum'; text-align:center; margin-top:40px; margin-bottom:20px;
-    font-size:3rem; color:#24E0EC; text-shadow:0 0 12px rgba(36,224,236,0.5);">
-    EVENTS
+  <!-- INTRO SECTIONS -->
+  <div class="intro-section" id="about">
+    <h2 class="section-title" style="font-family:'Oranienbaum'; color:#00F6FF;">PRAVAAH</h2>
+    <p class="intro-text">PRAVAAH is the annual Cultural, Techno-Entrepreneurship Fest of IIT Bhubaneswar, celebrating innovation, creativity, and vibrant campus spirit. Entering its 2nd grand edition, PRAVAAH brings together the energy of culture, the brilliance of technology, and the vision of entrepreneurship into one unforgettable experience. It stands as a platform where talent meets opportunity, ideas meet innovation, and students from across the nation come together to create, compete, and celebrate.
+    </p>
   </div>
 
-  <!-- CATEGORY SWITCH -->
-  <div class="category-switch">
-    <button id="techBtn" class="active">Technopreneurship</button>
-    <button id="cultBtn">Cultural</button>
-    <button id="workBtn">Workshops</button>
+  <div class="intro-section" id="theme">
+    <h2 class="section-title" style="font-family:'Oranienbaum'; color:#00F6FF;">THEME: CHRONICLES OF TIME</h2>
+    <p class="intro-text">"Chronicles of Time" is an epic journey across the eras, inviting participants to celebrate the Past through events that revive retro cultural aesthetics and timeless artistic traditions; to ground themselves in the Present with high-stakes quantitative entrepreneurship challenges focused on cutting-edge finance and real-time innovation; and finally, to propel themselves into the Future by tackling the boundless, conceptual frontiers of space technology and extraterrestrial exploration.</p>
   </div>
 
-  <!-- 🧠 TECH EVENTS -->
-  <div class="event-section tech-events active">
-    <div class="event-grid">
+  <!-- CALENDAR -->
+  <h2 class="section-title" style="font-family:'Oranienbaum'; color:#00F6FF;">📅 PRAVAAH'26 CALENDAR</h2>
 
-      <div class="event-card">
-        <img src="DSC09133.JPG" class="event-img" />
-        <div class="overlay">
-          <h3>Startup Expo</h3>
-          <p>A platform for entrepreneurs to showcase ideas and connect with investors.</p>
-          <div class="btn-group">
-            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <a href="#" class="btn know-more" target="_blank">Know More</a>
-          </div>
-        </div>
-        <div class="event-title">Startup Expo</div>
+  <div class="container" id="feed">
+    <div class="calendar-container">
+      <div class="header">
+        <button id="prevMonth">❮</button>
+        <h2 id="monthYear"></h2>
+        <button id="nextMonth">❯</button>
       </div>
 
-      <div class="event-card">
-        <img src="DSC09133.JPG" class="event-img" />
-        <div class="overlay">
-          <h3>Robo Wars</h3>
-          <p>Robots battle with pure strength, design, and strategy.</p>
-          <div class="btn-group">
-            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <button class="btn know-more">Know More</button>
-          </div>
-        </div>
-        <div class="event-title">Robo Wars</div>
+      <div class="days-of-week">
+        <div>Sun</div><div>Mon</div><div>Tue</div>
+        <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
       </div>
 
-      <div class="event-card">
-        <img src="DSC09133.JPG" class="event-img" />
-        <div class="overlay">
-          <h3>Hackathon</h3>
-          <p>Code, build, and innovate against the clock!</p>
-          <div class="btn-group">
-            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <button class="btn know-more">Know More</button>
-          </div>
-        </div>
-        <div class="event-title">Hackathon</div>
-      </div>
+      <div id="calendar" class="calendar-grid"></div>
+    </div>
 
+    <div class="feed-container">
+      <h2 class="feed-title">Chronicle Feed 🧾</h2>
+      <div class="feed-list" id="feedList"></div>
     </div>
   </div>
 
-  <!-- 🎭 CULTURAL EVENTS -->
-  <div class="event-section cult-events">
-    <div class="event-grid">
+  <!-- ✨ HIGHLIGHTS -->
+  <section class="highlights">
+    <h2 class="section-title">✨ HIGHLIGHTS OF 2K25 ✨</h2>
 
-      <div class="event-card">
-        <img src="DSC09133.JPG" class="event-img" />
-        <div class="overlay">
-          <h3>Group Dance</h3>
-          <p>Teams light up the stage with energy & synchronization.</p>
-          <div class="btn-group">
-            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <button class="btn know-more">Know More</button>
-          </div>
+    <div class="highlights-carousel">
+      <div class="slider-track">
+
+        <!-- 🎯 Magnify icon added -->
+        <div class="slide" data-title="Opening Ceremony">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
         </div>
-        <div class="event-title">Group Dance</div>
-      </div>
 
-      <div class="event-card">
-        <img src="DSC09133.JPG" class="event-img" />
-        <div class="overlay">
-          <h3>Solo Dance</h3>
-          <p>A solo battle of rhythm, creativity, and passion.</p>
-          <div class="btn-group">
-            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <button class="btn know-more">Know More</button>
-          </div>
+        <div class="slide" data-title="Cultural Night">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
         </div>
-        <div class="event-title">Solo Dance</div>
-      </div>
 
-      <div class="event-card">
-        <img src="DSC09133.JPG" class="event-img" />
-        <div class="overlay">
-          <h3>Fashion Show</h3>
-          <p>Walk the ramp with elegance, style, and creativity.</p>
-          <div class="btn-group">
-            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <button class="btn know-more">Know More</button>
-          </div>
+        <div class="slide" data-title="Tech Expo">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
         </div>
-        <div class="event-title">Fashion Show</div>
-      </div>
 
+        <div class="slide" data-title="Sports Gala">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        </div>
+
+        <div class="slide" data-title="Prize Distribution">
+          <img src="DSC09133.JPG">
+          <div class="zoom-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        </div>
+
+      </div>
     </div>
-  </div>
+  </section>
 
-  <!-- 🛠 WORKSHOPS -->
-  <div class="event-section work-events">
-    <div class="event-grid">
+  <!-- 🎬 AFTERMOVIE -->
+  <section class="aftermovie-section">
+    <h2 class="section-title">🎥 VIDEOS — 2K25</h2>
 
-      <div class="event-card">
-        <img src="DSC09133.JPG" class="event-img" />
-        <div class="overlay">
-          <h3>AI & ML Workshop</h3>
-          <p>Hands-on learning for beginners aiming to explore Artificial Intelligence.</p>
-          <div class="btn-group">
-            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <button class="btn know-more">Know More</button>
-          </div>
-        </div>
-        <div class="event-title">AI Workshop</div>
-      </div>
-
-      <div class="event-card">
-        <img src="DSC09133.JPG" class="event-img" />
-        <div class="overlay">
-          <h3>Robotics Workshop</h3>
-          <p>Learn the basics of robotics through fun practical modules.</p>
-          <div class="btn-group">
-            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <button class="btn know-more">Know More</button>
-          </div>
-        </div>
-        <div class="event-title">Robotics Workshop</div>
-      </div>
-
-      <div class="event-card">
-        <img src="DSC09133.JPG" class="event-img" />
-        <div class="overlay">
-          <h3>Drone Workshop</h3>
-          <p>Build & fly your first drone with expert guidance!</p>
-          <div class="btn-group">
-            <a href="registrationPravaah.html" class="register-btn">Register Now</a>
-            <button class="btn know-more">Know More</button>
-          </div>
-        </div>
-        <div class="event-title">Drone Workshop</div>
-      </div>
-
+    <div class="video-switch">
+      <button id="aftermovieBtn" class="active">Aftermovie</button>
+      <button id="themeBtn">Theme Video</button>
     </div>
-  </div>
 
-  <!-- ⭐ FOOTER (Same as Home) -->
+    <div class="aftermovie">
+      <div class="video-wrapper">
+        <video id="mainVideo" controls autoplay muted loop playsinline>
+          <source src="aftermovie.mp4" />
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
   <footer>
     <div class="footer-container">
 
@@ -260,7 +182,7 @@
       <div class="footer-column">
         <h3>Reach Out to Us</h3>
         <ul>
-          <li><a href="contact_us.html">Contact Us</a></li>
+          <li><a href="#">Contact Us</a></li>
         </ul>
 
         <div class="footer-social-icons">
@@ -279,7 +201,29 @@
     </div>
   </footer>
 
-  <!-- JS -->
-  <script src="events.js"></script>
+  <!-- LIGHTBOX (Option 1 UI) -->
+  <div id="lightbox" class="lightbox hidden">
+
+    <div class="lightbox-top">
+      <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
+
+      <a id="downloadIcon" class="download-icon" download>
+        <i class="fa-solid fa-download"></i>
+      </a>
+    </div>
+
+    <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
+
+    <img id="lightboxImg">
+
+    <div class="lightbox-info">
+      <h3 id="lightboxTitle"></h3>
+      <p id="lightboxDesc">Experience the Chronicles of Time — PRAVAAH 2K25.</p>
+    </div>
+
+    <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
+
+</div>
+
 </body>
 </html>
