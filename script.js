@@ -313,20 +313,21 @@ document.addEventListener("DOMContentLoaded", () => {
 const track = document.querySelector(".slider-track");
 if (track) {
 
-  const slides = Array.from(track.children);
-
-  /* 1️⃣ Clone slides for seamless loop */
-  slides.forEach(slide => {
-    track.appendChild(slide.cloneNode(true));
-  });
-
-  /* 2️⃣ Calculate total scroll distance */
+  const highlightSlides = Array.from(track.children);
   let totalWidth = 0;
   const gap = 30; // must match CSS gap
+  /* 1️⃣ Clone slides for seamless loop */
+  highlightSlides.forEach(slide => {
+  track.appendChild(slide.cloneNode(true));
+});
 
-  slides.forEach(slide => {
-    totalWidth += slide.offsetWidth + gap;
-  });
+highlightSlides.forEach(slide => {
+  totalWidth += slide.offsetWidth + gap;
+});
+
+
+  /* 2️⃣ Calculate total scroll distance */
+
 
   /* 3️⃣ Set CSS variables used by animation */
   track.style.setProperty("--distance", `-${totalWidth}px`);
@@ -336,6 +337,7 @@ if (track) {
 }
 
 });
+
 
 
 
