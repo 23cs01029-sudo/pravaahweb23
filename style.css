@@ -1630,6 +1630,1649 @@ video:-webkit-full-screen {
   animation: marquee var(--duration, 30s) linear infinite;
   overflow: visible;      /* ✅ ADD THIS */
 }
+/* =====================================================
+   SECTION 1 — GLOBAL + NAVBAR (FINAL UPDATED)
+   Fonts: Exo 2 for ALL text
+   Palette: Soft Neo Cyan (#24E0EC), Violet, Gold
+   Background: Your gradient kept exactly
+   ===================================================== */
+
+/* ---------- GOOGLE FONTS ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap');
+
+/* ---------- GLOBAL ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Exo 2', sans-serif !important;
+}
+/* Fix Font Awesome being overridden */
+/* Fix Font Awesome overriding */
+i.fa-solid {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important; /* solid */
+}
+
+i.fa-regular {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 400 !important; /* regular */
+}
+
+i.fa-brands {
+  font-family: "Font Awesome 6 Brands" !important;
+  font-weight: 400 !important; /* brands require weight 400 */
+}
+
+
+:root {
+  --primary: #24E0EC;                  /* Soft Neo Cyan */
+  --primary-glow: rgba(36,224,236,0.55);
+  --primary-soft: rgba(36,224,236,0.18);
+  --primary-border: rgba(36,224,236,0.45);
+
+  --violet: #7A00FF;
+  --gold: #F2D7A6;
+  --text: #F4F9FC;
+  --muted: #BFC7D5;
+
+  --surface-dark: rgba(0,0,0,0.48);
+  --surface-darker: rgba(0,0,0,0.70);
+}
+
+/* ---------- BACKGROUND (unchanged) ---------- */
+ /* ---------- BACKGROUND (Animated Gradient) ---------- */
+body {
+  min-height: 100vh;
+  background: linear-gradient(120deg, #2c1a55, #3e5d75, #022c43, #5b2a86);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+/* =====================================================
+   NAVBAR — CLEANER, BRIGHTER, FUTURISTIC
+   ===================================================== */
+
+nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 60px;
+  background: linear-gradient(to right, #0b141a, #15232e);   /* Slightly brighter */
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(6px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+/* ---------- MOBILE MENU TOGGLE ---------- */
+.menu-toggle {
+  display: none;
+  font-size: 1.9rem;
+  color: var(--primary);
+  cursor: pointer;
+  user-select: none;
+}
+
+@media (max-width: 900px) {
+  .menu-toggle { display: block; }
+}
+
+/* ---------- LOGO ---------- */
+.logo {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--primary);
+  text-shadow: 0 0 8px var(--primary-soft);
+}
+
+/* ---------- MENU LINKS ---------- */
+#menu {
+  display: flex;
+  list-style: none;
+  gap: 40px;
+}
+
+#menu li a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1.05rem;
+  letter-spacing: 0.6px;
+  position: relative;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+/* Neon underline hover */
+#menu li a::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0%;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.28s ease;
+  box-shadow: 0 0 6px var(--primary-soft);
+}
+
+#menu li a:hover {
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+#menu li a:hover::after { width: 100%; }
+
+#menu li a.active {
+  color: var(--primary);
+}
+#menu li a.active::after { width: 100%; }
+
+/* ---------- RESPONSIVE MENU ---------- */
+@media (max-width: 900px) {
+  nav {
+    flex-direction: column;
+    padding: 18px 0;
+  }
+
+  #menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+  }
+}
+
+/* ---------- LOGOUT BUTTON ---------- */
+.logout-btn {
+  background: var(--primary);
+  border: none;
+  color: #001c20;
+  padding: 8px 20px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.logout-btn:hover {
+  box-shadow: 0 0 15px var(--primary-soft);
+  transform: scale(1.05);
+}
+
+@media (max-width: 900px) {
+  .logout-btn { display: none; }
+  .mobile-only { display: block; }
+}
+
+@media (min-width: 901px) {
+  .mobile-only { display: none; }
+}
+
+/* ---------- LEFT IITBBS LOGO ---------- */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iitbbs-logo img {
+  height: 54px;
+  border-radius: 4px;
+  opacity: 0.95;
+  transition: 0.3s ease;
+}
+
+.iitbbs-logo:hover img {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+@media (max-width: 900px) {
+  .iitbbs-logo img { height: 46px; }
+}
+/* =====================================================
+   INTRO SECTION (PRAVAAH + THEME)
+   ===================================================== */
+
+.intro-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 0 1rem;
+}
+
+.intro-heading {
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  color: var(--primary);
+  font-weight: 800;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px var(--primary-soft);
+  margin-bottom: 2rem;
+  letter-spacing: 4px;
+}
+
+.theme-heading-glow {
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: 3px;
+  text-shadow: 0 0 14px var(--primary-glow);
+}
+
+.intro-text {
+  width: 75%;
+  max-width: 900px;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  background: rgba(0,0,0,0.5);
+  padding: 2.5rem;
+  border-radius: 15px;
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--primary-soft);
+  color: var(--text);
+  margin-bottom: 3rem;
+}
+
+
+/* =====================================================
+   SECTION 2 — HIGHLIGHTS + CALENDAR + FEED
+   ===================================================== */
+
+/* =====================================================
+   SECTION 2 — HIGHLIGHTS + CALENDAR + FEED
+   Updated with Soft Neo Cyan + Sci-Fi Glow (Option B)
+   ===================================================== */
+
+/* ---------- HIGHLIGHTS SECTION ---------- */
+.highlights {
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+  margin: 4rem -4rem;
+}
+
+.section-title,
+.calendar-title,
+.aftermovie-section h2,
+.social-section h2 {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+/* Section title */
+.section-title {
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  margin-bottom: 2rem;
+  color: var(--primary);
+  text-shadow: 0 0 8px var(--primary-soft);
+}
+
+/* Highlights carousel */
+.highlights-carousel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  padding: 15px 0;
+}
+
+.slider-track {
+  display: flex;
+  width: max-content;
+  gap: 30px;
+  animation: scrollLoop 25s linear infinite;
+}
+
+
+@keyframes scrollLoop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+
+.highlights-carousel:hover .slider-track {
+  animation-play-state: paused;
+}
+
+/* Slide */
+.slide {
+  width: 320px;
+  height: 200px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid var(--primary-soft);
+  box-shadow: 0 0 10px rgba(36,224,236,0.12);
+  position: relative;
+  transition: .45s ease;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: .45s ease;
+}
+
+.slide:hover {
+  transform: scale(1.07);
+  border-color: var(--primary);
+  box-shadow: 0 0 20px var(--primary-soft);
+}
+
+.slide:hover img {
+  transform: scale(1.10);
+}
+
+/* Hover title fix — ALWAYS SHOWS correctly now */
+.slide::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 1.1rem;
+  background: rgba(0, 0, 0, 0.6);
+  color: cyan;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s ease;
+  border-radius: 0 0 18px 18px;
+}
+
+.slide:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =====================================================
+   CALENDAR — Soft Neo Cyan Sci-Fi Glow
+   ===================================================== */
+
+.calendar-title {
+  text-align: center;
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  color: var(--primary);
+  letter-spacing: 2px;
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+}
+
+.calendar-title::after {
+  content:"";
+  width: 120px;
+  height: 3px;
+  background: var(--primary);
+  display: block;
+  margin: 10px auto 0;
+  box-shadow: 0 0 10px var(--primary-soft);
+}
+
+/* Container */
+.container {
+  display: flex;
+  width: 90%;
+  height: 75vh;
+  border-radius: 20px;
+  overflow: hidden;
+  backdrop-filter: blur(3px);
+  box-shadow: 0 0 30px rgba(0,0,0,0.3);
+}
+
+/* Calendar Panel */
+.calendar-container {
+  width: 60%;
+  padding: 25px;
+  background: rgba(0,0,0,0.45);
+  border-right: 2px solid rgba(255,255,255,0.06);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.header button {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  transition: .3s ease;
+}
+
+.header button:hover {
+  color: var(--primary);
+  text-shadow: 0 0 12px var(--primary-soft);
+}
+
+#monthYear {
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 6px var(--primary-soft);
+}
+
+/* Days Row — FIXED alignment */
+.days-of-week {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  align-items: center;        /* Vertical center */
+  justify-items: center;      /* Horizontal center */
+  padding-bottom: 20px;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+/* Calendar grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  gap: 14px;
+}
+
+/* ---------- DAY CELL ---------- */
+.day {
+  height: 60px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: .28s ease;
+}
+
+/* hover */
+.day:hover {
+  background: rgba(36,224,236,0.14);
+  box-shadow: 0 0 12px var(--primary-soft);
+  transform: scale(1.08);
+}
+
+/* TODAY — distinct glow ring */
+.today {
+  background: rgba(36,224,236,0.18);
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 14px var(--primary-soft);
+  font-weight: 600;
+  color: #fff;
+}
+
+/* SELECTED — different glow */
+.selected {
+  background: rgba(36,224,236,0.30);
+  border: 2px solid var(--primary-border);
+  box-shadow: 0 0 16px var(--primary-soft);
+  transform: scale(1.10);
+}
+
+/* TODAY + SELECTED — UNIQUE visual */
+.selected.today {
+  background: rgba(36,224,236,0.45);
+  border-color: var(--primary);
+  box-shadow: 0 0 26px var(--primary-soft);
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Fade animations */
+.calendar-grid.fade-out {
+  opacity: 0;
+  transform: scale(.97);
+  transition: .4s ease;
+}
+.calendar-grid.fade-in {
+  opacity: 1;
+  transform: scale(1);
+  transition: .4s ease;
+}
+
+/* =====================================================
+   FEED — EXACTLY LIKE YOUR PROVIDED DESIGN
+   ===================================================== */
+
+.feed-container {
+  width: 40%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  padding: 15px 20px;
+  overflow: hidden;
+}
+
+.feed-title {
+  text-align: center;
+  color: cyan;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px cyan;
+}
+
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 5px;
+  flex: 1;
+  min-height: 0;
+}
+
+.feed-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 12px 16px;
+  transition: background .3s ease, transform .3s ease;
+  flex-shrink: 0;
+  min-height: 70px;
+}
+
+.feed-item:hover {
+  background: rgba(0,255,255,0.15);
+  transform: scale(1.02);
+}
+
+.feed-item img {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #00ffff80;
+}
+
+.feed-details {
+  flex: 1;
+  overflow: hidden;
+}
+
+.feed-details h4,
+.feed-details p {
+  margin: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.feed-time {
+  font-size: 0.8rem;
+  color: #aaa;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Scrollbar */
+.feed-list::-webkit-scrollbar { width: 6px; }
+.feed-list::-webkit-scrollbar-thumb {
+  background: rgba(0,255,255,0.5);
+  border-radius: 10px;
+}
+
+
+
+
+/* =====================================================
+   SECTION 3 — AFTERMOVIE + SOCIAL + FOOTER + RESPONSIVE
+   ===================================================== */
+
+/* =====================================================
+   SECTION 3 — AFTERMOVIE + SOCIAL + FOOTER + RESPONSIVE
+   ===================================================== */
+
+/* =====================================================
+   SECTION 3 — AFTERMOVIE + FOOTER (SOCIAL STATS REMOVED)
+   ===================================================== */
+
+/* ---------- AFTERMOVIE SECTION ---------- */
+.aftermovie-section {
+  text-align:center;
+  margin:0 0 4rem 0;
+  width:100%;
+}
+
+.aftermovie-section h2 {
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  color: var(--primary);
+  text-shadow: 0 0 12px var(--primary-soft);
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+/* =====================================================
+   AFTERMOVIE MAIN BOX (Updated Border Glow)
+   ===================================================== */
+.aftermovie {
+  position: relative;
+  width: 70%;
+  height: 75vh;
+  margin: 0 auto;
+
+  border-radius: 25px;
+  border: 3px solid var(--primary);
+
+  box-shadow:
+    0 0 22px rgba(36,224,236,0.35),
+    inset 0 0 14px rgba(36,224,236,0.18);
+
+  background: rgba(0, 0, 0, 0.88);
+  overflow:hidden;
+  transition: all .5s ease;
+}
+
+.aftermovie:hover {
+  transform: scale(1.015);
+  box-shadow:
+    0 0 32px rgba(36,224,236,0.45),
+    inset 0 0 18px rgba(36,224,236,0.22);
+}
+
+.video-wrapper {
+  width:100%;
+  height:100%;
+  border-radius:25px;
+  overflow:hidden;
+  background:black;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transition: .4s ease;
+}
+
+.video-wrapper video { 
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:25px;
+}
+
+.aftermovie:hover .video-wrapper {
+  transform: scale(1.005);
+  box-shadow: 0 0 20px rgba(36,224,236,0.25);
+}
+
+/* Video switching */
+.video-switch {
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  margin-bottom:2rem;
+}
+
+.video-switch button {
+  background:none;
+  border:none;
+  color:var(--muted);
+  font-size:1.1rem;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  cursor:pointer;
+  transition:0.3s ease;
+  position:relative;
+}
+
+.video-switch button::after {
+  content:"";
+  width:0%;
+  height:2px;
+  background:var(--primary);
+  position:absolute;
+  bottom:-6px;
+  left:50%;
+  transform: translateX(-50%);
+  box-shadow:0 0 8px var(--primary-soft);
+  transition:0.3s;
+}
+
+.video-switch button:hover,
+.video-switch button.active {
+  color:var(--primary);
+}
+
+.video-switch button:hover::after,
+.video-switch button.active::after {
+  width:100%;
+}
+
+/* =====================================================
+   FOOTER SECTION — FINAL UPDATED CLEAN VERSION
+   ===================================================== */
+
+footer {
+  background: #070A12;
+  width: 100%;
+  color: #ccc;
+  padding: 3.8rem 2rem 2.2rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ----------------------------------------------
+   GRID LAYOUT — refined to prevent overflow
+---------------------------------------------- */
+.footer-container {
+  width: 90%;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: 3rem;
+  align-items: flex-start;
+}
+
+/* ----------------------------------------------
+   LEFT SECTION (Logo + Button)
+---------------------------------------------- */
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: flex-start;
+}
+
+.footer-logo {
+  width: 155px;
+  opacity: 0.92;
+  filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
+}
+
+.register-btn {
+  padding: 12px 30px;
+  border-radius: 26px;
+  background: linear-gradient(90deg, var(--violet), var(--primary));
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: 0.32s ease;
+}
+
+.register-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 18px var(--primary-soft);
+}
+
+/* ----------------------------------------------
+   COLUMN TITLES + LINKS
+---------------------------------------------- */
+.footer-column h3 {
+  color: var(--primary);
+  font-size: 1.22rem;
+  margin-bottom: 1rem;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin: 8px 0;
+}
+
+.footer-column ul li a {
+  color: #b8b8b8;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: 0.25s ease;
+}
+
+.footer-column ul li a:hover {
+  color: var(--primary);
+  text-shadow: 0 0 6px var(--primary-soft);
+}
+
+/* ----------------------------------------------
+   NEW MODERN ROUNDED SOCIAL ICONS
+---------------------------------------------- */
+.footer-social-icons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.footer-social-icons a {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #111623;
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+   font-size: 1.6rem;
+  color: #bfc7d5;
+
+  transition: 0.28s ease;
+}
+
+.footer-social-icons a:hover {
+  transform: translateY(-5px);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 0 14px var(--primary-soft);
+}
+
+/* ----------------------------------------------
+   DIVIDER LINE + COPYRIGHT
+---------------------------------------------- */
+.footer-line {
+  width: 90%;
+  margin: 2.2rem auto 1.3rem;
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+}
+
+.footer-bottom {
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.footer-bottom span {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* =====================================================
+   RESPONSIVE BREAKPOINTS
+   ===================================================== */
+
+/* Tablets */
+@media (max-width: 950px) {
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+}
+
+/* Mobiles */
+@media (max-width: 650px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-left {
+    align-items: center;
+  }
+
+  .footer-social-icons {
+    justify-content: center;
+  }
+}
+
+
+
+/* Correct styling for footer icons */
+.footer-social-icons i {
+  font-size: 1.6rem;
+  color: #bfc7d5;
+  transition: 0.3s;
+}
+
+.footer-social-icons i:hover {
+  color: white;
+}
+
+
+/* =====================================================
+   FINAL MOBILE RESPONSIVE FIX PACK (JOJI VERSION)
+   Everything scales properly under 900px & 650px
+===================================================== */
+
+/* =======================
+   NAVBAR — MOBILE
+======================= */
+/* ============================
+   📱 MOBILE NAVBAR (FINAL)
+============================ */
+@media (max-width: 900px) {
+
+  nav {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+  }
+
+  .menu-toggle {
+    display: block;
+    font-size: 1.9rem;
+    color: var(--primary);
+    cursor: pointer;
+    margin-left: auto;
+  }
+
+  /* Hidden menu */
+  #menu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+
+    position: absolute;
+    top: 72px;
+    left: 0;
+
+    background: rgba(10, 15, 31, 0.97);
+    padding: 18px 0;
+    border-top: 1px solid var(--primary);
+    box-shadow: 0 0 25px rgba(36,224,236,0.25);
+
+    gap: 18px;
+    z-index: 999;
+  }
+
+  /* Shown menu */
+  #menu.active {
+    display: flex;
+    animation: dropdownMenu 0.35s ease;
+  }
+
+  #menu li a {
+    font-size: 1.1rem;
+  }
+
+  .iitbbs-logo img {
+    height: 42px;
+  }
+}
+
+@keyframes dropdownMenu {
+  0% { opacity: 0; transform: translateY(-15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+
+/* =======================
+   HIGHLIGHTS — MOBILE
+======================= */
+@media (max-width: 650px) {
+
+  .highlights {
+    margin-top: 3rem;
+  }
+
+  .slide {
+    width: 220px;
+    height: 140px;
+  }
+}
+
+/* =======================
+   CALENDAR + FEED — MOBILE
+======================= */
+/* ---------------------------
+   📱 CALENDAR — FIRST VERSION STYLE
+--------------------------- */
+@media (max-width: 650px) {
+
+  .container {
+    flex-direction: column;
+    width: 95%;
+    height: auto;
+    padding-bottom: 0px;
+  }
+
+  .calendar-container {
+    width: 100%;
+    border-right: none;
+    padding: 15px 10px;
+  }
+
+  .days-of-week {
+    font-size: 0.75rem;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  .day {
+    width: 100%;
+    height: 42px !important;
+    font-size: 0.8rem !important;
+  }
+
+  #monthYear {
+    font-size: 1.3rem !important;
+  }
+
+  .feed-container {
+    width: 100%;
+    margin-top: 0px;
+    padding: 15px 10px;
+  }
+}
+
+/* 📱 MOBILE FEED LIMIT — show max 4 items, scroll if overflow */
+@media (max-width: 650px) {
+  .feed-list {
+    max-height: calc(4 * 75px); /* visible height for 4 items */
+    overflow-y: auto !important; /* scroll if more than 4 */
+    overflow-x: hidden !important;
+  }
+}
+
+/* =======================
+   AFTERMOVIE — MOBILE
+======================= */
+@media (max-width: 900px) {
+
+  .aftermovie {
+    width: 92%;
+    height: 45vh;
+  }
+
+  .video-switch {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+
+  .aftermovie-section h2 {
+    font-size: 1.4rem;
+  }
+
+  .video-switch button {
+    font-size: 0.9rem;
+  }
+}
+
+/* =======================
+   FOOTER — MOBILE
+======================= */
+@media (max-width: 900px) {
+  footer {
+    padding: 3rem 1rem;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.8rem;
+  }
+}
+
+/* ---------------------------
+   📱 FOOTER — LEFT ALIGN FIX
+--------------------------- */
+@media (max-width: 650px) {
+
+  footer {
+    text-align: center !important;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;   /* Centers all blocks */
+  }
+
+  /* Footer left block centered */
+  .footer-left {
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  /* Keep footer column titles + links left aligned */
+  .footer-column {
+    text-align: left !important;
+    width: 100%;
+  }
+
+  /* Social icons centered */
+  .footer-social-icons {
+    justify-content: center !important;
+  }
+}
+
+/* ============================
+   📱 INTRO SECTION — MOBILE FIX
+   ============================ */
+@media (max-width: 650px) {
+
+  .intro-section {
+    padding: 2rem 1rem 0.5rem;
+  }
+
+  .intro-heading {
+    font-size: 1.7rem !important;
+    letter-spacing: 2px;
+    margin-bottom: 1.2rem;
+  }
+
+  .theme-heading-glow {
+    font-size: 1.8rem !important;
+    letter-spacing: 2px;
+  }
+
+  .intro-text {
+    width: 95% !important;
+    padding: 1.4rem !important;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+  }
+}
+
+
+/* ===========================================================
+   🔵 PRAVAAH LIGHTBOX SYSTEM (Full Screen Gallery Viewer)
+   =========================================================== */
+
+.lightbox {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 40px 20px;
+  z-index: 9999;
+}
+
+.hidden { display: none !important; }
+
+/* MAIN IMAGE */
+.lightbox img {
+  width: 70%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 2px solid #00F6FF88;
+  box-shadow: 0 0 25px #00F6FF99;
+  animation: zoomIn 0.4s ease;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ARROW BUTTONS */
+/* Desktop Arrows */
+.lb-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 12px;
+  border-radius: 50%;
+  background: rgba(0, 246, 255, 0.18);
+  border: 2px solid rgba(0, 246, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0, 246, 255, 0.3);
+  cursor: pointer;
+  z-index: 9999;
+}
+
+.lb-arrow.left { left: 40px; }
+.lb-arrow.right { right: 40px; }
+
+/* MOBILE FIX — Arrows BELOW the image */
+@media (max-width: 650px) {
+  .lb-arrow {
+    top: auto;
+    bottom: 40px;
+    transform: none;
+    padding: 10px;
+  }
+
+  .lb-arrow.left { left: 16%; }
+  .lb-arrow.right { right: 16%; }
+
+  .lb-arrow i {
+    font-size: 20px;
+  }
+}
+
+
+
+/* INFO BOX BELOW IMAGE */
+.lightbox-info {
+  background: rgba(0,0,0,0.55);
+  width: 70%;
+  max-width: 900px;
+  padding: 18px 22px;
+  text-align: center;
+  border-radius: 12px;
+  border: 1px solid #00F6FF55;
+  backdrop-filter: blur(6px);
+}
+
+.lightbox-info h3 {
+  color: #00F6FF;
+  margin-bottom: 6px;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+}
+
+.lightbox-info p {
+  color: #E9F8FF;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* DOWNLOAD BUTTON */
+
+
+/* MOBILE FIX */
+@media (max-width: 650px) {
+  .lightbox img { width: 90%; }
+
+
+  .lightbox-info {
+    width: 90%;
+    padding: 12px 15px;
+  }
+
+  .lightbox-info h3 { font-size: 1.2rem; }
+  .lightbox-info p { font-size: 0.9rem; }
+}
+
+
+/* ============================================================
+   MAGNIFY ICON ON HIGHLIGHTS CARD
+   ============================================================ */
+
+.zoom-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(0, 246, 255, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1.5px solid #00F6FF88;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: 0.25s ease;
+}
+
+.slide:hover .zoom-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.zoom-icon i {
+  color: #00F6FF;
+  font-size: 1.2rem;
+}
+.zoom-icon {
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   LIGHTBOX TOP BAR (Close + Download Side-by-Side)
+   ============================================================ */
+
+/* ------------------------------
+   LIGHTBOX TOP BAR — FIXED
+------------------------------ */
+.lightbox-top {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  display: flex;
+  align-items: center;
+  gap: 14px;                /* FIX: Closer spacing */
+  z-index: 9999;
+}
+
+.lightbox-top i {
+  font-size: 32px;         /* FIX: Reduced glow and size */
+  color: #00F6FF;
+  cursor: pointer;
+  transition: .25s ease;
+  text-shadow: 0 0 4px #00F6FF; /* Reduced glow */
+}
+
+.lightbox-top i:hover {
+  color: white;
+  text-shadow: 0 0 10px #00F6FF;
+}
+
+
+/* Close Icon */
+
+#lightboxImg {
+    transition: opacity .25s ease-in-out;
+}
+
+/* Download Icon beside close button */
+.download-icon {
+  font-size: 32px;
+  color: #00F6FF;
+  cursor: pointer;
+  transition: 0.25s;
+  text-decoration: none;
+}
+
+.download-icon:hover {
+  color: white;
+  text-shadow: 0 0 12px #00F6FF;
+}
+@media (max-width: 650px) {
+  .lightbox img {
+    width: 90%;
+    max-height: 55vh;
+  }
+
+  .lightbox-info {
+    width: 90%;
+    padding: 12px 16px;
+  }
+}
+
+/* FIX — Remove underline + text hover styles from social icons */
+.footer-social-icons a {
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
+.footer-social-icons a:hover {
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+/* =========================================================
+   🔥 FINAL VIDEO + HIGHLIGHTS FIT FIX (ADD AT END)
+   ========================================================= */
+
+/* ===============================
+   🎯 HIGHLIGHTS — BIG RECTANGLE
+================================ */
+.slide {
+  width: 400px;
+  height: 230px;
+}
+
+.slide img {
+  object-fit: contain;   /* full image visible */
+  background: black;
+}
+
+/* Mobile highlights */
+@media (max-width: 650px) {
+  .slide {
+    width: 300px;
+    height: 170px;
+  }
+}
+
+
+/* ===============================
+   🎬 AFTERMOVIE + THEME VIDEO
+   HOME PAGE FIT FIX
+================================ */
+
+/* Normal view (inside page) */
+.video-wrapper video {
+  object-fit: contain;   /* show full video */
+  background: black;     /* black bars if needed */
+}
+
+/* ===============================
+   🖥️ FULLSCREEN VIDEO FIX
+================================ */
+
+/* When user clicks fullscreen */
+video:fullscreen,
+video:-webkit-full-screen {
+  object-fit: contain;
+  background: black;
+}
+
+/* ===============================
+   📱 MOBILE FULLSCREEN VIDEO FIX
+================================ */
+@media (max-width: 650px) {
+  video:fullscreen,
+  video:-webkit-full-screen {
+    object-fit: contain;
+    background: black;
+  }
+}
+
+
+/* ===============================
+   🖼️ LIGHTBOX IMAGE FULL FIT
+================================ */
+.lightbox img {
+  object-fit: contain;
+  background: black;
+  max-width: 90%;
+  max-height: 80vh;
+}
+
+/* Mobile lightbox */
+@media (max-width: 650px) {
+  .lightbox img {
+    width: 100%;
+    max-height: 60vh;
+    object-fit: contain;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+/* =========================================================
+   🎬 AFTERMOVIE / THEME VIDEO — BOX MATCH VIDEO EXACTLY
+   ========================================================= */
+
+/* Let the outer box size itself by video */
+.aftermovie {
+  height: auto !important;
+  aspect-ratio: 16 / 9;   /* 🔑 match video ratio */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Video wrapper should NOT force height */
+.video-wrapper {
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+}
+
+/* Video fills wrapper exactly */
+.video-wrapper video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: black;
+}
+
+/* ===============================
+   📱 MOBILE FIX — SAME BEHAVIOR
+================================ */
+@media (max-width: 650px) {
+  .aftermovie {
+    width: 95%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-wrapper {
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-wrapper video {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* =========================================================
+   🔁 HIGHLIGHTS — FIX IMAGE CUT + INFINITE LOOP STOP
+   ========================================================= */
+
+/* 🔧 Ensure slide height is respected */
+
+
+/* =========================================================
+
+/* =========================================
+   🔥 HARD OVERRIDE — HIGHLIGHTS IMAGE FIX
+   ========================================= */
+
+
+/* =========================================
+   📱 MOBILE — ALWAYS SHOW TITLE + ZOOM ICON
+   ========================================= */
+@media (max-width: 650px) {
+
+  /* Always show title bar */
+  .slide::after {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    background: rgba(0,0,0,0.65);
+    font-size: 0.95rem;
+  }
+
+  /* Always show magnify icon */
+  .zoom-icon {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+  }
+}
+/* FIX: let image decide height */
+.slide {
+  width: 430px;
+  height: auto;                 /* 🔑 remove fixed height */
+  aspect-ratio: 16 / 9;         /* consistent card ratio */
+  background: black;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;          /* full image visible */
+  background: black;
+}
+@media (max-width: 650px) {
+  .slide {
+    width: 300px;
+    aspect-ratio: 16 / 9;
+  }
+}
+/* 🔥 FINAL FIX — IMAGE DEFINES HEIGHT */
+
+.slide {
+  width: 400px;
+  height: auto;              /* ✅ allow natural height */
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.6);
+}
+
+.slide img {
+  width: 100%;
+  height: auto;              /* 🔑 MOST IMPORTANT */
+  display: block;
+  object-fit: contain;
+  background: transparent;  /* ❌ REMOVE black */
+}
+@media (max-width: 650px) {
+  .slide {
+    width: 300px;
+  }
+}
+.slider-track {
+  display: flex;
+  gap: 30px;
+  width: max-content;
+  animation: marquee var(--duration, 30s) linear infinite;
+}
+
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(var(--distance)); }
+}
+
+.slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  background: transparent;
+  pointer-events: none;   /* ✅ ADD THIS */
+}
+.zoom-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(0, 246, 255, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1.5px solid #00F6FF88;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: 0.25s ease;
+  cursor: pointer;
+  z-index: 10;            /* ✅ ADD THIS */
+}
+.slider-track {
+  display: flex;
+  gap: 30px;
+  width: max-content;
+  animation: marquee var(--duration, 30s) linear infinite;
+  overflow: visible;      /* ✅ ADD THIS */
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
