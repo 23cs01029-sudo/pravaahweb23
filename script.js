@@ -120,6 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => calendar.classList.remove("fade-in"), 450);
       }
     }, transition ? 250 : 0);
+    // Auto select first day after month change
+const firstDayEl = calendar.querySelector(".day");
+if (firstDayEl) {
+  firstDayEl.classList.add("selected");
+  const key = `${year}-${String(month + 1).padStart(2, "0")}-01`;
+  renderFeed(key);
+}
+
   }
 
 
@@ -194,15 +202,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   let galleryImages = Array.from(slides).map((slide, index) => {
-    const img = slide.querySelector("img");
+  const img = slide.querySelector("img");
 
-    return {
-      src: img.src,
-      title: slide.getAttribute("data-title"),
-      desc: "Experience the Chronicles of Time — PRAVAAH 2K25.",
-      index
-    };
-  });
+  slide.dataset.index = index; // important for correct click mapping
+
+  return {
+    src: img.src,
+    title: slide.dataset.title,
+    desc: slide.dataset.desc,
+    index
+  };
+});
+
 
   let currentIndex = 0;
 
@@ -321,6 +332,7 @@ highlightSlides.forEach(slide => {
 }
 
 });
+
 
 
 
