@@ -1,4 +1,43 @@
+/* ============================================================
+   PRAVAAH — FINAL UPDATED script.js (Optimized & Clean)
+============================================================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from
+  "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+
 document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------------------- FIREBASE CONFIG ---------------------- */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
+    authDomain: "pravaah-55b1d.firebaseapp.com",
+    projectId: "pravaah-55b1d",
+    storageBucket: "pravaah-55b1d.appspot.com",
+    messagingSenderId: "287687647267",
+    appId: "1:287687647267:web:7aecd603ee202779b89196"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+
+  /* ---------------------- LOGOUT ---------------------- */
+  const logoutDesktop = document.getElementById("logoutDesktop");
+  const logoutMobile = document.getElementById("logoutMobile");
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => (window.location.href = "login.html"))
+      .catch(err => alert("Logout Error: " + err.message));
+  };
+
+  logoutDesktop?.addEventListener("click", handleLogout);
+  logoutMobile?.addEventListener("click", handleLogout);
+
+
+
+  /* ---------------------- CALENDAR + FEED ---------------------- */
 
   const monthYear = document.getElementById("monthYear");
   const calendar = document.getElementById("calendar");
@@ -306,4 +345,35 @@ document.addEventListener("DOMContentLoaded", () => {
     if (startX - endX > 60) rightArrow.click();
     if (endX - startX > 60) leftArrow.click();
   });
+  /* ===========================================================
+     🔐 DASHBOARD VISIBILITY — ADMINS ONLY
+  =========================================================== */
+
+  const DASHBOARD_API = "/api/pravaah";
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+
+    try {
+      const res = await fetch(
+        `${DASHBOARD_API}?type=role&email=${encodeURIComponent(user.email)}`
+      );
+      const roleObj = await res.json();
+console.log("ROLE FROM API:", roleObj);
+
+if (["Admin", "SuperAdmin", "SuperAccount"].includes(roleObj.role)) {
+  document.getElementById("dashboardNav")?.classList.remove("hidden");
+}
+
+    } catch (err) {
+      console.error("Dashboard role check failed", err);
+    }
+  });
+
 });
+
+
+
+
+
+
