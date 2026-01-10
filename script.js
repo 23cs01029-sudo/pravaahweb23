@@ -262,12 +262,16 @@ if (firstDayEl) {
 
   closeBtn.addEventListener("click", () => lightbox.classList.add("hidden"));
 
-  document.querySelectorAll(".zoom-icon").forEach((icon, i) => {
+  document
+  .querySelectorAll(".slide:not(.clone) .zoom-icon")
+  .forEach(icon => {
     icon.addEventListener("click", (e) => {
       e.stopPropagation();
-      openLightbox(i);  // FIXED INDEXING
+      const index = Number(icon.closest(".slide").dataset.index);
+      openLightbox(index);
     });
   });
+
 
   leftArrow.addEventListener("click", () => {
     currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
@@ -332,6 +336,7 @@ highlightSlides.forEach(slide => {
 }
 
 });
+
 
 
 
