@@ -8,64 +8,172 @@
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;font-family:'Exo 2',sans-serif;-webkit-tap-highlight-color:transparent}
-body{
-  margin:0;min-height:100vh;
-  background:linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
-  background-size:400% 400%;animation:bgMove 15s ease infinite;
-  display:flex;justify-content:center;align-items:center;padding:14px
-}
-@keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-.card{
-  width:100%;max-width:420px;background:rgba(0,0,0,.78);
-  border:2px solid cyan;border-radius:18px;
-  box-shadow:0 0 30px rgba(0,255,255,.45);
-  padding:14px;display:flex;flex-direction:column;align-items:center
-}
-.logo{font-size:1.4rem;font-weight:800;color:cyan;text-shadow:0 0 12px cyan}
-.subtitle{font-size:.85rem;opacity:.8;margin-bottom:10px}
-#cameraBox{
-  position:relative;width:100%;max-width:360px;aspect-ratio:1/1;
-  margin:12px auto;overflow:hidden;border-radius:14px
-}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  border-radius:14px;border:2px solid cyan}
-.scan-box{position:absolute;inset:20%;border:2px solid rgba(0,255,255,.95);border-radius:14px;pointer-events:none}
-.scan-line{position:absolute;top:0;width:100%;height:2px;background:red;animation:scanMove 1.8s linear infinite}
-@keyframes scanMove{from{top:0}to{top:100%}}
-.helper{font-size:.85rem;margin-top:10px;text-align:center;color:#eaffff;font-weight:600}
-
-#profilePreview{
-  display:none;width:100%;margin-top:10px;padding:12px;border-radius:14px;
-  background:rgba(0,0,0,.6);border:1.5px solid rgba(0,255,255,.5);
-  color:#eaffff;font-size:.85rem
+* {
+  box-sizing: border-box;
+  font-family: 'Exo 2', sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
-#actionButtons{display:none;width:100%;gap:10px;margin-top:12px}
-#actionButtons button{
-  flex:1;padding:12px;border-radius:12px;border:2px solid cyan;
-  background:black;color:cyan;font-weight:700;cursor:pointer;
-  box-shadow:0 0 12px rgba(0,255,255,.4)
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(120deg,#2c1a55,#3e5d75,#022c43,#5b2a86);
+  background-size: 400% 400%;
+  animation: bgMove 15s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px;
 }
-#actionButtons button:hover{background:cyan;color:black}
-.footer{margin-top:10px;font-size:.65rem;opacity:.6;text-align:center}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(0,0,0,0.78);
+  border: 2px solid cyan;
+  border-radius: 18px;
+  box-shadow: 0 0 30px rgba(0,255,255,0.45);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: cyan;
+  text-shadow: 0 0 12px cyan;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+#cameraBox {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1 / 1;
+  margin: 12px auto;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 2px solid cyan;
+}
+
+.scan-box {
+  position: absolute;
+  inset: 20%;
+  border: 2px solid rgba(0,255,255,0.95);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 2px;
+  background: red;
+  animation: scanMove 1.8s linear infinite;
+}
+
+@keyframes scanMove {
+  from { top: 0; }
+  to { top: 100%; }
+}
+
+.helper {
+  font-size: 0.85rem;
+  margin-top: 10px;
+  text-align: center;
+  color: #eaffff;
+  font-weight: 600;
+}
+
+/* PROFILE PREVIEW */
+#profilePreview {
+  display: none;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.6);
+  border: 1.5px solid rgba(0,255,255,0.5);
+  color: #eaffff;
+  font-size: 0.85rem;
+}
+
+/* ACTION BUTTONS */
+#actionButtons {
+  display: none;
+  width: 100%;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+#actionButtons button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid cyan;
+  background: black;
+  color: cyan;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(0,255,255,0.4);
+}
+
+#actionButtons button:hover {
+  background: cyan;
+  color: black;
+}
+
+.footer {
+  margin-top: 10px;
+  font-size: 0.65rem;
+  opacity: 0.6;
+  text-align: center;
+}
 </style>
 </head>
 
 <body>
+
 <div class="card">
   <div class="logo">PRAVAAH 2026</div>
   <div class="subtitle">Admin QR Scanner</div>
 
   <div id="cameraBox">
     <video id="video" autoplay playsinline></video>
-    <div class="scan-box"><div class="scan-line"></div></div>
+    <div class="scan-box">
+      <div class="scan-line"></div>
+    </div>
   </div>
 
   <div class="helper" id="helperText">Align QR inside the square</div>
 
+  <!-- PROFILE PREVIEW -->
   <div id="profilePreview"></div>
 
+  <!-- ACTION BUTTONS -->
   <div id="actionButtons">
     <button id="adminBtn">Admin Gate</button>
     <button id="eventBtn">Event Entry</button>
@@ -76,142 +184,131 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
 <script>
 const video = document.getElementById("video");
 const helperText = document.getElementById("helperText");
-const profilePreview = document.getElementById("profilePreview");
 const actionButtons = document.getElementById("actionButtons");
+const profilePreview = document.getElementById("profilePreview");
 const adminBtn = document.getElementById("adminBtn");
 const eventBtn = document.getElementById("eventBtn");
 const retakeBtn = document.getElementById("retakeBtn");
 
-let stream=null, scanning=false, locked=false, detectedPaymentId=null;
+let stream = null;
+let scanning = false;
+let locked = false;
+let detectedPaymentId = null;
 
-/* ---------------- URL PARAMS ---------------- */
-const params = new URLSearchParams(location.search);
-const scannerEmail = params.get("scanner");
-const prefilledPaymentId = params.get("paymentId");
-
-if (!scannerEmail) {
-  alert("Scanner identity missing. Please open scanner from dashboard.");
-  location.href = "dashboard.html";
-  throw new Error("Scanner email missing");
-}
-
-/* ---------------- CAMERA ---------------- */
-async function startCamera(){
-  if(stream) return;
-  stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+/* CAMERA */
+async function startCamera() {
+  stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "environment" }
+  });
   video.srcObject = stream;
   scanning = true;
-  requestAnimationFrame(scanLoop);
+  scanLoop();
 }
 
-function stopCamera(){
-  scanning=false;
-  stream?.getTracks().forEach(t=>t.stop());
-  stream=null;
+function stopCamera() {
+  scanning = false;
+  stream?.getTracks().forEach(t => t.stop());
+  stream = null;
 }
 
-/* ---------------- SCAN LOOP ---------------- */
-const canvas=document.createElement("canvas");
-const ctx=canvas.getContext("2d");
+/* SCAN LOOP */
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
 
-function scanLoop(){
-  if(!scanning || locked || !video.videoWidth) return;
+function scanLoop() {
+  if (!scanning || locked || !video.videoWidth) {
+    requestAnimationFrame(scanLoop);
+    return;
+  }
 
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.drawImage(video, 0, 0);
 
-  // 🔵 Crop center area (matches scan box)
-  const cropSize = Math.min(canvas.width, canvas.height) * 0.6;
-  const x = (canvas.width - cropSize) / 2;
-  const y = (canvas.height - cropSize) / 2;
+  const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const code = jsQR(img.data, img.width, img.height);
 
-  const img = ctx.getImageData(x, y, cropSize, cropSize);
-
-  const code = jsQR(img.data, img.width, img.height, {
-    inversionAttempts: "attemptBoth"
-  });
-
-  if(code){
-    try{
-      const url = new URL(code.data);
-      const pid = url.searchParams.get("paymentId");
-      if(pid){
+  if (code) {
+    try {
+      const pid = new URL(code.data).searchParams.get("paymentId");
+      if (pid) {
         locked = true;
         detectedPaymentId = pid;
         stopCamera();
         loadProfile(pid);
         showActions();
-        return;
       }
-    }catch{}
+    } catch {}
   }
 
-  // 🔵 Scan at ~15 FPS (important)
-  setTimeout(() => requestAnimationFrame(scanLoop), 66);
+  requestAnimationFrame(scanLoop);
 }
 
-
-/* ---------------- LOAD PROFILE ---------------- */
-function loadProfile(pid){
-  fetch(`/api/pravaah?type=searchPass&query=${encodeURIComponent(pid)}`)
-    .then(r=>r.json())
-    .then(rows=>{
-      if(!rows.length){
-        profilePreview.innerHTML="<span style='color:#ff6b6b'>Invalid Pass</span>";
-      }else{
-        const p=rows[0];
-        profilePreview.innerHTML=`
-          <b style="color:cyan">${p.Name}</b><br>
-          <span style="opacity:.8">${p.College||"—"}</span>
-          <hr style="border:0;border-top:1px dashed rgba(0,255,255,.3);margin:8px 0">
-          <div><b>Payment ID</b><br>${p["Payment ID"]}</div>
-          <div>Pass: <b>${p["Pass Type"]}</b></div>
-          <div>Days: <b>${p["Selected Days"]||"—"}</b></div>
-        `;
+/* LOAD PROFILE (NO VALIDITY CHECK) */
+function loadProfile(paymentId) {
+  fetch(`/api/pravaah?type=searchPass&query=${encodeURIComponent(paymentId)}`)
+    .then(r => r.json())
+    .then(rows => {
+      if (!rows.length) {
+        profilePreview.innerHTML =
+          "<span style='color:#ff6b6b'>Invalid Pass</span>";
+        profilePreview.style.display = "block";
+        return;
       }
-      profilePreview.style.display="block";
+
+      const p = rows[0];
+
+      profilePreview.innerHTML = `
+        <b style="color:cyan">${p.Name}</b><br>
+        <span style="opacity:.8">${p.College || "—"}</span>
+
+        <hr style="border:0;border-top:1px dashed rgba(0,255,255,0.3);margin:8px 0">
+
+        <div><b>Payment ID</b><br>${p["Payment ID"]}</div>
+        <div style="margin-top:6px">Pass: <b>${p["Pass Type"]}</b></div>
+        <div>Days: <b>${p["Selected Days"] || "—"}</b></div>
+      `;
+      profilePreview.style.display = "block";
     });
 }
 
-/* ---------------- ACTIONS ---------------- */
-function showActions(){
-  helperText.textContent="Select scan type";
-  actionButtons.style.display="flex";
+/* ACTIONS */
+function showActions() {
+  helperText.textContent = "Select scan type";
+  actionButtons.style.display = "flex";
 
-  adminBtn.onclick=()=>location.href=
-    `admin.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+  const scannerEmail = new URLSearchParams(location.search).get("scanner");
 
-  eventBtn.onclick=()=>location.href=
-    `event.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+  eventBtn.onclick = () => {
+    location.href =
+      `event.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+  };
 
-  retakeBtn.onclick=resetScanner;
+  adminBtn.onclick = () => {
+    location.href =
+      `admin.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+  };
+
+  retakeBtn.onclick = resetScanner;
 }
 
-/* ---------------- RESET ---------------- */
-function resetScanner(){
-  locked=false;
-  detectedPaymentId=null;
-  profilePreview.style.display="none";
-  actionButtons.style.display="none";
-  helperText.textContent="Align QR inside the square";
+/* RESET */
+function resetScanner() {
+  locked = false;
+  detectedPaymentId = null;
+  profilePreview.style.display = "none";
+  actionButtons.style.display = "none";
+  helperText.textContent = "Align QR inside the square";
   startCamera();
 }
 
-/* ---------------- INIT ---------------- */
-if (prefilledPaymentId) {
-  // ✅ Opened from dashboard → skip camera
-  locked = true;
-  detectedPaymentId = prefilledPaymentId;
-  loadProfile(prefilledPaymentId);
-  showActions();
-} else {
-  // ✅ Normal scanning
-  startCamera();
-}
+/* INIT */
+startCamera();
 </script>
+
 </body>
 </html>
