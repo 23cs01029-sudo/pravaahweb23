@@ -1631,39 +1631,6 @@ video:-webkit-full-screen {
   overflow: visible;      /* ✅ ADD THIS */
 }
 
-/* =========================================================
-   ✅ FINAL OVERRIDE — HIGHLIGHTS AUTO SLIDER (WORKING)
-   ========================================================= */
-
-/* Carousel wrapper */
-.highlights-carousel {
-  overflow: hidden;
-  width: 100%;
-}
-
-/* Slider track — single source of truth */
-.slider-track {
-  display: flex;
-  gap: 30px;
-  width: max-content;
-  animation: highlights-scroll 28s linear infinite;
-  will-change: transform;
-}
-
-/* Pause on hover */
-.highlights-carousel:hover .slider-track {
-  animation-play-state: paused;
-}
-
-/* Keyframes — NO variables, NO calc, NO JS dependency */
-@keyframes highlights-scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
 
 
 
