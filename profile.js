@@ -15,6 +15,14 @@ const DEBUG_PROFILE = true;
 const log = (...args) => {
   if (DEBUG_PROFILE) console.log("[PROFILE]", ...args);
 };
+function getSafePhoto(photo){
+  if(!photo) return "default-avatar.png";
+  const p = String(photo).trim().toLowerCase();
+  if(p === "" || p === "null" || p === "undefined") {
+    return "default-avatar.png";
+  }
+  return photo;
+}
 
 /* ---------- Toast ---------- */
 function showToast(message, type = "info") {
@@ -209,10 +217,13 @@ window.addEventListener("storage", e => {
   if(e.key === "pravaah_profile_" + currentUserEmail){
       const data = JSON.parse(e.newValue);
 
-      if(data.photo){
-          userPhoto.src = data.photo;
-          renderProfilePhoto(data.photo, data.transform || {x:0,y:0,zoom:1,rotation:0});
-      }
+      const safePhoto = getSafePhoto(data.photo);
+userPhoto.src = safePhoto;
+renderProfilePhoto(
+  safePhoto,
+  data.transform || {x:0,y:0,zoom:1,rotation:0}
+);
+
 
       userPhoneInput.value = data.phone || "";
       userCollegeInput.value = data.college || "";
@@ -237,7 +248,7 @@ if(cachedProfile){
         ? cachedProfile.photo
         : "default-avatar.png";
 
-    userPhoto.src = finalCachedPhoto;
+    userPhoto.src = getSafePhoto(finalCachedPhoto);
 
 
     if(cachedProfile.transform){
@@ -259,13 +270,13 @@ if(isEditing) return;  // ⛔ cloud cannot override current editing preview
     userPhoneInput.value = p.phone || "";
     userCollegeInput.value = p.college || "";
 
-    const finalPhoto = (p.photo && p.photo.trim() !== "") ? p.photo : "default-avatar.png";
+    const finalPhoto = getSafePhoto(p.photo);
+userPhoto.src = finalPhoto;
 
-    userPhoto.src = finalPhoto;
 
     if(p.transform){
         savedTransform = JSON.parse(p.transform);
-        renderProfilePhoto(finalPhoto, savedTransform);
+        renderProfilePhoto(getSafePhoto(finalPhoto), savedTransform);
     } else {
         savedTransform = {x:0,y:0,zoom:1,rotation:0};
         renderProfilePhoto(finalPhoto, savedTransform);
@@ -329,14 +340,12 @@ function startEditTimeout(){
             // Restore last saved profile from cache/sheet
             const cached = getCachedProfile(currentUserEmail);
 
-            if(cached?.photo){
-                savedTransform = cached.transform || {x:0,y:0,zoom:1,rotation:0};
-                userPhoto.src = cached.photo;
-                renderProfilePhoto(cached.photo, savedTransform);
-            } else {
-                userPhoto.src = "default-avatar.png";
-                renderProfilePhoto("default-avatar.png",{x:0,y:0,zoom:1,rotation:0});
-            }
+            const safePhoto = getSafePhoto(cached?.photo);
+
+savedTransform = cached?.transform || {x:0,y:0,zoom:1,rotation:0};
+userPhoto.src = safePhoto;
+renderProfilePhoto(safePhoto, savedTransform);
+
 
             // RESET workspace like soft reload
             pendingTransform = null;
@@ -422,11 +431,16 @@ setInterval(async ()=>{
 
           userPhoneInput.value = newP.phone || "";
           userCollegeInput.value = newP.college || "";
-          if(newP.photo){
-              userPhoto.src = newP.photo;
-              savedTransform = newP.transform ? JSON.parse(newP.transform) : null;
-              renderProfilePhoto(newP.photo, savedTransform || {x:0,y:0,zoom:1,rotation:0});
-          }
+          const safePhoto = getSafePhoto(newP.photo);
+
+userPhoto.src = safePhoto;
+savedTransform = newP.transform ? JSON.parse(newP.transform) : null;
+
+renderProfilePhoto(
+  safePhoto,
+  savedTransform || {x:0,y:0,zoom:1,rotation:0}
+);
+
 
           cacheProfile({
               email:user.email,
@@ -1059,6 +1073,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
