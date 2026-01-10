@@ -1375,9 +1375,10 @@ footer {
   text-decoration: none !important;
   box-shadow: none !important;
 }
-.hidden {
-  display: none !important;
-}
+/* =========================================================
+   🔥 FINAL VIDEO + HIGHLIGHTS FIT FIX (ADD AT END)
+   ========================================================= */
+
 /* ===============================
    🎯 HIGHLIGHTS — BIG RECTANGLE
 ================================ */
@@ -1560,3 +1561,48 @@ video:-webkit-full-screen {
     aspect-ratio: 16 / 9;
   }
 }
+/* 🔥 FINAL FIX — IMAGE DEFINES HEIGHT */
+
+.slide {
+  width: 400px;
+  height: auto;              /* ✅ allow natural height */
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.6);
+}
+
+.slide img {
+  width: 100%;
+  height: auto;              /* 🔑 MOST IMPORTANT */
+  display: block;
+  object-fit: contain;
+  background: transparent;  /* ❌ REMOVE black */
+}
+@media (max-width: 650px) {
+  .slide {
+    width: 300px;
+  }
+}
+.slider-track {
+  display: flex;
+  gap: 30px;
+  width: max-content;
+  animation: marquee var(--duration, 30s) linear infinite;
+}
+
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(var(--distance)); }
+}
+
+
+
+
+
+
+
+
+
+
+
