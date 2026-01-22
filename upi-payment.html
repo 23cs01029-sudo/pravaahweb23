@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>PRAVAAH — UPI Payment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- USE SAME CSS -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="pass.css">
+
+  <!-- OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <!-- QR -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+
+<main class="passes-section">
+  <div class="passes-box">
+
+    <h1>💳 Complete Payment</h1>
+
+    <div id="sessionInfo" style="margin:10px 0;"></div>
+
+    <!-- QR -->
+    <div id="qrBox" style="margin:20px auto;"></div>
+
+    <p style="color:var(--muted)">
+      Scan the QR and complete payment.<br>
+      After payment, upload the screenshot.
+    </p>
+
+    <!-- Upload -->
+    <input type="file" id="screenshot" accept="image/*">
+
+    <!-- Auto filled -->
+    <input id="utr" placeholder="UTR (auto-detected)" disabled>
+    <input id="receiver" placeholder="Receiver check" disabled>
+    <input id="amountDetected" placeholder="Amount detected" disabled>
+
+    <!-- Buttons -->
+    <button id="confirmBtn" class="main-btn" disabled>
+      Confirm Payment
+    </button>
+
+    <button id="cancelBtn" class="main-btn" style="background:#ff5c5c">
+      Cancel Payment
+    </button>
+
+    <p style="margin-top:16px;">
+      Any issue?
+      <a href="mailto:pravah@iitbbs.ac.in">Contact us</a>
+    </p>
+
+  </div>
+</main>
+
+<script type="module" src="upi-payment.js"></script>
+</body>
+</html>
