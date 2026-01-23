@@ -198,6 +198,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const day = document.createElement("div");
         day.classList.add("day");
         day.textContent = i;
+        // Highlight fest days: 5, 6, 7, 8
+if ([5, 6, 7, 8].includes(i) && month === 1 && year === 2026) {
+  day.classList.add("fest-day");
+}
 
         const today = new Date();
         if (
@@ -413,6 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
 
