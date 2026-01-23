@@ -621,7 +621,12 @@ payBtn.addEventListener("click", async () => {
     return;
   }
 
-  const cards = [...document.querySelectorAll("#participantsContainerPlaceholder .participant-card")];
+  const cards = [
+    ...document.querySelectorAll(
+      "#participantsContainerPlaceholder .participant-card"
+    )
+  ];
+
   const participants = cards.map(c => ({
     name: c.querySelector(".pname")?.value.trim(),
     email: c.querySelector(".pemail")?.value.trim(),
@@ -637,11 +642,11 @@ payBtn.addEventListener("click", async () => {
     }
   }
 
-  /* 🔐 CREATE PAYMENT SESSION */
+  /* 🔐 CREATE PAYMENT SESSION (UPDATED) */
   const paymentSession = {
-    sessionId: crypto.randomUUID(),
+    sessionId: "PAY_" + Date.now() + "_" + Math.floor(Math.random() * 100000),
     createdAt: Date.now(),
-    expiresAt: new Date().setHours(23,59,59,999),
+    expiresAt: new Date().setHours(23, 59, 59, 999),
 
     registeredEmail: auth.currentUser.email,
     passType: currentPassType,
@@ -654,12 +659,14 @@ payBtn.addEventListener("click", async () => {
     events: collectSelectedEvents()
   };
 
-  // 💾 Save session locally
+  /* 💾 SAVE SESSION */
   localStorage.setItem(
     "pravaah_payment",
     JSON.stringify(paymentSession)
   );
 
-  // ➡️ Redirect to UPI page
+  /* ➡️ REDIRECT TO UPI PAYMENT */
   window.location.href = "upi-payment.html";
 });
+
+
