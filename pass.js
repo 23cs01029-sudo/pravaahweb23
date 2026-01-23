@@ -63,6 +63,7 @@ function saveRegistrations(data) {
   localStorage.setItem("pravaah_user_regs", JSON.stringify(data));
 }
 
+let selectedEventsByDay = {};
 
 
 /* =======================================
@@ -414,14 +415,28 @@ function attachParticipantControls(){
 function renderAccordion(containerId, days, selectable) {
   const container = document.getElementById(containerId);
 
+  // ✅ SAVE CURRENT SELECTIONS
+  document.querySelectorAll(".event-checkbox").forEach(cb => {
+    const day = cb.dataset.day;
+    if (!selectedEventsByDay[day]) selectedEventsByDay[day] = [];
+
+    if (cb.checked && !selectedEventsByDay[day].includes(cb.value)) {
+      selectedEventsByDay[day].push(cb.value);
+    }
+
+    if (!cb.checked) {
+      selectedEventsByDay[day] =
+        selectedEventsByDay[day]?.filter(v => v !== cb.value);
+    }
+  });
+
   if (!days.length) {
     container.innerHTML = "";
     return;
   }
 
   container.innerHTML = days.map(d => `
-    <div class="day-accordion" data-day="${d}">
-      
+    <div class="day-accordion open" data-day="${d}">
       <div class="day-accordion-header">
         <span>${d.toUpperCase()}</span>
         <i class="fa-solid fa-chevron-down day-arrow"></i>
@@ -432,16 +447,25 @@ function renderAccordion(containerId, days, selectable) {
           renderEventRow(e, { dayKey: d, selectable })
         ).join("")}
       </div>
-
     </div>
   `).join("");
 
+  // ✅ RESTORE SELECTIONS
+  document.querySelectorAll(".event-checkbox").forEach(cb => {
+    const day = cb.dataset.day;
+    if (selectedEventsByDay[day]?.includes(cb.value)) {
+      cb.checked = true;
+    }
+  });
+
+  // Accordion toggle
   container.querySelectorAll(".day-accordion-header").forEach(h => {
     h.addEventListener("click", () => {
       h.parentElement.classList.toggle("open");
     });
   });
 }
+
 
 /* =======================================
       RENDER DAY PASS EVENTS
@@ -735,6 +759,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
