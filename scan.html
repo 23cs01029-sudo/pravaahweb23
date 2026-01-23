@@ -323,31 +323,26 @@ function resetScanner() {
   actionButtons.style.display = "none";
   helperText.textContent = "Align QR inside the square";
 
-  /* =============================
-   INIT MODE (Dashboard vs Camera)
-============================= */
+  if (!presetPaymentId) {
+    startCamera();
+  }
+}
+
 
 if (presetPaymentId && scannerEmail) {
-  // 🔹 DASHBOARD MODE (opened from admin dashboard QR)
-
+  // DASHBOARD MODE
   detectedPaymentId = presetPaymentId;
   locked = true;
 
   helperText.textContent = "Pass loaded from dashboard";
 
-  // ❌ ensure camera never starts
-  stopCamera();
-
-  // ✅ show profile + buttons
+  stopCamera();              // ensure camera is OFF
   loadProfile(detectedPaymentId);
   showActions();
 
 } else {
-  // 🔹 NORMAL SCANNER MODE
+  // CAMERA MODE
   startCamera();
-}
-
-
 }
 
 </script>
