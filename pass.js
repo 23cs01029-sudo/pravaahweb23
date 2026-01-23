@@ -49,6 +49,19 @@ const PRICES = {
   starnite: 99
 };
 
+const IITBBS_DOMAIN = "@iitbbs.ac.in";
+
+function isIITBBSUser() {
+  return auth.currentUser?.email?.endsWith(IITBBS_DOMAIN);
+}
+
+function getRegistrations() {
+  return JSON.parse(localStorage.getItem("pravaah_user_regs") || "{}");
+}
+
+function saveRegistrations(data) {
+  localStorage.setItem("pravaah_user_regs", JSON.stringify(data));
+}
 
 
 
@@ -154,8 +167,6 @@ function renderEventRow(name, opt = {}) {
 ======================================= */
 passCards.forEach((c) => {
   c.addEventListener("click", () => {
-    passCards.forEach((x) => x.classList.remove("selected"));
-    c.classList.add("selected");
 
     let t = c.dataset.type;
     if (/day/i.test(t)) t = "Day Pass";
@@ -163,14 +174,26 @@ passCards.forEach((c) => {
     else if (/fest/i.test(t)) t = "Fest Pass";
     else if (/star/i.test(t)) t = "Starnite Pass";
 
+    const regs = getRegistrations();
+
+    // ❌ Block other passes if Fest already registered
+    if (regs.fest && t !== "Fest Pass") {
+      alert("You have already registered for Fest Pass.");
+      return;
+    }
+
+    passCards.forEach((x) => x.classList.remove("selected"));
+    c.classList.add("selected");
+
     currentPassType = t;
     currentDayPassDays = [];
     currentVisitorDays = [];
-
     participantsCount = 0;
+
     renderSelectionArea();
   });
 });
+
 
 /* =======================================
       STAR NITE TOGGLE TEMPLATE
@@ -218,6 +241,11 @@ function renderSelectionArea() {
     document.querySelectorAll(".day-card").forEach((btn) =>
   btn.addEventListener("click", () => {
     const d = btn.dataset.day;
+const regs = getRegistrations();
+if (regs.days?.includes(d)) {
+  alert("You are already registered for this day.");
+  return;
+}
 
     if (currentDayPassDays.includes(d)) {
       currentDayPassDays = currentDayPassDays.filter(x => x !== d);
@@ -268,7 +296,11 @@ function renderSelectionArea() {
     document.querySelectorAll(".visitor-day-card").forEach((btn) =>
       btn.addEventListener("click", () => {
         let d = btn.dataset.day;
-
+const regs = getRegistrations();
+if (regs.days?.includes(d)) {
+  alert("You are already registered for this day.");
+  return;
+}
         if (currentVisitorDays.includes(d)) {
           currentVisitorDays = currentVisitorDays.filter((x) => x !== d);
           btn.classList.remove("active");
@@ -311,6 +343,18 @@ function renderSelectionArea() {
 
   /* ---------- STARNITE PASS ---------- */
   if (currentPassType === "Starnite Pass") {
+    if (isIITBBSUser()) {
+    participantForm.innerHTML = `
+      <div class="participant-card">
+        <h4>Starnite Pass</h4>
+        <p style="color:#4cff88;font-weight:600;">
+          IITBBS students need not register for Starnite.
+        </p>
+      </div>
+    `;
+    payBtn.style.display = "none";
+    return;
+  }
     participantForm.innerHTML = `
     <div class="participant-card"><h4>Starnite Pass</h4></div>
 
@@ -632,6 +676,7 @@ payBtn.addEventListener("click", async () => {
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
