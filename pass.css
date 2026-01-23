@@ -512,6 +512,79 @@ body {
   }
 }
 
+/* =========================================================
+   DAY / VISITOR / FEST ACCORDION (TOP-DOWN EVENTS)
+========================================================= */
+
+.day-accordion {
+  border: 1px solid rgba(0,255,255,0.35);
+  border-radius: 14px;
+  margin: 14px 0;
+  overflow: hidden;
+  background: rgba(0,0,0,0.35);
+  box-shadow: 0 0 10px rgba(0,255,255,0.15);
+}
+
+/* ---------- HEADER ---------- */
+.day-accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  cursor: pointer;
+
+  color: cyan;
+  font-size: 1.1rem;
+  font-weight: 600;
+
+  background: rgba(0,255,255,0.08);
+  border-bottom: 1px solid rgba(0,255,255,0.25);
+
+  transition: 0.25s ease;
+}
+
+.day-accordion-header:hover {
+  background: rgba(0,255,255,0.18);
+}
+
+/* ---------- ARROW ---------- */
+.day-arrow {
+  transition: transform 0.3s ease;
+  font-size: 1rem;
+}
+
+/* ---------- CONTENT ---------- */
+.day-accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.25s ease;
+  padding: 0 16px;
+}
+
+/* ---------- OPEN STATE ---------- */
+.day-accordion.open .day-accordion-content {
+  max-height: 1000px; /* enough for many events */
+  padding: 16px;
+}
+
+.day-accordion.open .day-arrow {
+  transform: rotate(180deg);
+}
+
+/* ---------- MOBILE TUNING ---------- */
+@media (max-width: 600px) {
+  .day-accordion-header {
+    padding: 14px 16px;
+    font-size: 1rem;
+  }
+
+  .day-accordion-content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+
 
 
 
