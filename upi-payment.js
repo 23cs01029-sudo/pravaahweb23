@@ -41,19 +41,26 @@ document.getElementById("sessionInfo").innerHTML = `
   <p><b>Amount:</b> ₹${amount}</p>
 `;
 
-/* ================= DYNAMIC QR ================= */
+/* ================= DYNAMIC UPI LINK ================= */
 const upiLink =
   `upi://pay?pa=${UPI_ID}` +
   `&pn=${encodeURIComponent(RECEIVER_NAME)}` +
   `&am=${amount}` +
   `&cu=INR` +
-  `&tn=PRAVAAH_PASS`;
+  `&tn=PRAVAAH_${session.sessionId}`;
 
+/* ================= QR ================= */
 new QRCode(document.getElementById("qrBox"), {
   text: upiLink,
   width: 240,
   height: 240
 });
+
+/* ================= PAY USING APP BUTTON ================= */
+const upiPayBtn = document.getElementById("upiPayBtn");
+if (upiPayBtn) {
+  upiPayBtn.href = upiLink;
+}
 
 /* ================= OCR & UPLOAD ================= */
 const fileInput = document.getElementById("screenshot");
@@ -62,63 +69,48 @@ const fileNameEl = document.getElementById("fileName");
 const uploadStatusEl = document.getElementById("uploadStatus");
 
 let extractedUTR = null;
-let uploadedFile = null;
 
 fileInput.addEventListener("change", async () => {
   const file = fileInput.files[0];
   if (!file) return;
 
-  // 🔒 Only ONE image
+  // 🔒 Allow ONLY one image
   if (fileInput.files.length > 1) {
     alert("Please upload only one screenshot.");
     fileInput.value = "";
     return;
   }
 
-  uploadedFile = file;
   extractedUTR = null;
-
   confirmBtn.disabled = true;
   confirmBtn.textContent = "Processing…";
 
-  if (fileNameEl) fileNameEl.textContent = file.name;
-  if (uploadStatusEl) {
-    uploadStatusEl.textContent = "⏳ Processing screenshot…";
-    uploadStatusEl.style.color = "#ffd36a";
-  }
+  fileNameEl.textContent = file.name;
+  uploadStatusEl.textContent = "⏳ Processing screenshot…";
+  uploadStatusEl.style.color = "#ffd36a";
 
   try {
     const { data } = await Tesseract.recognize(file, "eng");
     const text = data.text.toUpperCase();
 
-    /* 🔢 UTR */
+    /* 🔢 UTR (12–16 digits) */
     const utrMatch = text.match(/\b\d{12,16}\b/);
 
-    /* 💰 Amount */
+    /* 💰 Amount check */
     const cleanText = text.replace(/[,₹RSINR]/g, "");
     const amountOk = new RegExp(`\\b${amount}(\\.00)?\\b`).test(cleanText);
 
-    /* 👤 Receiver */
+    /* 👤 Receiver name */
     const receiverOk = RECEIVER_KEYWORDS.some(k => text.includes(k));
 
     if (utrMatch && amountOk && receiverOk) {
       extractedUTR = utrMatch[0];
-
       confirmBtn.disabled = false;
-      confirmBtn.textContent = "Confirm Payment";
-
-      if (uploadStatusEl) {
-        uploadStatusEl.textContent = "✅ Screenshot verified";
-        uploadStatusEl.style.color = "#4cff88";
-      }
+      uploadStatusEl.textContent = "✅ Screenshot verified";
+      uploadStatusEl.style.color = "#4cff88";
     } else {
-      confirmBtn.textContent = "Confirm Payment";
-
-      if (uploadStatusEl) {
-        uploadStatusEl.textContent = "❌ Verification failed";
-        uploadStatusEl.style.color = "#ff5c5c";
-      }
-
+      uploadStatusEl.textContent = "❌ Verification failed";
+      uploadStatusEl.style.color = "#ff5c5c";
       alert(
         "Could not verify payment.\n\n" +
         "Make sure screenshot shows:\n" +
@@ -127,17 +119,15 @@ fileInput.addEventListener("change", async () => {
         "• Receiver name"
       );
     }
+
   } catch (err) {
     console.error(err);
-    confirmBtn.textContent = "Confirm Payment";
-
-    if (uploadStatusEl) {
-      uploadStatusEl.textContent = "❌ Processing failed";
-      uploadStatusEl.style.color = "#ff5c5c";
-    }
-
+    uploadStatusEl.textContent = "❌ Processing failed";
+    uploadStatusEl.style.color = "#ff5c5c";
     alert("Screenshot processing failed. Please try again.");
   }
+
+  confirmBtn.textContent = "Confirm Payment";
 });
 
 /* ================= CONFIRM PAYMENT ================= */
