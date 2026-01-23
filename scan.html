@@ -253,13 +253,15 @@ function scanLoop() {
 
 /* LOAD PROFILE (NO VALIDITY CHECK) */
 function loadProfile(paymentId) {
+  profilePreview.innerHTML = "<i>Loading profile…</i>";
+  profilePreview.style.display = "block";
+
   fetch(`/api/pravaah?type=searchPass&query=${encodeURIComponent(paymentId)}`)
     .then(r => r.json())
     .then(rows => {
       if (!rows.length) {
         profilePreview.innerHTML =
           "<span style='color:#ff6b6b'>Invalid Pass</span>";
-        profilePreview.style.display = "block";
         return;
       }
 
@@ -275,9 +277,14 @@ function loadProfile(paymentId) {
         <div style="margin-top:6px">Pass: <b>${p["Pass Type"]}</b></div>
         <div>Days: <b>${p["Selected Days"] || "—"}</b></div>
       `;
-      profilePreview.style.display = "block";
+    })
+    .catch(err => {
+      profilePreview.innerHTML =
+        "<span style='color:#ff6b6b'>Server error</span>";
+      console.error(err);
     });
 }
+
 
 /* ACTIONS */
 function showActions() {
