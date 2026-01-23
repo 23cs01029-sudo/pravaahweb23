@@ -181,5 +181,5 @@ confirmBtn.onclick = async () => {
 document.getElementById("cancelBtn").onclick = () => {
   allowExit = true;
   localStorage.removeItem(SESSION_KEY);
-  window.location.replace("registartionPravaah.html");
+  window.location.replace("registrationPravaah.html");
 };
