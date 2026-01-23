@@ -204,6 +204,13 @@ passCards.forEach((c) => {
       RENDER SELECTION AREA
 ======================================= */
 function renderSelectionArea() {
+  if (isIITBBSUser()) {
+  payBtn.textContent = "Register";
+  payBtn.style.display = "inline-block";
+  totalAmountEl.textContent = "Total: ₹0 (Free for IITBBS)";
+}
+
+
   selectionArea.classList.remove("hidden");
   selectedPassTxt.textContent = `Selected: ${currentPassType}`;
   participantForm.innerHTML = "";
@@ -602,6 +609,50 @@ function collectSelectedEvents() {
   return events;
 }
 
+function completeFreeRegistration() {
+  const numInputLocal = document.getElementById("numParticipants");
+  const count = parseInt(numInputLocal?.value || 0);
+
+  if (count <= 0) {
+    alert("Please add at least 1 participant.");
+    return;
+  }
+
+  const cards = [
+    ...document.querySelectorAll(
+      "#participantsContainerPlaceholder .participant-card"
+    )
+  ];
+
+  const participants = cards.map(c => ({
+    name: c.querySelector(".pname")?.value.trim(),
+    email: c.querySelector(".pemail")?.value.trim(),
+    phone: c.querySelector(".pphone")?.value.trim(),
+    college: c.querySelector(".pcollege")?.value.trim()
+  }));
+
+  for (let p of participants) {
+    if (!p.name || !p.email || !p.phone || !p.college) {
+      alert("Fill all participant fields.");
+      return;
+    }
+  }
+
+  const regs = getRegistrations();
+  if (!regs.days) regs.days = [];
+
+  regs.days.push(...currentDayPassDays, ...currentVisitorDays);
+
+  if (currentPassType === "Fest Pass") {
+    regs.fest = true;
+  }
+
+  saveRegistrations(regs);
+
+  alert("Registration successful!");
+  window.location.href = "dashboard.html";
+}
+
 
 
 
@@ -609,6 +660,12 @@ function collectSelectedEvents() {
       PAYMENT HANDLER
 ======================================= */
 payBtn.addEventListener("click", async () => {
+  // ✅ IITBBS USERS — NO PAYMENT, DIRECT REGISTER
+if (isIITBBSUser()) {
+  completeFreeRegistration();
+  return;
+}
+
   if (paying) return;
   paying = true;
 
@@ -672,10 +729,23 @@ payBtn.addEventListener("click", async () => {
     "pravaah_payment",
     JSON.stringify(paymentSession)
   );
+  const regs = getRegistrations();
+if (!regs.days) regs.days = [];
+
+// save selected days
+regs.days.push(...currentDayPassDays, ...currentVisitorDays);
+
+// fest blocks everything else
+if (currentPassType === "Fest Pass") {
+  regs.fest = true;
+}
+
+saveRegistrations(regs);
 
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
