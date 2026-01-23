@@ -9,6 +9,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentDate = new Date();
 
   const feedsByDate = { 
+     "2026-01-27": [
+      { img: "Pravaah.JPG", name: "9days to go", text: "Somethings cooking", time: "soon" },
+    ],
+     "2026-01-28": [
+      { img: "Pravaah.JPG", name: "8days to go", text: "Somethings cooking", time: "soon" },
+    ],
+     "2026-01-29": [
+      { img: "Pravaah.JPG", name: "7days to go", text: "Somethings cooking", time: "soon" },
+    ],
      "2026-01-30": [
       { img: "Pravaah.JPG", name: "6days to go", text: "Somethings cooking", time: "soon" },
     ],
@@ -364,6 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
 
