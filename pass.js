@@ -22,9 +22,40 @@ const scriptURL = "/api/pravaah";
 ======================================= */
 const EVENTS = {
   day0: [],
-  day1: ["General Quiz", "Nukkad", "Robowars"],
-  day2: ["Film Quiz", "Battle of Bands", "Roborace"],
-  day3: ["Street Battle", "Enigma", "Trekkon"]
+  day1: [
+  "Fashion Show",
+  "Data Science Hackathon",
+  "General Quiz",
+  "Marcatus",
+  "Startup Expo",
+  "Face Painting",
+  "Robo Soccer",
+  "51-Hour Short Film",
+  "Abhinay(StagePlay)"
+],
+ day2: [
+  "Comedy Night",
+  "Web Hackathon",
+  "Science & Technology Quiz",
+  "B-Plan",
+  "Enigma",
+  "Innovation Expo",
+  "Blast Off",
+  "Robo Race",
+  "Monoact",
+  "Tamasha(Nukkad)"
+],
+
+day3: [
+  "StarNite",
+  "DJ Night",
+  "IPL Auction",
+  "Solo Dance",
+  "Group Dance",
+  "Trekkon-Line Follower",
+  "Street Battle"
+]
+
 };
 
 const PRICES = {
@@ -82,6 +113,8 @@ const selectedPassTxt = document.getElementById("selectedPass");
 const participantForm = document.getElementById("participantForm");
 
 const totalAmountEl = document.getElementById("totalAmount");
+totalAmountEl.style.display = "none";
+
 const payBtn = document.getElementById("payBtn");
 if (payBtn) payBtn.setAttribute("type", "button");
 
@@ -820,6 +853,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
