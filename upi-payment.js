@@ -1,11 +1,12 @@
 const SESSION_KEY = "pravaah_payment";
 const SCRIPT_URL = "/api/pravaah";
 
-// 🔐 UPI DETAILS (LOCKED)
+/* 🔐 UPI DETAILS */
 const UPI_ID = "8074412679@ybl";
 const RECEIVER_NAME = "KANDULA JOJI KUMAR";
 const RECEIVER_KEYWORDS = ["KANDULA", "JOJI", "KUMAR"];
 
+/* ================= SESSION ================= */
 const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
 
 // ❌ No session → go home
@@ -13,13 +14,7 @@ if (!session.sessionId) {
   window.location.replace("home.html");
 }
 
-// 🔒 LOCK PAGE (cannot exit casually)
-window.addEventListener("beforeunload", e => {
-  e.preventDefault();
-  e.returnValue = "";
-});
-
-// ⏰ Auto-expire at day end
+/* ⏰ AUTO EXPIRE AT DAY END */
 const now = new Date();
 const end = new Date();
 end.setHours(23, 59, 59, 999);
@@ -29,34 +24,40 @@ if (now > end) {
   window.location.replace("home.html");
 }
 
-// 🧾 Show info
+/* 🔒 PAGE LOCK */
+window.addEventListener("beforeunload", e => {
+  e.preventDefault();
+  e.returnValue = "";
+});
+
+/* ================= DISPLAY INFO ================= */
+// ✅ FIX: use totalAmount
+const amount = session.totalAmount;
+
 document.getElementById("sessionInfo").innerHTML = `
   <p><b>Pass:</b> ${session.passType}</p>
-  <p><b>Amount:</b> ₹${session.amount}</p>
+  <p><b>Amount:</b> ₹${amount}</p>
 `;
 
-// 🔗 Dynamic UPI link
+/* ================= DYNAMIC UPI QR ================= */
 const upiLink =
   `upi://pay?pa=${UPI_ID}` +
   `&pn=${encodeURIComponent(RECEIVER_NAME)}` +
-  `&am=${session.amount}` +
+  `&am=${amount}` +
   `&cu=INR` +
   `&tn=PRAVAAH_PASS`;
 
-// 📷 QR
 new QRCode(document.getElementById("qrBox"), {
   text: upiLink,
-  width: 220,
-  height: 220
+  width: 240,
+  height: 240
 });
 
-// OCR + validation
+/* ================= OCR (HIDDEN) ================= */
 const fileInput = document.getElementById("screenshot");
 const confirmBtn = document.getElementById("confirmBtn");
 
-let validUTR = false;
-let validAmount = false;
-let validReceiver = false;
+let extractedUTR = null;
 
 fileInput.addEventListener("change", async () => {
   const file = fileInput.files[0];
@@ -64,36 +65,42 @@ fileInput.addEventListener("change", async () => {
 
   confirmBtn.disabled = true;
 
-  const { data } = await Tesseract.recognize(file, "eng");
-  const text = data.text.toUpperCase();
+  try {
+    const { data } = await Tesseract.recognize(file, "eng");
+    const text = data.text.toUpperCase();
 
-  // 🔢 UTR
-  const utrMatch = text.match(/\b\d{12}\b/);
-  if (utrMatch) {
-    document.getElementById("utr").value = utrMatch[0];
-    validUTR = true;
-  }
+    /* 🔢 UTR */
+    const utrMatch = text.match(/\b\d{12}\b/);
 
-  // 💰 Amount
-  const amtMatch = text.match(/₹\s?(\d+)/);
-  if (amtMatch && Number(amtMatch[1]) === session.amount) {
-    document.getElementById("amountDetected").value = amtMatch[1];
-    validAmount = true;
-  }
+    /* 💰 Amount (best effort) */
+    const amountOk = text.includes(String(amount));
 
-  // 👤 Receiver
-  validReceiver = RECEIVER_KEYWORDS.some(k => text.includes(k));
-  document.getElementById("receiver").value =
-    validReceiver ? "MATCHED" : "NOT MATCHED";
+    /* 👤 Receiver (keyword match) */
+    const receiverOk = RECEIVER_KEYWORDS.some(k => text.includes(k));
 
-  // ✅ Enable confirm only if ALL valid
-  if (validUTR && validAmount && validReceiver) {
-    confirmBtn.disabled = false;
+    if (utrMatch && amountOk && receiverOk) {
+      extractedUTR = utrMatch[0];
+      confirmBtn.disabled = false; // ✅ allow backend to decide finally
+    } else {
+      alert(
+        "Unable to verify payment from screenshot.\n" +
+        "Please upload a clear screenshot showing UTR, amount, and receiver name."
+      );
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to process screenshot. Please try again.");
   }
 });
 
-// ✅ Confirm payment
+/* ================= CONFIRM PAYMENT ================= */
 confirmBtn.onclick = async () => {
+  if (!extractedUTR) {
+    alert("UTR not detected. Please upload a valid screenshot.");
+    return;
+  }
+
   confirmBtn.disabled = true;
 
   const res = await fetch(SCRIPT_URL, {
@@ -101,22 +108,23 @@ confirmBtn.onclick = async () => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       type: "UPI_PAYMENT_CONFIRM",
-      session,
-      utr: document.getElementById("utr").value
+      utr: extractedUTR,
+      session
     })
   });
 
   const out = await res.json();
+
   if (out.ok) {
     localStorage.removeItem(SESSION_KEY);
-    window.location.replace("payment_success.html");
+    window.location.replace("payment-success.html");
   } else {
     alert(out.error || "Payment validation failed");
     confirmBtn.disabled = false;
   }
 };
 
-// ❌ Cancel payment
+/* ================= CANCEL PAYMENT ================= */
 document.getElementById("cancelBtn").onclick = () => {
   localStorage.removeItem(SESSION_KEY);
   window.location.replace("events.html");
