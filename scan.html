@@ -193,6 +193,9 @@ const profilePreview = document.getElementById("profilePreview");
 const adminBtn = document.getElementById("adminBtn");
 const eventBtn = document.getElementById("eventBtn");
 const retakeBtn = document.getElementById("retakeBtn");
+const params = new URLSearchParams(location.search);
+const presetPaymentId = params.get("paymentId");
+const scannerEmail = params.get("scanner");
 
 let stream = null;
 let scanning = false;
@@ -278,23 +281,32 @@ function loadProfile(paymentId) {
 
 /* ACTIONS */
 function showActions() {
+  if (!detectedPaymentId) {
+    helperText.textContent = "No Payment ID available";
+    return;
+  }
+
+  if (!scannerEmail) {
+    helperText.textContent = "Scanner identity missing";
+    return;
+  }
+
   helperText.textContent = "Select scan type";
   actionButtons.style.display = "flex";
-
-  const scannerEmail = new URLSearchParams(location.search).get("scanner");
-
-  eventBtn.onclick = () => {
-    location.href =
-      `event.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
-  };
 
   adminBtn.onclick = () => {
     location.href =
       `admin.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
   };
 
+  eventBtn.onclick = () => {
+    location.href =
+      `event.html?paymentId=${encodeURIComponent(detectedPaymentId)}&scanner=${encodeURIComponent(scannerEmail)}`;
+  };
+
   retakeBtn.onclick = resetScanner;
 }
+
 
 /* RESET */
 function resetScanner() {
@@ -303,8 +315,21 @@ function resetScanner() {
   profilePreview.style.display = "none";
   actionButtons.style.display = "none";
   helperText.textContent = "Align QR inside the square";
+
+  // 🔥 Only restart camera if NOT opened from dashboard
+  if (presetPaymentId) {
+  // 🔹 DASHBOARD MODE
+  detectedPaymentId = presetPaymentId;
+  helperText.textContent = "Payment ID loaded from dashboard";
+  loadProfile(detectedPaymentId);
+  showActions();
+} else {
+  // 🔹 CAMERA SCANNER MODE
   startCamera();
 }
+
+}
+
 
 /* INIT */
 startCamera();
