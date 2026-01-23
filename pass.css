@@ -685,6 +685,23 @@ body {
   display: none;
 }
 
+/* Limit events to 5 rows & allow scroll */
+.day-accordion-content {
+  max-height: 260px;        /* ~5 event rows */
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Optional: smooth scrollbar */
+.day-accordion-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.day-accordion-content::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 6px;
+}
+
 
 
 
