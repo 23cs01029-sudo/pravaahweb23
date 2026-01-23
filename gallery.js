@@ -6,7 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ===========================================================
      📸 GALLERY DATA (FROM GRID)
   =========================================================== */
-
+  const galleryItems = document.querySelectorAll(".gallery-item"); 
+  if (!galleryItems.length) return;
+  
   const galleryImages = Array.from(galleryItems).map(item => {
   const img = item.querySelector("img");
   return {
@@ -133,4 +135,5 @@ if (menuToggle && menu) {
     link.addEventListener("click", () => menu.classList.remove("active"));
   });
 }
+
 
