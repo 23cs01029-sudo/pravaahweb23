@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       location: "Open Auditorium",
       register: "registrationPravaah.html"
     }
-  ]
+  ],
   };
 
   const defaultFeed = [
@@ -339,4 +339,5 @@ document.addEventListener("DOMContentLoaded", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
