@@ -1677,6 +1677,30 @@ video:-webkit-full-screen {
     0 0 22px rgba(242, 215, 166, 0.6),
     0 0 30px rgba(122, 0, 255, 0.5);
 }
+/* =========================================================
+   ✅ FINAL FIX — YOUTUBE IFRAME SIZE & FIT (ADD LAST)
+   ========================================================= */
+
+.video-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Make sure aftermovie box always keeps correct ratio */
+.aftermovie {
+  aspect-ratio: 16 / 9;
+  height: auto !important;
+}
+
+/* Mobile safety */
+@media (max-width: 650px) {
+  .aftermovie {
+    width: 95%;
+    aspect-ratio: 16 / 9;
+  }
+}
+
 
 
 
