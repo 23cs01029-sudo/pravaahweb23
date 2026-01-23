@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="feed-row">
       <h4>${feed.name}</h4>
       <span class="event-time">
-        <i class="fa-regular fa-clock"></i> ${feed.time}
+        ${feed.time}
       </span>
     </div>
 
@@ -413,6 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
 
