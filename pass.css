@@ -702,6 +702,34 @@ body {
   border-radius: 6px;
 }
 
+/* CLOSED state */
+.day-accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+/* OPEN state — show only 5 events */
+.day-accordion.open .day-accordion-content {
+  max-height: 260px;   /* ~5 events */
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Event row height consistency */
+.event-row {
+  min-height: 48px;
+}
+
+/* Optional scrollbar styling */
+.day-accordion-content::-webkit-scrollbar {
+  width: 6px;
+}
+.day-accordion-content::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 6px;
+}
+
 
 
 
