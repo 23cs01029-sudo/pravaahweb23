@@ -428,6 +428,37 @@ themeBtn?.addEventListener("click", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+/* =========================================================
+   ⏸️ STOP YOUTUBE VIDEO WHEN TAB / PAGE IS NOT VISIBLE
+   ========================================================= */
+
+const iframe = document.getElementById("mainVideo");
+
+function stopYouTubeVideo() {
+  if (!iframe) return;
+
+  // Reload iframe without autoplay (stops playback)
+  const src = iframe.src;
+  iframe.src = src.replace("&autoplay=1", "");
+}
+
+// When user switches tab
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    stopYouTubeVideo();
+  }
+});
+
+// When user switches browser / minimizes window
+window.addEventListener("blur", () => {
+  stopYouTubeVideo();
+});
+
+// When user leaves the page
+window.addEventListener("beforeunload", () => {
+  stopYouTubeVideo();
+});
+
 
 
 
