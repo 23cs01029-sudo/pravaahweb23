@@ -584,6 +584,58 @@ body {
   }
 }
 
+/* ================================
+   DAY ACCORDION (TOP–DOWN DROPDOWN)
+================================ */
+
+/* Wrapper */
+.day-accordion {
+  width: 100%;
+  margin: 12px auto;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(0,255,255,0.35);
+  box-shadow: 0 0 10px rgba(0,255,255,0.15);
+}
+
+/* Header (DAY1 ▼) */
+.day-accordion-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  cursor: pointer;
+  color: cyan;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-shadow: 0 0 6px rgba(0,255,255,0.4);
+}
+
+/* Arrow */
+.day-arrow {
+  transition: transform 0.3s ease;
+}
+
+/* Content hidden by default */
+.day-accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  padding: 0 16px;
+}
+
+/* OPEN STATE */
+.day-accordion.open .day-accordion-content {
+  max-height: 600px; /* enough for all events */
+  padding-bottom: 14px;
+}
+
+.day-accordion.open .day-arrow {
+  transform: rotate(180deg);
+}
+
 
 
 
