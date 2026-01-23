@@ -271,6 +271,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </div>
 <script type="module">
+  import { auth } from "./auth.js";
+  import {
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
   document.addEventListener("DOMContentLoaded", () => {
     const logoutDesktop = document.getElementById("logoutDesktop");
     const logoutMobile = document.getElementById("logoutMobile");
@@ -279,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const logout = async () => {
       try {
         await signOut(auth);
-        localStorage.clear();   // 🔐 clear payment/session cache
+        localStorage.clear();
         window.location.href = "index.html";
       } catch (err) {
         alert("Logout failed");
@@ -290,7 +296,6 @@ document.addEventListener("DOMContentLoaded", () => {
     logoutDesktop?.addEventListener("click", logout);
     logoutMobile?.addEventListener("click", logout);
 
-    /* ✅ Optional: hide/show dashboard based on login */
     onAuthStateChanged(auth, (user) => {
       if (user) {
         dashboardNav?.classList.remove("hidden");
@@ -300,23 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const menuToggle = document.getElementById("menuToggle");
-  const menu = document.getElementById("menu");
 
-  menuToggle?.addEventListener("click", () => {
-    menu.classList.toggle("active");
-  });
-
-  // Close menu when clicking a link (mobile UX)
-  document.querySelectorAll("#menu a").forEach(link => {
-    link.addEventListener("click", () => {
-      menu.classList.remove("active");
-    });
-  });
-});
-</script>
 
 </body>
 </html>
