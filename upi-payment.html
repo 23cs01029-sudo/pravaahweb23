@@ -18,42 +18,67 @@
 <body>
 
 <main class="passes-section">
-  <div class="passes-box">
+  <div class="passes-box" style="text-align:center;">
 
-    <!-- TOP ACTION BAR -->
-    <div style="display:flex; justify-content:space-between; gap:12px;">
-      <button id="cancelBtn" class="main-btn" style="background:#ff5c5c">
-        Cancel Payment
-      </button>
+    <h1 style="margin-bottom:10px;">💳 Complete Payment</h1>
 
-      <button id="confirmBtn" class="main-btn" disabled>
-        Confirm Payment
-      </button>
-    </div>
+    <div id="sessionInfo" style="margin:8px 0;"></div>
 
-    <h1 style="margin-top:22px;">💳 Complete Payment</h1>
-
-    <div id="sessionInfo" style="margin:10px 0; text-align:center;"></div>
-
-    <!-- CENTERED QR -->
-    <div style="display:flex; justify-content:center; margin:25px 0;">
+    <!-- QR CENTER -->
+    <div style="display:flex; justify-content:center; margin:24px 0;">
       <div id="qrBox"></div>
     </div>
 
-    <p style="color:var(--muted); text-align:center;">
+    <p style="color:var(--muted); margin-bottom:18px;">
       Scan the QR and complete payment.<br>
       After payment, upload the screenshot below.
     </p>
 
-    <!-- Upload -->
-    <input
-      type="file"
-      id="screenshot"
-      accept="image/*"
-      style="display:block; margin:18px auto;"
-    >
+    <!-- UPLOAD SCREENSHOT -->
+    <div style="margin:20px 0;">
+      <label
+        style="
+          display:inline-block;
+          padding:14px 22px;
+          border:2px dashed #00f6ff;
+          border-radius:12px;
+          cursor:pointer;
+          color:#00f6ff;
+          font-weight:600;
+        "
+      >
+        <i class="fa-solid fa-upload"></i>
+        Upload Payment Screenshot
+        <input type="file" id="screenshot" accept="image/*" hidden>
+      </label>
 
-    <p style="margin-top:18px; text-align:center;">
+      <div id="fileName" style="margin-top:8px; font-size:14px; color:#aaa;">
+        No file selected
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div style="margin-top:22px; display:flex; flex-direction:column; gap:14px; align-items:center;">
+      <button
+        id="confirmBtn"
+        class="main-btn"
+        style="width:220px;"
+        disabled
+      >
+        Confirm Payment
+      </button>
+
+      <button
+        id="cancelBtn"
+        class="main-btn"
+        style="background:#ff5c5c; width:220px;"
+      >
+        Cancel Payment
+      </button>
+    </div>
+
+    <!-- CONTACT -->
+    <p style="margin-top:22px; font-size:14px;">
       Any issue?
       <a href="mailto:pravah@iitbbs.ac.in">Contact us</a>
     </p>
