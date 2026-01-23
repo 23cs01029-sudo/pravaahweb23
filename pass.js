@@ -217,8 +217,9 @@ function renderSelectionArea() {
   if (isIITBBSUser()) {
   payBtn.textContent = "Register";
   payBtn.style.display = "inline-block";
-  totalAmountEl.textContent = "Total: ₹0 (Free for IITBBS)";
+  totalAmountEl.style.display = "none"; // 🔥 hide total completely
 }
+
 
 
   selectionArea.classList.remove("hidden");
@@ -644,10 +645,17 @@ function calculateTotal() {
 }
 
 function updateTotal(amount) {
+  if (isIITBBSUser()) {
+    totalAmountEl.style.display = "none";
+    payBtn.style.display = "inline-block";
+    return;
+  }
+
   currentTotal = amount;
   totalAmountEl.textContent = `Total: ₹${amount}`;
   payBtn.style.display = amount > 0 ? "inline-block" : "none";
 }
+
 
 /* =======================================
       EVENT COLLECTION
@@ -717,7 +725,7 @@ for (let p of participants) {
   saveRegistrations(regs);
 
   alert("Registration successful!");
-  window.location.href = "dashboard.html";
+  window.location.href = "profile.html";
 }
 
 
@@ -812,6 +820,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
