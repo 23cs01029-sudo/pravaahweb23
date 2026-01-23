@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
   { img: "StreetDanceBattle_gallery.jpg", name: "Street Battle", text: "", time: "4:00 PM" },
 
   { img: "StarNight_events.JPG", name: "Star Night", text: "", time: "7:00 PM" },
-  { img: "djnight.JPG", name: "DJ Night", text: "", time: "7:00 PM" }
+  { img: "Screenshot 2026-01-24 010231.png", name: "DJ Night", text: "", time: "7:00 PM" }
 ]
 
 
@@ -458,6 +458,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
