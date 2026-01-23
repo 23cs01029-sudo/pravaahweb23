@@ -7,17 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
      📸 GALLERY DATA (FROM GRID)
   =========================================================== */
 
-  const galleryItems = document.querySelectorAll(".gallery-item");
-  if (!galleryItems.length) return;
-
   const galleryImages = Array.from(galleryItems).map(item => {
-    const img = item.querySelector("img");
-    return {
-      src: img.src,
-      title: item.dataset.title || "PRAVAAH Moment",
-      desc: "Experience the Chronicles of Time — PRAVAAH 2K25."
-    };
-  });
+  const img = item.querySelector("img");
+  return {
+    src: img.src,
+    title: item.dataset.title || "PRAVAAH Moment",
+    desc: item.dataset.desc || "Experience the Chronicles of Time — PRAVAAH 2K25."
+  };
+});
 
   let currentIndex = 0;
 
@@ -136,3 +133,4 @@ if (menuToggle && menu) {
     link.addEventListener("click", () => menu.classList.remove("active"));
   });
 }
+
