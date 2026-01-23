@@ -468,7 +468,7 @@ function renderAccordion(containerId, days, selectable) {
       <div class="day-accordion ${shouldOpen ? "open" : ""}" data-day="${d}">
         <div class="day-accordion-header">
           <span>${d.toUpperCase()}</span>
-          <i class="fa-solid fa-chevron-down day-arrow"></i>
+          <div class="dropdown-arrow"></div>
         </div>
 
         <div class="day-accordion-content">
@@ -796,6 +796,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
