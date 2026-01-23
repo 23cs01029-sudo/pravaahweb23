@@ -10,80 +10,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const feedsByDate = { 
      "2026-01-27": [
-      { img: "pravah-logo.png", name: "9days to go", text: "Somethings cooking", time: "soon" },
+      { img: "pravah-logo.png", name: "9 days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-01-28": [
-      { img: "Pravaah logo.png", name: "8days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "8 days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-01-29": [
-      { img: "Pravaah logo.png", name: "7days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "7 days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-01-30": [
-      { img: "Pravaah logo.png", name: "6days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "6 days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-01-31": [
-      { img: "Pravaah logo.png", name: "5days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "5 days to go", text: "Somethings cooking", time: "soon" },
     ],
     "2026-02-01": [
-      { img: "Pravaah logo.png", name: "4days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "4 days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-02-02": [
-      { img: "Pravaah logo.png", name: "3days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "3 days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-02-03": [
-      { img: "Pravaah logo.png", name: "2days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "2 days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-02-04": [
-      { img: "Pravaah logo.png", name: "1day to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "1 day to go", text: "Somethings cooking", time: "soon" },
     ],
     "2026-02-05": [
-      { img: "Openingcermony.JPG", name: "Pravaah", text: "Opening Cermony", time: "6:30 PM" },
+      { img: "Inaugural.jpg", name: "Pravaah", text: "Opening Cermony", time: "6:30 PM" },
     ],
   "2026-02-06": [
-  { img: "guesttalk1.JPG", name: "Guest Talk – 1", text: "", time: "9:00 AM" },
-  { img: "fashionshow_gallery.JPG", name: "Fashion Show", text: "", time: "10:00 AM" },
-  { img: "hackathon.JPG", name: "Data Science Hackathon", text: "", time: "11:00 AM" },
-  { img: "quiz.JPG", name: "General Quiz", text: "", time: "12:00 PM" },
+  { img: "Guest Talk.JPG", name: "Guest Talk – 1", text: "", time: "9:00 AM" },
+  { img: "fashionshow_gallery.jpg", name: "Fashion Show", text: "", time: "10:00 AM" },
+  { img: "ML HACKTHON.jpg", name: "Data Science Hackathon", text: "", time: "11:00 AM" },
+  { img: "Film Quiz_events.JPG", name: "General Quiz", text: "", time: "12:00 PM" },
 
   { img: "Marcatus.JPG", name: "Marcatus – Round 2", text: "", time: "1:00 PM" },
   { img: "informal night.JPG", name: "Informal Night", text: "", time: "1:00 PM" },
 
   { img: "Marcatus.JPG", name: "Marcatus – Round 1", text: "", time: "2:00 PM" },
-  { img: "startupExpo.JPG", name: "Startup Expo", text: "", time: "2:00 PM" },
-  { img: "facepainting.JPG", name: "Face Painting", text: "", time: "2:00 PM" },
+  { img: "startup expo event.jpg", name: "Startup Expo", text: "", time: "2:00 PM" },
+  { img: "face painting events.webp", name: "Face Painting", text: "", time: "2:00 PM" },
 
-  { img: "startupExpo.JPG", name: "Startup Expo", text: "", time: "3:00 PM" },
+  
   { img: "robo soccor.JPG", name: "Robo Soccer", text: "", time: "3:00 PM" },
-  { img: "shortfilm.JPG", name: "51-Hour Short Film – Start", text: "", time: "3:00 PM" },
+  { img: "51hr flimmaking events.avif", name: "51-Hour Short Film – Start", text: "", time: "3:00 PM" },
 
-  { img: "robo soccor.JPG", name: "Robo Soccer", text: "", time: "4:00 PM" },
-  { img: "abhinay.JPG", name: "Abhinay", text: "", time: "5:00 PM" },
-  { img: "abhinay.JPG", name: "Abhinay", text: "", time: "6:00 PM" }
+  
+  { img: "abhinay event.jpeg", name: "Abhinay", text: "", time: "5:00 PM" }
+  
 ],
 
 
 
   // ================= DAY 2 (Feb 7) =================
 "2026-02-07": [
-  { img: "guesttalk2.JPG", name: "Guest Talk – 2", text: "", time: "8:00 AM" },
-  { img: "shortfilm.JPG", name: "51-Hour Short Film", text: "", time: "9:00 AM" },
-  { img: "webhackathon.JPG", name: "Web Hackathon", text: "", time: "10:00 AM" },
+  { img: "Guest Talk.JPG", name: "Guest Talk – 2", text: "", time: "8:00 AM" },
+  { img: "51hr flimmaking events.avif", name: "51-Hour Short Film", text: "", time: "9:00 AM" },
+  { img: "ML HACKTHON.jpg", name: "Web Hackathon", text: "", time: "10:00 AM" },
 
-  { img: "sciencequiz.JPG", name: "Science & Technology Quiz", text: "", time: "11:00 AM" },
-  { img: "bplan.JPG", name: "B-Plan", text: "", time: "11:00 AM" },
+  { img: "data sceince event.jpg", name: "Science & Technology Quiz", text: "", time: "11:00 AM" },
+  { img: "B plan event.jpg", name: "B-Plan", text: "", time: "11:00 AM" },
 
-  { img: "enigma.JPG", name: "Enigma – Round 1", text: "", time: "12:00 PM" },
-  { img: "enigma.JPG", name: "Enigma – Round 2", text: "", time: "1:00 PM" },
+  { img: "Enigma_gallery.JPG", name: "Enigma – Round 1", text: "", time: "12:00 PM" },
+  { img: "Enigma_events.JPG", name: "Enigma – Round 2", text: "", time: "1:00 PM" },
 
   { img: "Innovation Expo_gallery.JPG", name: "Innovation Expo", text: "", time: "2:00 PM" },
-  { img: "Innovation Expo_gallery.JPG", name: "Innovation Expo", text: "", time: "3:00 PM" },
+  
 
-  { img: "blastoff.JPG", name: "Blast Off", text: "", time: "4:00 PM" },
-  { img: "RoboRace.JPG", name: "Robo Race", text: "", time: "4:00 PM" },
+  { img: "blastoff event.jpg", name: "Blast Off", text: "", time: "4:00 PM" },
+  { img: "RoboRace.jpg", name: "Robo Race", text: "", time: "4:00 PM" },
 
-  { img: "monoact.JPG", name: "Monoact", text: "", time: "5:00 PM" },
-  { img: "Tamasha_gallery.JPG", name: "Tamasha", text: "", time: "6:00 PM" },
-  { img: "comedy.JPG", name: "Comedy Night", text: "", time: "7:00 PM" }
+  { img: "monoct events.jpeg", name: "Monoact", text: "", time: "5:00 PM" },
+  { img: "Tamasha_gallery.jpg", name: "Tamasha", text: "", time: "6:00 PM" },
+  { img: "Pravaah logo.png", name: "Comedy Night", text: "", time: "7:00 PM" }
 ],
 
 
@@ -458,6 +458,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
