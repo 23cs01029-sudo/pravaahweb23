@@ -166,7 +166,7 @@ confirmBtn.onclick = async () => {
     if (out.ok) {
       allowExit = true;
       localStorage.removeItem(SESSION_KEY);
-      window.location.replace("payment-success.html");
+      window.location.replace("payment_success.html");
     } else {
       throw new Error(out.error || "Payment validation failed");
     }
@@ -181,5 +181,5 @@ confirmBtn.onclick = async () => {
 document.getElementById("cancelBtn").onclick = () => {
   allowExit = true;
   localStorage.removeItem(SESSION_KEY);
-  window.location.replace("events.html");
+  window.location.replace("registartionPravaah.html");
 };
