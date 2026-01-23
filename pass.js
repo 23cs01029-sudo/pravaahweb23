@@ -511,8 +511,11 @@ function renderVisitorEvents(days) {
       FEST EVENTS
 ======================================= */
 
-selectedEventsByDay = {}; // ensure clean state
-renderAccordion("festEventsContainer", currentDayPassDays, true);
+function renderFestEvents() {
+  currentDayPassDays = ["day0", "day1", "day2", "day3"];
+  selectedEventsByDay = {}; // reset selections for fest
+  renderAccordion("festEventsContainer", currentDayPassDays, true);
+}
 
 
 
@@ -786,6 +789,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
