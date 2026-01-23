@@ -166,7 +166,6 @@ passCards.forEach((c) => {
     currentPassType = t;
     currentDayPassDays = [];
     currentVisitorDays = [];
-    includeStarNite = false;
 
     participantsCount = 0;
     renderSelectionArea();
@@ -633,6 +632,7 @@ payBtn.addEventListener("click", async () => {
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
