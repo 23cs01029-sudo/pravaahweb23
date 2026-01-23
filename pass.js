@@ -187,9 +187,11 @@ passCards.forEach((c) => {
     c.classList.add("selected");
 
     currentPassType = t;
-    currentDayPassDays = [];
-    currentVisitorDays = [];
-    participantsCount = 0;
+currentDayPassDays = [];
+currentVisitorDays = [];
+participantsCount = 0;
+selectedEventsByDay = {}; // ✅ RESET EVENTS WHEN PASS CHANGES
+
 
     renderSelectionArea();
   });
@@ -414,8 +416,9 @@ function attachParticipantControls(){
 }
 function renderAccordion(containerId, days, selectable) {
   const container = document.getElementById(containerId);
+  if (!container) return;
 
-  // ✅ SAVE CURRENT SELECTIONS
+  /* ===== SAVE CURRENT SELECTIONS ===== */
   document.querySelectorAll(".event-checkbox").forEach(cb => {
     const day = cb.dataset.day;
     if (!selectedEventsByDay[day]) selectedEventsByDay[day] = [];
@@ -435,22 +438,42 @@ function renderAccordion(containerId, days, selectable) {
     return;
   }
 
-  container.innerHTML = days.map(d => `
-    <div class="day-accordion open" data-day="${d}">
-      <div class="day-accordion-header">
-        <span>${d.toUpperCase()}</span>
-        <i class="fa-solid fa-chevron-down day-arrow"></i>
-      </div>
+  const isFest = currentPassType === "Fest Pass";
 
-      <div class="day-accordion-content">
-        ${EVENTS[d].map(e =>
-          renderEventRow(e, { dayKey: d, selectable })
-        ).join("")}
-      </div>
-    </div>
-  `).join("");
+  container.innerHTML = days.map(d => {
 
-  // ✅ RESTORE SELECTIONS
+    /* 🚫 DAY 0 — NO EVENTS, NO DROPDOWN */
+    if (!EVENTS[d] || EVENTS[d].length === 0) {
+      return `
+        <div class="day-accordion no-events">
+          <div class="day-accordion-header">
+            <span>${d.toUpperCase()}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    /* 🎯 OPEN LOGIC */
+    const shouldOpen =
+      !isFest && selectedEventsByDay[d]?.length > 0;
+
+    return `
+      <div class="day-accordion ${shouldOpen ? "open" : ""}" data-day="${d}">
+        <div class="day-accordion-header">
+          <span>${d.toUpperCase()}</span>
+          <i class="fa-solid fa-chevron-down day-arrow"></i>
+        </div>
+
+        <div class="day-accordion-content">
+          ${EVENTS[d].map(e =>
+            renderEventRow(e, { dayKey: d, selectable })
+          ).join("")}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  /* ===== RESTORE CHECKED EVENTS ===== */
   document.querySelectorAll(".event-checkbox").forEach(cb => {
     const day = cb.dataset.day;
     if (selectedEventsByDay[day]?.includes(cb.value)) {
@@ -458,34 +481,38 @@ function renderAccordion(containerId, days, selectable) {
     }
   });
 
-  // Accordion toggle
+  /* ===== TOGGLE HANDLER ===== */
   container.querySelectorAll(".day-accordion-header").forEach(h => {
     h.addEventListener("click", () => {
-      h.parentElement.classList.toggle("open");
+      const parent = h.parentElement;
+      if (parent.classList.contains("no-events")) return;
+      parent.classList.toggle("open");
     });
   });
 }
+
 
 
 /* =======================================
       RENDER DAY PASS EVENTS
 ======================================= */
 function renderDayEvents(days) {
-  renderAccordion("dayEventsContainer", days, true);
+  renderAccordion("dayEventsContainer", [...new Set(days)], true);
 }
+
 /* =======================================
       VISITOR PASS EVENTS
 ======================================= */
 function renderVisitorEvents(days) {
-  renderAccordion("visitorEventsContainer", days, false);
+  renderAccordion("visitorEventsContainer", [...new Set(days)], false);
 }
+
 /* =======================================
       FEST EVENTS
 ======================================= */
-function renderFestEvents() {
-  currentDayPassDays = ["day0", "day1", "day2", "day3"];
-  renderAccordion("festEventsContainer", currentDayPassDays, true);
-}
+
+selectedEventsByDay = {}; // ensure clean state
+renderAccordion("festEventsContainer", currentDayPassDays, true);
 
 
 
@@ -759,6 +786,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
