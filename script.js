@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentDate = new Date();
 
   const feedsByDate = {
-    "2025-12-11": [
+    "2025-12-5": [
       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
        { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
        { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
@@ -22,53 +22,56 @@ document.addEventListener("DOMContentLoaded", () => {
        { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
     ],
-    "2026-02-01": [
-    {
-      img: "DSC09133.JPG",
-      name: "Pravaah",
-      text: "Opening Ceremony",
-      time: "10:00 AM – 12:00 PM"
-    }
-  ],
+ 
 
+  // ================= DAY 1 (Feb 6) =================
   "2026-02-06": [
-    {
-      img: "StarNight_gallery.JPG",
-      name: "Star Night",
-      text: "Live Concert",
-      time: "6:00 PM – 9:00 PM"
-    },
-    {
-      img: "fashionshow_gallery.JPG",
-      name: "Fashion Show",
-      text: "Style & Glamour",
-      time: "3:00 PM – 5:00 PM"
-    }
+    { img: "guesttalk1.JPG", name: "Guest Talk 1", text: "Expert Session", time: "10:00 AM" },
+    { img: "fashionshow_gallery.JPG", name: "Fashion Show", text: "Style & Glamour", time: "11:30 AM" },
+    { img: "hackathon.JPG", name: "Data Science Hackathon", text: "24Hr Challenge", time: "12:00 PM" },
+    { img: "quiz.JPG", name: "General Quiz", text: "Brain Battle", time: "1:00 PM" },
+    { img: "Marcatus.JPG", name: "Marcatus", text: "Round 1 & 2", time: "2:00 PM" },
+    { img: "informal night.JPG", name: "Informal Night", text: "Fun & Games", time: "4:00 PM" },
+    { img: "startupExpo.JPG", name: "Startup Expo", text: "Both Slots", time: "5:00 PM" },
+    { img: "facepainting.JPG", name: "Face Painting", text: "Art Arena", time: "5:30 PM" },
+    { img: "robo soccor.JPG", name: "Robo Soccer", text: "Both Slots", time: "6:00 PM" },
+    { img: "shortfilm.JPG", name: "51-Hour Short Film", text: "Film Making Begins", time: "6:00 PM" },
+    { img: "abhinay.JPG", name: "Abhinay", text: "Both Slots", time: "7:00 PM" }
   ],
 
+
+  // ================= DAY 2 (Feb 7) =================
   "2026-02-07": [
-    {
-      img: "RoboWars_gallery.JPG",
-      name: "Robo Wars",
-      text: "Tech Combat Arena",
-      time: "11:00 AM – 2:00 PM"
-    },
-    {
-      img: "StreetDanceBattle_gallery.JPG",
-      name: "Street Dance Battle",
-      text: "Urban Moves",
-      time: "5:00 PM – 8:00 PM"
-    }
+    { img: "guesttalk2.JPG", name: "Guest Talk 2", text: "Tech Insights", time: "10:00 AM" },
+    { img: "comedy.JPG", name: "Comedy Night", text: "Laugh Out Loud", time: "11:00 AM" },
+    { img: "shortfilm.JPG", name: "51-Hour Short Film", text: "Continuation", time: "12:00 PM" },
+    { img: "webhackathon.JPG", name: "Web Hackathon", text: "Coding Battle", time: "1:00 PM" },
+    { img: "sciencequiz.JPG", name: "Science & Tech Quiz", text: "Quiz Challenge", time: "2:00 PM" },
+    { img: "bplan.JPG", name: "B-Plan", text: "Business Plan Contest", time: "3:00 PM" },
+    { img: "enigma.JPG", name: "Enigma", text: "Round 1 & 2", time: "4:00 PM" },
+    { img: "Innovation Expo_gallery.JPG", name: "Innovation Expo", text: "Both Slots", time: "5:00 PM" },
+    { img: "blastoff.JPG", name: "Blast Off", text: "Rocket Challenge", time: "6:00 PM" },
+    { img: "RoboRace.JPG", name: "Robo Race", text: "Speed Arena", time: "6:30 PM" },
+    { img: "monoact.JPG", name: "Monoact", text: "Solo Drama", time: "7:00 PM" },
+    { img: "Tamasha_gallery.JPG", name: "Tamasha", text: "Fun Event", time: "8:00 PM" }
   ],
 
+
+  // ================= DAY 3 (Feb 8) =================
   "2026-02-08": [
-    {
-      img: "Innovation Expo_gallery.JPG",
-      name: "Innovation Expo",
-      text: "Future Tech Showcase",
-      time: "10:00 AM – 4:00 PM"
-    }
+    { img: "guesttalk3.JPG", name: "Guest Talk 3", text: "Industry Leaders", time: "10:00 AM" },
+    { img: "starnight.JPG", name: "Star Night", text: "Celebrity Concert", time: "6:00 PM" },
+    { img: "djnight.JPG", name: "DJ Night", text: "Music & Lights", time: "8:00 PM" },
+    { img: "shortfilm.JPG", name: "51-Hour Short Film", text: "Final Screening", time: "12:00 PM" },
+    { img: "edusphere.JPG", name: "Edusphere", text: "Education Expo", time: "1:00 PM" },
+    { img: "iplauction.JPG", name: "IPL Auction", text: "Round 1 & 2", time: "2:00 PM" },
+    { img: "solodance.JPG", name: "Solo Dance", text: "Dance Battle", time: "3:00 PM" },
+    { img: "groupdance.JPG", name: "Group Dance", text: "Crew Battle", time: "4:00 PM" },
+    { img: "Trekkon_gallery.JPG", name: "Trekkon", text: "Treasure Hunt", time: "5:00 PM" },
+    { img: "StreetDanceBattle_gallery.JPG", name: "Street Battle", text: "Street Dance", time: "6:00 PM" }
   ]
+
+
     
   };
 
@@ -355,6 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
 
