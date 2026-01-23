@@ -637,6 +637,17 @@ function completeFreeRegistration() {
       return;
     }
   }
+  // 🔒 IITBBS EMAIL STRICT CHECK
+const loggedInEmail = auth.currentUser.email.toLowerCase();
+
+for (let p of participants) {
+  if (p.email.toLowerCase() !== loggedInEmail) {
+    alert(
+      "IITBBS students must register using the same IITBBS email as their profile."
+    );
+    return;
+  }
+}
 
   const regs = getRegistrations();
   if (!regs.days) regs.days = [];
@@ -745,6 +756,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
