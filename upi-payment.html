@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="pass.css">
 
+  <!-- Icons -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
   <!-- OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <!-- QR -->
@@ -29,8 +33,29 @@
       <div id="qrBox"></div>
     </div>
 
-    <p style="color:var(--muted); margin-bottom:18px;">
-      Scan the QR and complete payment.<br>
+    <p style="color:var(--muted); margin-bottom:10px;">
+      Scan the QR and complete payment.
+    </p>
+
+    <p style="font-size:13px; color:#ffb84d; margin-bottom:16px;">
+      ⚠️ QR must be scanned using camera.  
+      Uploading QR images into UPI apps is not supported.
+    </p>
+
+    <!-- PAY USING UPI APP -->
+    <a
+      id="upiPayBtn"
+      class="main-btn"
+      style="width:220px; margin:14px auto; display:block; text-decoration:none;"
+    >
+      Pay using UPI App
+    </a>
+
+    <p style="font-size:13px; color:#9fb0b7;">
+      (Opens PhonePe / GPay / Paytm)
+    </p>
+
+    <p style="color:var(--muted); margin:18px 0;">
       After payment, upload the screenshot below.
     </p>
 
@@ -55,6 +80,9 @@
       <div id="fileName" style="margin-top:8px; font-size:14px; color:#aaa;">
         No file selected
       </div>
+
+      <!-- STATUS (used by JS) -->
+      <div id="uploadStatus" style="margin-top:6px; font-size:14px;"></div>
     </div>
 
     <!-- ACTION BUTTONS -->
@@ -79,39 +107,35 @@
 
     <!-- CONTACT -->
     <div
-  style="
-    margin-top:28px;
-    padding-top:18px;
-    border-top:1px solid rgba(255,255,255,0.12);
-    text-align:center;
-  "
->
-  <p style="font-size:14px; color:#b8c7cc; margin-bottom:8px;">
-    Facing any issue with payment?
-  </p>
+      style="
+        margin-top:28px;
+        padding-top:18px;
+        border-top:1px solid rgba(255,255,255,0.12);
+        text-align:center;
+      "
+    >
+      <p style="font-size:14px; color:#b8c7cc; margin-bottom:8px;">
+        Facing any issue with payment?
+      </p>
 
-  <a
-    href="mailto:pravah@iitbbs.ac.in"
-    style="
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 18px;
-      border-radius:999px;
-      background:rgba(0,246,255,0.12);
-      color:#00f6ff;
-      font-weight:600;
-      text-decoration:none;
-      transition:0.3s ease;
-    "
-    onmouseover="this.style.background='rgba(0,246,255,0.22)'"
-    onmouseout="this.style.background='rgba(0,246,255,0.12)'"
-  >
-    <i class="fa-solid fa-envelope"></i>
-    Contact Support
-  </a>
-</div>
-
+      <a
+        href="mailto:pravah@iitbbs.ac.in"
+        style="
+          display:inline-flex;
+          align-items:center;
+          gap:8px;
+          padding:10px 18px;
+          border-radius:999px;
+          background:rgba(0,246,255,0.12);
+          color:#00f6ff;
+          font-weight:600;
+          text-decoration:none;
+        "
+      >
+        <i class="fa-solid fa-envelope"></i>
+        Contact Support
+      </a>
+    </div>
 
   </div>
 </main>
