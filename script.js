@@ -260,10 +260,12 @@ const aftermovieBtn = document.getElementById("aftermovieBtn");
 const themeBtn = document.getElementById("themeBtn");
 
 const AFTERMOVIE_URL =
-  "https://www.youtube.com/embed/AFTERMOVIE_ID?autoplay=1&mute=1&rel=0";
+  "https://www.youtube.com/embed/kH1XlwHQv9o?loop=1&playlist=kH1XlwHQv9o&rel=0";
+
 
 const THEME_URL =
-  "https://www.youtube.com/embed/THEMEVIDEO_ID?autoplay=1&mute=1&rel=0";
+  "https://www.youtube.com/embed/kH1XlwHQv9o?loop=1&playlist=kH1XlwHQv9o&rel=0";
+
 
 aftermovieBtn?.addEventListener("click", () => {
   mainVideo.src = AFTERMOVIE_URL;
@@ -426,6 +428,7 @@ themeBtn?.addEventListener("click", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
 
