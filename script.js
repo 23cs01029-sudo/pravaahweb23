@@ -10,31 +10,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const feedsByDate = { 
      "2026-01-27": [
-      { img: "Pravaah.JPG", name: "9days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "9days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-01-28": [
-      { img: "Pravaah.JPG", name: "8days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "8days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-01-29": [
-      { img: "Pravaah.JPG", name: "7days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "7days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-01-30": [
-      { img: "Pravaah.JPG", name: "6days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "6days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-01-31": [
-      { img: "Pravaah.JPG", name: "5days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "5days to go", text: "Somethings cooking", time: "soon" },
     ],
     "2026-02-01": [
-      { img: "Pravaah.JPG", name: "4days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "4days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-02-02": [
-      { img: "Pravaah.JPG", name: "3days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "3days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-02-03": [
-      { img: "Pravaah.JPG", name: "2days to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "2days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-02-04": [
-      { img: "Pravaah.JPG", name: "1day to go", text: "Somethings cooking", time: "soon" },
+      { img: "Pravaah logo.png", name: "1day to go", text: "Somethings cooking", time: "soon" },
     ],
     "2026-02-05": [
       { img: "Openingcermony.JPG", name: "Pravaah", text: "Opening Cermony", time: "6:30 PM" },
@@ -428,6 +428,7 @@ themeBtn?.addEventListener("click", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
 
