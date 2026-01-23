@@ -8,19 +8,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentDate = new Date();
 
-  const feedsByDate = {
-    "2025-12-5": [
-      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
-      { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
+  const feedsByDate = { 
+     "2026-1-30": [
+      { img: "Pravaah.JPG", name: "6days to go", text: "Somethings cooking", time: "soon" },
+    ],
+     "2026-1-31": [
+      { img: "Pravaah.JPG", name: "5days to go", text: "Somethings cooking", time: "soon" },
+    ],
+    "2026-2-01": [
+      { img: "Pravaah.JPG", name: "4days to go", text: "Somethings cooking", time: "soon" },
+    ],
+     "2026-2-02": [
+      { img: "Pravaah.JPG", name: "3days to go", text: "Somethings cooking", time: "soon" },
+    ],
+     "2026-2-03": [
+      { img: "Pravaah.JPG", name: "2days to go", text: "Somethings cooking", time: "soon" },
+    ],
+     "2026-2-04": [
+      { img: "Pravaah.JPG", name: "1day to go", text: "Somethings cooking", time: "soon" },
+    ],
+    "2026-2-05": [
+      { img: "Openingcermony.JPG", name: "Pravaah", text: "Opening Cermony", time: "6:30 PM" },
     ],
   "2026-02-06": [
     { img: "guesttalk1.JPG", name: "Guest Talk 1", text: "Expert Session", time: "10:00 AM" },
@@ -356,6 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
 
