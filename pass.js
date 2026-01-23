@@ -28,11 +28,27 @@ const EVENTS = {
 };
 
 const PRICES = {
-  dayPass: { day0: 300, day1: 800, day2: 800, day3_normal: 800, day3_star: 1100 },
-  visitor: { day0: 400, day1: 500, day2: 500, day3_normal: 500, day3_star: 800 },
-  fest: { normal: 2000, star: 2500 },
-  starnite: 300
+  dayPass: {
+    day0: 99,
+    day1: 199,
+    day2: 199,
+    day3: 249
+  },
+
+  visitor: {
+    day0: 99,
+    day1: 149,
+    day2: 149,
+    day3: 199
+  },
+
+  fest: {
+    normal: 599
+  },
+
+  starnite: 99
 };
+
 
 
 
@@ -51,7 +67,7 @@ if (payBtn) payBtn.setAttribute("type", "button");
 let currentPassType = null;
 let currentDayPassDays = [];
 let currentVisitorDays = [];
-let includeStarNite = false;
+
 let participantsCount = 0;
 
 let cachedProfile = {};
@@ -160,16 +176,7 @@ passCards.forEach((c) => {
 /* =======================================
       STAR NITE TOGGLE TEMPLATE
 ======================================= */
-function starNiteToggleHTML(id) {
-  return `
-    <div class="starnite-toggle-row">
-        <label>
-            <input type="checkbox" id="${id}">
-            <span>Include Star Nite</span>
-        </label>
-    </div>
-  `;
-}
+
 
 /* =======================================
       RENDER SELECTION AREA
@@ -243,7 +250,7 @@ function renderSelectionArea() {
 
     <!-- EVENTS FIRST -->
     <div id="visitorEventsContainer"></div>
-    <div id="visitorStarContainer"></div>
+    
 
     <!-- PARTICIPANTS NEXT -->
     <div style="text-align:center;margin-top:18px;">
@@ -272,7 +279,6 @@ function renderSelectionArea() {
         }
 
         renderVisitorEvents(currentVisitorDays);
-        renderVisitorStarToggleIfNeeded();
         calculateTotal();
 
       })
@@ -363,30 +369,21 @@ function renderDayEvents(days) {
   const container = document.getElementById("dayEventsContainer");
   if (!days.length) {
     container.innerHTML = "";
-    includeStarNite = false;
     return;
   }
-if (!days.includes("day3")) {
-  includeStarNite = false;
-}
+
   container.innerHTML = days.map(d => `
     <div class="participant-card">
       <h4>${d.toUpperCase()}</h4>
       <div>
-        ${EVENTS[d].map(e => renderEventRow(e, { dayKey: d, selectable: true })).join("")}
+        ${EVENTS[d].map(e =>
+          renderEventRow(e, { dayKey: d, selectable: true })
+        ).join("")}
       </div>
-      ${d === "day3" ? starNiteToggleHTML("day3StarToggle_daypass") : ""}
     </div>
   `).join("");
-
-  const toggle = document.getElementById("day3StarToggle_daypass");
-  if (toggle) {
-    toggle.addEventListener("change", () => {
-      includeStarNite = toggle.checked;
-      calculateTotal();
-    });
-  }
 }
+
 
 
 /* =======================================
@@ -413,24 +410,7 @@ function renderVisitorEvents(days) {
     .join("");
 }
 
-/* --- Visitor Star toggle --- */
-function renderVisitorStarToggleIfNeeded() {
-  const c = document.getElementById("visitorStarContainer");
 
-  if (currentVisitorDays.includes("day3")) {
-    c.innerHTML = starNiteToggleHTML("visitorStar");
-
-    document.getElementById("visitorStar").addEventListener("change", (e) => {
-      includeStarNite = e.target.checked;
-      calculateTotal();
-
-
-    });
-  } else {
-    c.innerHTML = "";
-    includeStarNite = false;
-  }
-}
 
 /* =======================================
       FEST EVENTS
@@ -445,19 +425,11 @@ function renderFestEvents() {
       <div class="participant-card">
         <h4>${d.toUpperCase()}</h4>
         <div>${EVENTS[d].map((ev) => renderEventRow(ev, { dayKey: d, selectable: true })).join("")}</div>
-        ${d === "day3" ? starNiteToggleHTML("festStar") : ""}
       </div>
   `
     )
     .join("");
 
-  const toggle = document.getElementById("festStar");
-  if (toggle)
-    toggle.addEventListener("change", () => {
-      includeStarNite = toggle.checked;
-      calculateTotal();
-
-    });
 }
 
 /* =======================================
@@ -537,32 +509,21 @@ function calculateTotal() {
   let base = 0;
 
   if (currentPassType === "Day Pass") {
-  if (!currentDayPassDays.length) return updateTotal(0);
+    if (!currentDayPassDays.length) return updateTotal(0);
 
-  currentDayPassDays.forEach(d => {
-    base +=
-      d !== "day3"
-        ? PRICES.dayPass[d]
-        : includeStarNite
-        ? PRICES.dayPass.day3_star
-        : PRICES.dayPass.day3_normal;
-  });
-}
-
+    currentDayPassDays.forEach(d => {
+      base += PRICES.dayPass[d];
+    });
+  }
 
   if (currentPassType === "Visitor Pass") {
-    currentVisitorDays.forEach((d) => {
-      base +=
-        d !== "day3"
-          ? PRICES.visitor[d]
-          : includeStarNite
-          ? PRICES.visitor.day3_star
-          : PRICES.visitor.day3_normal;
+    currentVisitorDays.forEach(d => {
+      base += PRICES.visitor[d];
     });
   }
 
   if (currentPassType === "Fest Pass") {
-    base = includeStarNite ? PRICES.fest.star : PRICES.fest.normal;
+    base = PRICES.fest.normal;
   }
 
   if (currentPassType === "Starnite Pass") {
@@ -600,16 +561,13 @@ function collectSelectedEvents() {
 /* =======================================
       PAYMENT HANDLER
 ======================================= */
-/* =======================================
-      PAYMENT HANDLER (FINAL FIXED)
-======================================= */
 payBtn.addEventListener("click", async () => {
   if (paying) return;
   paying = true;
 
   const numInputLocal = document.getElementById("numParticipants");
   if (!numInputLocal) {
-    alert("Please select pass and number of participants first.");
+    alert("Please select a pass and number of participants.");
     paying = false;
     return;
   }
@@ -642,7 +600,7 @@ payBtn.addEventListener("click", async () => {
     }
   }
 
-  /* 🔐 CREATE PAYMENT SESSION (UPDATED) */
+  /* 🔐 CREATE PAYMENT SESSION — FINAL CLEAN VERSION */
   const paymentSession = {
     sessionId: "PAY_" + Date.now() + "_" + Math.floor(Math.random() * 100000),
     createdAt: Date.now(),
@@ -655,7 +613,10 @@ payBtn.addEventListener("click", async () => {
     participants,
     daySelected: currentDayPassDays,
     visitorDays: currentVisitorDays,
-    starnite: includeStarNite,
+
+    // ✅ StarNite ONLY if pass itself is StarNite
+    starnite: currentPassType === "Starnite Pass",
+
     events: collectSelectedEvents()
   };
 
@@ -665,8 +626,10 @@ payBtn.addEventListener("click", async () => {
     JSON.stringify(paymentSession)
   );
 
-  /* ➡️ REDIRECT TO UPI PAYMENT */
+  /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
+
 
 
