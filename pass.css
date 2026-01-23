@@ -660,6 +660,31 @@ body {
 .day-accordion.no-events .dropdown-arrow {
   display: none;
 }
+.day-accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdown-arrow {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #24E0EC;
+  border-bottom: 2px solid #24E0EC;
+  transform: rotate(45deg);
+  transition: transform 0.25s ease;
+  filter: drop-shadow(0 0 6px rgba(36,224,236,.6));
+}
+
+.day-accordion.open .dropdown-arrow {
+  transform: rotate(-135deg);
+}
+
+.day-accordion.no-events .dropdown-arrow {
+  display: none;
+}
+
 
 
 
