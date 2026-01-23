@@ -253,21 +253,30 @@ if ([5, 6, 7, 8].includes(i) && month === 1 && year === 2026) {
 
   /* ---------------------- VIDEO SWITCH ---------------------- */
 
-  const mainVideo = document.getElementById("mainVideo");
-  const aftermovieBtn = document.getElementById("aftermovieBtn");
-  const themeBtn = document.getElementById("themeBtn");
+/* ---------------------- VIDEO SWITCH (YOUTUBE) ---------------------- */
 
-  aftermovieBtn?.addEventListener("click", () => {
-    mainVideo.src = "aftermovie.mp4";
-    aftermovieBtn.classList.add("active");
-    themeBtn.classList.remove("active");
-  });
+const mainVideo = document.getElementById("mainVideo");
+const aftermovieBtn = document.getElementById("aftermovieBtn");
+const themeBtn = document.getElementById("themeBtn");
 
-  themeBtn?.addEventListener("click", () => {
-    mainVideo.src = "themevideo.mp4";
-    themeBtn.classList.add("active");
-    aftermovieBtn.classList.remove("active");
-  });
+const AFTERMOVIE_URL =
+  "https://www.youtube.com/embed/AFTERMOVIE_ID?autoplay=1&mute=1&rel=0";
+
+const THEME_URL =
+  "https://www.youtube.com/embed/THEMEVIDEO_ID?autoplay=1&mute=1&rel=0";
+
+aftermovieBtn?.addEventListener("click", () => {
+  mainVideo.src = AFTERMOVIE_URL;
+  aftermovieBtn.classList.add("active");
+  themeBtn.classList.remove("active");
+});
+
+themeBtn?.addEventListener("click", () => {
+  mainVideo.src = THEME_URL;
+  themeBtn.classList.add("active");
+  aftermovieBtn.classList.remove("active");
+});
+
 
 
 
@@ -417,6 +426,7 @@ if ([5, 6, 7, 8].includes(i) && month === 1 && year === 2026) {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
 
