@@ -1639,6 +1639,45 @@ video:-webkit-full-screen {
   transform: scale(1.2);
   color: #66ffff;
 }
+/* ===========================
+   🎉 FEST DAYS HIGHLIGHT
+=========================== */
+
+.fest-day {
+  background: linear-gradient(
+    135deg,
+    rgba(122, 0, 255, 0.35),
+    rgba(36, 224, 236, 0.35)
+  );
+  border: 2px solid #7A00FF;
+  box-shadow:
+    0 0 12px rgba(122, 0, 255, 0.45),
+    0 0 20px rgba(36, 224, 236, 0.35);
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Hover stronger */
+.fest-day:hover {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 18px rgba(122, 0, 255, 0.65),
+    0 0 28px rgba(36, 224, 236, 0.55);
+}
+
+/* Selected + Fest */
+.fest-day.selected {
+  background: linear-gradient(
+    135deg,
+    rgba(242, 215, 166, 0.45),
+    rgba(122, 0, 255, 0.55)
+  );
+  border-color: var(--gold);
+  box-shadow:
+    0 0 22px rgba(242, 215, 166, 0.6),
+    0 0 30px rgba(122, 0, 255, 0.5);
+}
+
 
 
 
