@@ -1583,6 +1583,63 @@ video:-webkit-full-screen {
     width: 300px;
   }
 }
+/* ===========================
+   FEED ROW LAYOUT (NEW)
+=========================== */
+
+.feed-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* First row: Name + Time */
+.feed-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Event name */
+.feed-row h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Time */
+.event-time {
+  font-size: 0.85rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Second row: text + location */
+.feed-row.secondary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feed-row.secondary p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  max-width: 80%;
+}
+
+/* Location icon only */
+.event-location {
+  font-size: 1rem;
+  color: var(--primary);
+  transition: 0.25s ease;
+}
+
+.event-location:hover {
+  transform: scale(1.2);
+  color: #66ffff;
+}
+
 
 
 
