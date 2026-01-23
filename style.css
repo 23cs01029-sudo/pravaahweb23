@@ -1644,7 +1644,7 @@ video:-webkit-full-screen {
 =========================== */
 
 .fest-day {
-  background-color:violet;
+  background-color:rgba(255,255,255,0.06);
   border: 2px solid #EFBF04;
   box-shadow:
     0 0 12px rgba(122, 0, 255, 0.45),
@@ -1696,6 +1696,7 @@ video:-webkit-full-screen {
     aspect-ratio: 16 / 9;
   }
 }
+
 
 
 
