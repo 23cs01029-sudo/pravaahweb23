@@ -304,6 +304,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const menuToggle = document.getElementById("menuToggle");
+  const menu = document.getElementById("menu");
+
+  menuToggle?.addEventListener("click", () => {
+    menu.classList.toggle("active");
+  });
+
+  // Close menu when clicking a link (mobile UX)
+  document.querySelectorAll("#menu a").forEach(link => {
+    link.addEventListener("click", () => {
+      menu.classList.remove("active");
+    });
+  });
+});
+</script>
 
 </body>
 </html>
