@@ -276,6 +276,40 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
 
 </div>
+<script type="module">
+  import { auth } from "./auth.js";
+  import { signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoutDesktop = document.getElementById("logoutDesktop");
+    const logoutMobile = document.getElementById("logoutMobile");
+    const dashboardNav = document.getElementById("dashboardNav");
+
+    const logout = async () => {
+      try {
+        await signOut(auth);
+        localStorage.clear();   // 🔐 clear payment/session cache
+        window.location.href = "index.html";
+      } catch (err) {
+        alert("Logout failed");
+        console.error(err);
+      }
+    };
+
+    logoutDesktop?.addEventListener("click", logout);
+    logoutMobile?.addEventListener("click", logout);
+
+    /* ✅ Optional: hide/show dashboard based on login */
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dashboardNav?.classList.remove("hidden");
+      } else {
+        dashboardNav?.classList.add("hidden");
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
