@@ -24,10 +24,9 @@ if (now > end) {
   window.location.replace("home.html");
 }
 
-/* ================= PAGE LOCK CONTROL ================= */
+/* ================= PAGE LOCK ================= */
 let allowExit = false;
-
-window.addEventListener("beforeunload", e => {
+window.addEventListener("beforeunload", (e) => {
   if (!allowExit) {
     e.preventDefault();
     e.returnValue = "";
@@ -42,7 +41,7 @@ document.getElementById("sessionInfo").innerHTML = `
   <p><b>Amount:</b> ₹${amount}</p>
 `;
 
-/* ================= DYNAMIC UPI QR ================= */
+/* ================= DYNAMIC QR ================= */
 const upiLink =
   `upi://pay?pa=${UPI_ID}` +
   `&pn=${encodeURIComponent(RECEIVER_NAME)}` +
@@ -56,88 +55,123 @@ new QRCode(document.getElementById("qrBox"), {
   height: 240
 });
 
-/* ================= OCR ================= */
+/* ================= OCR & UPLOAD ================= */
 const fileInput = document.getElementById("screenshot");
 const confirmBtn = document.getElementById("confirmBtn");
 const fileNameEl = document.getElementById("fileName");
+const uploadStatusEl = document.getElementById("uploadStatus");
 
 let extractedUTR = null;
+let uploadedFile = null;
 
 fileInput.addEventListener("change", async () => {
   const file = fileInput.files[0];
   if (!file) return;
 
+  // 🔒 Only ONE image
+  if (fileInput.files.length > 1) {
+    alert("Please upload only one screenshot.");
+    fileInput.value = "";
+    return;
+  }
+
+  uploadedFile = file;
   extractedUTR = null;
+
   confirmBtn.disabled = true;
-  confirmBtn.textContent = "Processing screenshot…";
+  confirmBtn.textContent = "Processing…";
 
   if (fileNameEl) fileNameEl.textContent = file.name;
+  if (uploadStatusEl) {
+    uploadStatusEl.textContent = "⏳ Processing screenshot…";
+    uploadStatusEl.style.color = "#ffd36a";
+  }
 
   try {
     const { data } = await Tesseract.recognize(file, "eng");
     const text = data.text.toUpperCase();
 
-    /* 🔢 UTR (12–16 digits) */
+    /* 🔢 UTR */
     const utrMatch = text.match(/\b\d{12,16}\b/);
 
-    /* 💰 Amount (robust) */
+    /* 💰 Amount */
     const cleanText = text.replace(/[,₹RSINR]/g, "");
-    const amountRegex = new RegExp(`\\b${amount}(\\.00)?\\b`);
-    const amountOk = amountRegex.test(cleanText);
+    const amountOk = new RegExp(`\\b${amount}(\\.00)?\\b`).test(cleanText);
 
     /* 👤 Receiver */
     const receiverOk = RECEIVER_KEYWORDS.some(k => text.includes(k));
 
     if (utrMatch && amountOk && receiverOk) {
       extractedUTR = utrMatch[0];
+
       confirmBtn.disabled = false;
       confirmBtn.textContent = "Confirm Payment";
+
+      if (uploadStatusEl) {
+        uploadStatusEl.textContent = "✅ Screenshot verified";
+        uploadStatusEl.style.color = "#4cff88";
+      }
     } else {
       confirmBtn.textContent = "Confirm Payment";
+
+      if (uploadStatusEl) {
+        uploadStatusEl.textContent = "❌ Verification failed";
+        uploadStatusEl.style.color = "#ff5c5c";
+      }
+
       alert(
-        "Unable to verify payment from screenshot.\n\n" +
-        "Please ensure:\n" +
-        "• UTR is visible\n" +
-        "• Amount is ₹" + amount + "\n" +
-        "• Receiver name is visible"
+        "Could not verify payment.\n\n" +
+        "Make sure screenshot shows:\n" +
+        "• UTR\n" +
+        "• Amount ₹" + amount + "\n" +
+        "• Receiver name"
       );
     }
-
   } catch (err) {
     console.error(err);
     confirmBtn.textContent = "Confirm Payment";
-    alert("Failed to process screenshot. Please try again.");
+
+    if (uploadStatusEl) {
+      uploadStatusEl.textContent = "❌ Processing failed";
+      uploadStatusEl.style.color = "#ff5c5c";
+    }
+
+    alert("Screenshot processing failed. Please try again.");
   }
 });
 
 /* ================= CONFIRM PAYMENT ================= */
 confirmBtn.onclick = async () => {
   if (!extractedUTR) {
-    alert("UTR not detected. Please upload a valid screenshot.");
+    alert("Please upload a valid payment screenshot.");
     return;
   }
 
   confirmBtn.disabled = true;
   confirmBtn.textContent = "Confirming…";
 
-  const res = await fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      type: "UPI_PAYMENT_CONFIRM",
-      utr: extractedUTR,
-      session
-    })
-  });
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "UPI_PAYMENT_CONFIRM",
+        utr: extractedUTR,
+        session
+      })
+    });
 
-  const out = await res.json();
+    const out = await res.json();
 
-  if (out.ok) {
-    allowExit = true;
-    localStorage.removeItem(SESSION_KEY);
-    window.location.replace("payment-success.html");
-  } else {
-    alert(out.error || "Payment validation failed");
+    if (out.ok) {
+      allowExit = true;
+      localStorage.removeItem(SESSION_KEY);
+      window.location.replace("payment-success.html");
+    } else {
+      throw new Error(out.error || "Payment validation failed");
+    }
+  } catch (err) {
+    alert(err.message);
     confirmBtn.disabled = false;
     confirmBtn.textContent = "Confirm Payment";
   }
