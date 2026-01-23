@@ -411,79 +411,58 @@ function attachParticipantControls(){
     buildParticipantForms(v);
   });
 }
+function renderAccordion(containerId, days, selectable) {
+  const container = document.getElementById(containerId);
 
-/* =======================================
-      RENDER DAY PASS EVENTS
-======================================= */
-function renderDayEvents(days) {
-  const container = document.getElementById("dayEventsContainer");
   if (!days.length) {
     container.innerHTML = "";
     return;
   }
 
   container.innerHTML = days.map(d => `
-    <div class="participant-card">
-      <h4>${d.toUpperCase()}</h4>
-      <div>
+    <div class="day-accordion" data-day="${d}">
+      
+      <div class="day-accordion-header">
+        <span>${d.toUpperCase()}</span>
+        <i class="fa-solid fa-chevron-down day-arrow"></i>
+      </div>
+
+      <div class="day-accordion-content">
         ${EVENTS[d].map(e =>
-          renderEventRow(e, { dayKey: d, selectable: true })
+          renderEventRow(e, { dayKey: d, selectable })
         ).join("")}
       </div>
+
     </div>
   `).join("");
+
+  container.querySelectorAll(".day-accordion-header").forEach(h => {
+    h.addEventListener("click", () => {
+      h.parentElement.classList.toggle("open");
+    });
+  });
 }
 
-
-
+/* =======================================
+      RENDER DAY PASS EVENTS
+======================================= */
+function renderDayEvents(days) {
+  renderAccordion("dayEventsContainer", days, true);
+}
 /* =======================================
       VISITOR PASS EVENTS
 ======================================= */
 function renderVisitorEvents(days) {
-
-  const c = document.getElementById("visitorEventsContainer");
-
-  if (!days.length) {
-    c.innerHTML = "";
-    return;
-  }
-
-  c.innerHTML = days
-    .map(
-      (d) => `
-    <div class="participant-card">
-      <h4>${d.toUpperCase()}</h4>
-      <div>${EVENTS[d].map((ev) => renderEventRow(ev, { dayKey: d, selectable: false })).join("")}</div>
-    </div>
-  `
-    )
-    .join("");
+  renderAccordion("visitorEventsContainer", days, false);
 }
-
-
-
 /* =======================================
       FEST EVENTS
 ======================================= */
 function renderFestEvents() {
-  const c = document.getElementById("festEventsContainer");
   currentDayPassDays = ["day0", "day1", "day2", "day3"];
-
-  c.innerHTML = ["day0", "day1", "day2", "day3"]
-    .map(
-      (d) => `
-      <div class="participant-card">
-        <h4>${d.toUpperCase()}</h4>
-        <div>
-          ${EVENTS[d].map(ev =>
-            renderEventRow(ev, { dayKey: d, selectable: true })
-          ).join("")}
-        </div>
-      </div>
-      `
-    )
-    .join("");
+  renderAccordion("festEventsContainer", currentDayPassDays, true);
 }
+
 
 
 /* =======================================
@@ -756,6 +735,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
