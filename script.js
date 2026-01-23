@@ -21,39 +21,55 @@ document.addEventListener("DOMContentLoaded", () => {
        { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
        { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" },
       { img: "DSC09133.JPG", name: "Pravaah", text: "2nd Edition", time: "11:59" }
-    ]
-    "2026-02-05": [
+    ],
+    "2026-02-01": [
     {
-      title: "Inauguration",
-      time: "9:30 AM – 11:00 AM",
-      location: "Main Auditorium",
-      register: "registrationPravaah.html"
+      img: "DSC09133.JPG",
+      name: "Pravaah",
+      text: "Opening Ceremony",
+      time: "10:00 AM – 12:00 PM"
     }
   ],
 
   "2026-02-06": [
     {
-      title: "Robo Race",
-      time: "10:00 AM – 12:00 PM",
-      location: "Main Ground",
-      register: "registrationPravaah.html"
+      img: "StarNight_gallery.JPG",
+      name: "Star Night",
+      text: "Live Concert",
+      time: "6:00 PM – 9:00 PM"
     },
     {
-      title: "Hackathon",
-      time: "11:00 AM – 5:00 PM",
-      location: "IT Block",
-      register: "registrationPravaah.html"
+      img: "fashionshow_gallery.JPG",
+      name: "Fashion Show",
+      text: "Style & Glamour",
+      time: "3:00 PM – 5:00 PM"
     }
   ],
 
   "2026-02-07": [
     {
-      title: "Cultural Night",
-      time: "6:00 PM – 9:00 PM",
-      location: "Open Auditorium",
-      register: "registrationPravaah.html"
+      img: "RoboWars_gallery.JPG",
+      name: "Robo Wars",
+      text: "Tech Combat Arena",
+      time: "11:00 AM – 2:00 PM"
+    },
+    {
+      img: "StreetDanceBattle_gallery.JPG",
+      name: "Street Dance Battle",
+      text: "Urban Moves",
+      time: "5:00 PM – 8:00 PM"
     }
   ],
+
+  "2026-02-08": [
+    {
+      img: "Innovation Expo_gallery.JPG",
+      name: "Innovation Expo",
+      text: "Future Tech Showcase",
+      time: "10:00 AM – 4:00 PM"
+    }
+  ]
+    
   };
 
   const defaultFeed = [
@@ -339,5 +355,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
