@@ -418,19 +418,23 @@ function renderVisitorEvents(days) {
 function renderFestEvents() {
   const c = document.getElementById("festEventsContainer");
   currentDayPassDays = ["day0", "day1", "day2", "day3"];
-  includeStarNite = false;
+
   c.innerHTML = ["day0", "day1", "day2", "day3"]
     .map(
       (d) => `
       <div class="participant-card">
         <h4>${d.toUpperCase()}</h4>
-        <div>${EVENTS[d].map((ev) => renderEventRow(ev, { dayKey: d, selectable: true })).join("")}</div>
+        <div>
+          ${EVENTS[d].map(ev =>
+            renderEventRow(ev, { dayKey: d, selectable: true })
+          ).join("")}
+        </div>
       </div>
-  `
+      `
     )
     .join("");
-
 }
+
 
 /* =======================================
       PARTICIPANT FORM GENERATION
@@ -629,6 +633,7 @@ payBtn.addEventListener("click", async () => {
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
