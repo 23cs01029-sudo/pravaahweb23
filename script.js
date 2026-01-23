@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const feedsByDate = { 
      "2026-01-27": [
-      { img: "Pravaah logo.png", name: "9days to go", text: "Somethings cooking", time: "soon" },
+      { img: "pravah-logo.png", name: "9days to go", text: "Somethings cooking", time: "soon" },
     ],
      "2026-01-28": [
       { img: "Pravaah logo.png", name: "8days to go", text: "Somethings cooking", time: "soon" },
@@ -428,6 +428,7 @@ themeBtn?.addEventListener("click", () => {
     if (endX - startX > 60) leftArrow.click();
   });
 });
+
 
 
 
