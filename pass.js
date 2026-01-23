@@ -388,11 +388,27 @@ if (regs.days?.includes(d)) {
     <div id="participantsContainerPlaceholder"></div>
   `;
   }
+  // 🔒 IITBBS USERS — FORCE SINGLE PARTICIPANT
+if (isIITBBSUser()) {
+  const counterBox = document.querySelector(".custom-number-box");
+  if (counterBox) counterBox.style.display = "none";
+
+  const numInput = document.getElementById("numParticipants");
+  if (numInput) {
+    numInput.value = 1;
+    numInput.setAttribute("disabled", "true");
+  }
+
+  participantsCount = 1;
+  buildParticipantForms(1);
+}
+
 attachParticipantControls(); 
   calculateTotal();
 
 }
 function attachParticipantControls(){
+  if (isIITBBSUser()) return;
   const numInputLocal = document.getElementById("numParticipants");
   const incLocal = document.getElementById("incPart");
   const decLocal = document.getElementById("decPart");
@@ -796,6 +812,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
