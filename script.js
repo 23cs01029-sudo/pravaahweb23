@@ -90,19 +90,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ================= DAY 3 (Feb 8) =================
  "2026-02-08": [
-  { img: "guesttalk3.JPG", name: "Guest Talk – 3", text: "", time: "8:00 AM" },
-  { img: "shortfilm.JPG", name: "51-Hour Short Film", text: "", time: "9:00 AM" },
-  { img: "edusphere.JPG", name: "Edusphere", text: "", time: "10:00 AM" },
+  { img: "Guest Talk.JPG", name: "Guest Talk – 3", text: "", time: "8:00 AM" },
+  { img: "51hr flimmaking events.avif", name: "51-Hour Short Film", text: "", time: "9:00 AM" },
+  { img: "edusphere.png", name: "Edusphere", text: "", time: "10:00 AM" },
 
-  { img: "iplauction.JPG", name: "IPL Auction – Round 1", text: "", time: "11:00 AM" },
-  { img: "iplauction.JPG", name: "IPL Auction – Round 2", text: "", time: "12:00 PM" },
+  { img: "ipl quiz_events (1).png", name: "IPL Auction – Round 1", text: "", time: "11:00 AM" },
+  { img: "ipl quiz_events (1).png", name: "IPL Auction – Round 2", text: "", time: "12:00 PM" },
 
-  { img: "solodance.JPG", name: "Solo Dance", text: "", time: "1:00 PM" },
-  { img: "groupdance.JPG", name: "Group Dance", text: "", time: "2:00 PM" },
-  { img: "Trekkon_gallery.JPG", name: "Trekkon", text: "", time: "3:00 PM" },
-  { img: "StreetDanceBattle_gallery.JPG", name: "Street Battle", text: "", time: "4:00 PM" },
+  { img: "SoloDance_events.jpg", name: "Solo Dance", text: "", time: "1:00 PM" },
+  { img: "group Dance_events.JPG", name: "Group Dance", text: "", time: "2:00 PM" },
+  { img: "trekkon event.jpg", name: "Trekkon", text: "", time: "3:00 PM" },
+  { img: "StreetDanceBattle_gallery.jpg", name: "Street Battle", text: "", time: "4:00 PM" },
 
-  { img: "starnight.JPG", name: "Star Night", text: "", time: "7:00 PM" },
+  { img: "StarNight_events.JPG", name: "Star Night", text: "", time: "7:00 PM" },
   { img: "djnight.JPG", name: "DJ Night", text: "", time: "7:00 PM" }
 ]
 
@@ -458,6 +458,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
