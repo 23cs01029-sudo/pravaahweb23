@@ -65,6 +65,13 @@ function saveRegistrations(data) {
 
 let selectedEventsByDay = {};
 
+const DAY_ORDER = ["day0", "day1", "day2", "day3"];
+
+function sortDays(arr) {
+  return [...new Set(arr)].sort(
+    (a, b) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b)
+  );
+}
 
 /* =======================================
       DOM ELEMENTS
@@ -261,7 +268,7 @@ if (regs.days?.includes(d)) {
       currentDayPassDays = currentDayPassDays.filter(x => x !== d);
       btn.classList.remove("active");
     } else {
-      currentDayPassDays.push(d);
+      currentDayPassDays = sortDays([...currentDayPassDays, d]);
       btn.classList.add("active");
     }
 
@@ -315,7 +322,7 @@ if (regs.days?.includes(d)) {
           currentVisitorDays = currentVisitorDays.filter((x) => x !== d);
           btn.classList.remove("active");
         } else {
-          currentVisitorDays.push(d);
+          currentVisitorDays = sortDays([...currentVisitorDays, d]);
           btn.classList.add("active");
         }
 
@@ -789,6 +796,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
