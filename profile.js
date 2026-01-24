@@ -6,10 +6,10 @@ import { auth } from "./auth.js";
 import { onAuthStateChanged, signOut, updateProfile } from
   "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-const FRONTEND_BASE = "https://pravaahweb1.vercel.app";
+const FRONTEND_BASE = "https://pravaahweb.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbyqxjAqzZZSVmNT_O2wuJZddJasisjxurP2ttLGn1qnCL1X8743xQ91kbIuukmo8tjstw/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbzQ2jkGLoKhQP_8oFvWHAEj9MsM9FO9YxZfHZbPbfupstKbHnzyIbp5re2V1GJHuzfKzA/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -1073,6 +1073,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
