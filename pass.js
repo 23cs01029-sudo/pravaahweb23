@@ -85,6 +85,14 @@ const IITBBS_DOMAIN = "@iitbbs.ac.in";
 function isIITBBSUser() {
   return auth.currentUser?.email?.endsWith(IITBBS_DOMAIN);
 }
+function generateIITBBSUTR() {
+  return (
+    "IITBBS_" +
+    Date.now() +
+    "_" +
+    Math.random().toString(36).slice(2, 8).toUpperCase()
+  );
+}
 
 function getRegistrations() {
   return JSON.parse(localStorage.getItem("pravaah_user_regs") || "{}");
@@ -274,7 +282,9 @@ function renderSelectionArea() {
         <button type="button" class="day-card" data-day="day3">DAY 3</button>
       </div>
     </div>
-
+<div id="eventHint" style="display:block;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+      Select the events
+    </div>
     <!-- EVENTS FIRST -->
     <div id="dayEventsContainer"></div>
 
@@ -375,7 +385,9 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
   if (currentPassType === "Fest Pass") {
     participantForm.innerHTML = `
     <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
-
+<div id="eventHint" style="display:block;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+      Select the events
+    </div>
     <!-- EVENTS FIRST -->
     <div id="festEventsContainer"></div>
 
@@ -759,10 +771,30 @@ for (let p of participants) {
     regs.fest = true;
   }
 
-  saveRegistrations(regs);
+  const fakePaymentId = generateIITBBSUTR();
 
-  alert("Registration successful!");
-  window.location.href = "profile.html";
+const freePassSession = {
+  paymentId: fakePaymentId,
+  passType: currentPassType,
+  totalAmount: 0,
+  participants,
+  daySelected: currentDayPassDays,
+  visitorDays: currentVisitorDays,
+  starnite: currentPassType === "Starnite Pass",
+  events: collectSelectedEvents(),
+  registeredEmail: auth.currentUser.email
+};
+
+localStorage.setItem(
+  "pravaah_payment",
+  JSON.stringify(freePassSession)
+);
+
+saveRegistrations(regs);
+
+alert("Registration successful!");
+window.location.href = "profile.html";
+
 }
 
 
@@ -857,6 +889,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
