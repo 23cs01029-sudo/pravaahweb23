@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
  "2026-02-08": [
   { img: "Guest Talk.JPG", name: "Guest Talk – 3", text: "Inspiring expert insights", time: "12:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
   { img: "51hr flimmaking events.avif", name: "51-Hour Short Film", text: "Create,Shoot,Edit.", time: "8:00 AM" },
-  { img: "edusphere.png", name: "Edusphere", text: "Learn,Explore,Grow.", time: "10:00 AM",,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
+  { img: "edusphere.png", name: "Edusphere", text: "Learn,Explore,Grow.", time: "10:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
 
   { img: "ipl quiz_events (1).png", name: "IPL Auction – Round 1", text: "Bid,Strategize,Win.", time: "10:00 AM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
   { img: "ipl quiz_events (1).png", name: "IPL Auction – Round 2", text: "Bid,Strategize,Win.", time: "2:00 PM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
@@ -458,6 +458,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
