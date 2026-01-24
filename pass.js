@@ -775,10 +775,36 @@ for (let p of participants) {
     regs.fest = true;
   }
 
-  saveRegistrations(regs);
+  // 🔥 Generate fake unique UTR for IITBBS
+const fakePaymentId =
+  "IITBBS_" +
+  Date.now() +
+  "_" +
+  Math.random().toString(36).slice(2, 8).toUpperCase();
 
-  alert("Registration successful!");
-  window.location.href = "profile.html";
+// 🔐 Create pass object like paid users
+const freePassSession = {
+  paymentId: fakePaymentId,
+  passType: currentPassType,
+  totalAmount: 0,
+  participants,
+  daySelected: currentDayPassDays,
+  visitorDays: currentVisitorDays,
+  starnite: currentPassType === "Starnite Pass",
+  events: collectSelectedEvents(),
+  registeredEmail: auth.currentUser.email
+};
+
+// Save so backend / profile can read it
+localStorage.setItem(
+  "pravaah_payment",
+  JSON.stringify(freePassSession)
+);
+
+saveRegistrations(regs);
+
+alert("Registration successful!");
+window.location.href = "profile.html";
 }
 
 
@@ -873,6 +899,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
