@@ -9,7 +9,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "https://pravaahweb.vercel.app";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbzQ2jkGLoKhQP_8oFvWHAEj9MsM9FO9YxZfHZbPbfupstKbHnzyIbp5re2V1GJHuzfKzA/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbyQpGQOJOonuLW_RoGOoPX36gkL0gBgigtz1wT2W8KotWjHb1DHD4q7bNXAy8eiZH2YpA/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -1073,6 +1073,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
