@@ -173,3 +173,31 @@ document.getElementById("cancelBtn").onclick = () => {
   localStorage.removeItem(SESSION_KEY);
   window.location.replace("registrationPravaah.html");
 };
+const payerUpiInput = document.getElementById("payerUpi");
+const sendRequestBtn = document.getElementById("sendRequestBtn");
+
+if (sendRequestBtn) {
+  sendRequestBtn.onclick = () => {
+    const payerUpi = payerUpiInput.value.trim();
+
+    if (!payerUpi || !payerUpi.includes("@")) {
+      alert("Please enter a valid UPI ID (example: name@upi)");
+      return;
+    }
+
+    // UPI COLLECT (Request to Pay)
+    const collectLink =
+      `upi://pay?pa=${UPI_ID}` +
+      `&pn=${encodeURIComponent(RECEIVER_NAME)}` +
+      `&am=${amount}` +
+      `&cu=INR` +
+      `&tn=PRAVAAH_${session.sessionId}` +
+      `&tr=${session.sessionId}` +
+      `&mode=02`; // 👈 02 = Collect Request
+
+    // Open UPI app with request
+    window.location.href = collectLink;
+
+    alert("Payment request sent to " + payerUpi);
+  };
+}
