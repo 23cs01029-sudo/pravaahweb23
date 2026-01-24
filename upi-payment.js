@@ -57,18 +57,19 @@ const upiLink =
   "&pn=" + encodeURIComponent(RECEIVER_NAME) +
   "&am=" + encodeURIComponent(amount) +
   "&cu=INR" +
-  "&tn=" + encodeURIComponent("PRAVAAH_" + session.sessionId);
+  "&tn=" + encodeURIComponent("PRAVAAH");
 
 console.log("UPI LINK:", upiLink);
 
 // HIGH QUALITY QR
 new QRCode(qrBox, {
   text: upiLink,
-  width: 380,
-  height: 380,
-  useSVG: true,                 // ⭐ IMPORTANT (no blur)
-  correctLevel: QRCode.CorrectLevel.H
+  width: 420,
+  height: 420,
+  useSVG: true,
+  correctLevel: QRCode.CorrectLevel.M   // faster scan
 });
+
 
 
 
