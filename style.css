@@ -274,7 +274,7 @@ nav {
   margin: 4rem -4rem;
 }
 .section-title{
-   font-size:4rem;
+font-size: clamp(1.6rem, 3.5vw, 2.6rem);
 }
 .section-title,
 .calendar-title,
@@ -1698,6 +1698,7 @@ video:-webkit-full-screen {
     aspect-ratio: 16 / 9;
   }
 }
+
 
 
 
