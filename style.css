@@ -273,7 +273,9 @@ nav {
   text-align: center;
   margin: 4rem -4rem;
 }
-
+.section-title{
+   font-size:4rem;
+}
 .section-title,
 .calendar-title,
 .aftermovie-section h2,
@@ -1696,6 +1698,7 @@ video:-webkit-full-screen {
     aspect-ratio: 16 / 9;
   }
 }
+
 
 
 
