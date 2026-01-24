@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   "2026-02-06": [
   { img: "Guest Talk.JPG", name: "Guest Talk – 1", text: "Inspiring expert insights", time: "12:00 PM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
   { img: "fashionshow_gallery.jpg", name: "Fashion Show", text: "Style meets confidence", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/BDz4WQp2ZXHVktaR9" },
-  { img: "ML HACKTHON.jpg", name: "Data Science Hackathon", text: "Code,Analyze,Innovate.", time: "9:00 AM" ,locationLink:"https://maps.app.goo.gl/n6YXxLQmicNHihqi7"},
+  { img: "WEB HACKTHON.jpg", name: "Data Science Hackathon", text: "Code,Analyze,Innovate.", time: "9:00 AM" ,locationLink:"https://maps.app.goo.gl/n6YXxLQmicNHihqi7"},
   { img: "Film Quiz_events.JPG", name: "General Quiz", text: "Test your knowledge", time: "9:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
 
   { img: "Marcatus.JPG", name: "Marcatus – Round 1", text: "Business minds battle", time: "10:00 PM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 "2026-02-07": [
   { img: "Guest Talk.JPG", name: "Guest Talk – 2", text: "Act,Express,Perform.", time: "12:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
   { img: "51hr flimmaking events.avif", name: "51-Hour Short Film", text: "Create,Shoot,Edit.", time: "8:00 AM" },
-  { img: "ML HACKTHON.jpg", name: "Web Hackathon", text: "Build,Deploy,Innovate", time: "8:00 AM",locationLink:"https://maps.app.goo.gl/n6YXxLQmicNHihqi7" },
+  { img: "WEB HACKTHON.jpg", name: "Web Hackathon", text: "Build,Deploy,Innovate", time: "8:00 AM",locationLink:"https://maps.app.goo.gl/n6YXxLQmicNHihqi7" },
 
   { img: "data sceince event.jpg", name: "Science & Technology Quiz", text: "Where minds compete", time: "9:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
   { img: "B plan event.jpg", name: "B-Plan", text: "Pitch your startup", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
@@ -458,6 +458,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
