@@ -260,7 +260,7 @@ const aftermovieBtn = document.getElementById("aftermovieBtn");
 const themeBtn = document.getElementById("themeBtn");
 
 const AFTERMOVIE_URL =
-  "https://www.youtube.com/embed/kH1XlwHQv9o?loop=1&playlist=kH1XlwHQv9o&rel=0";
+  "https://www.youtube.com/embed/0iiRlChfIRo?loop=1&playlist=0iiRlChfIRo&rel=0&mute=0";
 
 
 const THEME_URL =
@@ -458,6 +458,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
