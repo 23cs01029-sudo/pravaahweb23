@@ -230,6 +230,7 @@ nav {
  
   font-size: clamp(2.2rem, 5vw, 3.6rem);  /* ⬅️ bigger */
   letter-spacing: 5px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   color: var(--primary);
   font-weight: 800;
@@ -1701,6 +1702,7 @@ video:-webkit-full-screen {
     aspect-ratio: 16 / 9;
   }
 }
+
 
 
 
