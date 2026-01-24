@@ -83,10 +83,8 @@ const PRICES = {
 const IITBBS_DOMAIN = "@iitbbs.ac.in";
 
 function isIITBBSUser() {
-  const email = auth.currentUser?.email || "";
-  return email.toLowerCase().endsWith(IITBBS_DOMAIN);
+  return auth.currentUser?.email?.endsWith(IITBBS_DOMAIN);
 }
-
 
 function getRegistrations() {
   return JSON.parse(localStorage.getItem("pravaah_user_regs") || "{}");
@@ -109,7 +107,16 @@ function sortDays(arr) {
 /* =======================================
       DOM ELEMENTS
 ======================================= */
+const passCards = document.querySelectorAll(".pass-card");
+const selectionArea = document.getElementById("selectionArea");
+const selectedPassTxt = document.getElementById("selectedPass");
+const participantForm = document.getElementById("participantForm");
 
+const totalAmountEl = document.getElementById("totalAmount");
+totalAmountEl.style.display = "none";
+
+const payBtn = document.getElementById("payBtn");
+if (payBtn) payBtn.setAttribute("type", "button");
 
 let currentPassType = null;
 let currentDayPassDays = [];
@@ -122,133 +129,6 @@ let currentTotal = 0;
 let paying = false;
 
 const RULEBOOK_URL = "sponsorship-brochure.pdf";
-document.addEventListener("DOMContentLoaded", () => {
-
-  const passCards = document.querySelectorAll(".pass-card");
-  const selectionArea = document.getElementById("selectionArea");
-  const selectedPassTxt = document.getElementById("selectedPass");
-  const participantForm = document.getElementById("participantForm");
-  const totalAmountEl = document.getElementById("totalAmount");
-  const payBtn = document.getElementById("payBtn");
-
-  totalAmountEl.style.display = "none";
-  payBtn.setAttribute("type", "button");
-
-  passCards.forEach((c) => {
-    c.addEventListener("click", () => {
-      let t = c.dataset.type;
-      if (/day/i.test(t)) t = "Day Pass";
-      else if (/visitor/i.test(t)) t = "Visitor Pass";
-      else if (/fest/i.test(t)) t = "Fest Pass";
-      else if (/star/i.test(t)) t = "Starnite Pass";
-
-      const regs = getRegistrations();
-      if (regs.fest && t !== "Fest Pass" && isIITBBSUser()) {
-        alert("IITBBS users cannot register again after Fest Pass.");
-        return;
-      }
-
-      passCards.forEach((x) => x.classList.remove("selected"));
-      c.classList.add("selected");
-
-      currentPassType = t;
-      currentDayPassDays = [];
-      currentVisitorDays = [];
-      participantsCount = 0;
-      selectedEventsByDay = {};
-
-      renderSelectionArea();
-    });
-  });
-
-  payBtn.addEventListener("click", async () => {
-  // ✅ IITBBS USERS — NO PAYMENT, DIRECT REGISTER
-if (isIITBBSUser()) {
-  completeFreeRegistration();
-  return;
-}
-
-  if (paying) return;
-  paying = true;
-
-  const numInputLocal = document.getElementById("numParticipants");
-  if (!numInputLocal) {
-    alert("Please select a pass and number of participants.");
-    paying = false;
-    return;
-  }
-
-  participantsCount = parseInt(numInputLocal.value) || 0;
-  if (participantsCount <= 0) {
-    alert("Please add at least 1 participant.");
-    paying = false;
-    return;
-  }
-
-  const cards = [
-    ...document.querySelectorAll(
-      "#participantsContainerPlaceholder .participant-card"
-    )
-  ];
-
-  const participants = cards.map(c => ({
-    name: c.querySelector(".pname")?.value.trim(),
-    email: c.querySelector(".pemail")?.value.trim(),
-    phone: c.querySelector(".pphone")?.value.trim(),
-    college: c.querySelector(".pcollege")?.value.trim()
-  }));
-
-  for (let p of participants) {
-    if (!p.name || !p.email || !p.phone || !p.college) {
-      alert("Fill all participant fields.");
-      paying = false;
-      return;
-    }
-  }
-
-  /* 🔐 CREATE PAYMENT SESSION — FINAL CLEAN VERSION */
-  const paymentSession = {
-    sessionId: "PAY_" + Date.now() + "_" + Math.floor(Math.random() * 100000),
-    createdAt: Date.now(),
-    expiresAt: new Date().setHours(23, 59, 59, 999),
-
-    registeredEmail: auth.currentUser.email,
-    passType: currentPassType,
-    totalAmount: currentTotal,
-
-    participants,
-    daySelected: currentDayPassDays,
-    visitorDays: currentVisitorDays,
-
-    // ✅ StarNite ONLY if pass itself is StarNite
-    starnite: currentPassType === "Starnite Pass",
-
-    events: collectSelectedEvents()
-  };
-
-  /* 💾 SAVE SESSION */
-  localStorage.setItem(
-    "pravaah_payment",
-    JSON.stringify(paymentSession)
-  );
-  const regs = getRegistrations();
-if (!regs.days) regs.days = [];
-
-// save selected days
-regs.days.push(...currentDayPassDays, ...currentVisitorDays);
-
-// fest blocks everything else
-if (currentPassType === "Fest Pass") {
-  regs.fest = true;
-}
-
-saveRegistrations(regs);
-
-  /* ➡️ REDIRECT TO PAYMENT PAGE */
-  window.location.href = "upi-payment.html";
-});
-
-});
 
 
 /* =======================================
@@ -323,7 +203,38 @@ function renderEventRow(name, opt = {}) {
   `;
 }
 
+/* =======================================
+      PASS CARD CLICK HANDLER
+======================================= */
+passCards.forEach((c) => {
+  c.addEventListener("click", () => {
 
+    let t = c.dataset.type;
+    if (/day/i.test(t)) t = "Day Pass";
+    else if (/visitor/i.test(t)) t = "Visitor Pass";
+    else if (/fest/i.test(t)) t = "Fest Pass";
+    else if (/star/i.test(t)) t = "Starnite Pass";
+
+    const regs = getRegistrations();
+
+    // ❌ Block other passes if Fest already registered
+    if (regs.fest && t !== "Fest Pass" && isIITBBSUser()) {
+  alert("IITBBS users cannot register again after Fest Pass.");
+  return;
+}
+    passCards.forEach((x) => x.classList.remove("selected"));
+    c.classList.add("selected");
+
+    currentPassType = t;
+currentDayPassDays = [];
+currentVisitorDays = [];
+participantsCount = 0;
+selectedEventsByDay = {}; // ✅ RESET EVENTS WHEN PASS CHANGES
+
+
+    renderSelectionArea();
+  });
+});
 
 
 /* =======================================
@@ -365,11 +276,7 @@ function renderSelectionArea() {
     </div>
 
     <!-- EVENTS FIRST -->
-<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
-  Select the events
-</div>
-<div id="dayEventsContainer"></div>
-
+    <div id="dayEventsContainer"></div>
 
     <!-- THEN PARTICIPANTS -->
     <div style="text-align:center;margin-top:18px;">
@@ -387,30 +294,26 @@ function renderSelectionArea() {
 
     document.querySelectorAll(".day-card").forEach((btn) =>
   btn.addEventListener("click", () => {
-  const d = btn.dataset.day;
+    const d = btn.dataset.day;
+const regs = getRegistrations();
+if (regs.days?.includes(d) && isIITBBSUser()) {
+  alert("IITBBS users cannot register again for the same day.");
+  return;
+}
 
-  const regs = getRegistrations();
-  if (regs.days?.includes(d) && isIITBBSUser()) {
-    alert("IITBBS users cannot register again for the same day.");
-    return;
-  }
 
-  if (currentDayPassDays.includes(d)) {
-    currentDayPassDays = currentDayPassDays.filter(x => x !== d);
-    btn.classList.remove("active");
-  } else {
-    currentDayPassDays = sortDays([...currentDayPassDays, d]);
-    btn.classList.add("active");
-  }
+    if (currentDayPassDays.includes(d)) {
+      currentDayPassDays = currentDayPassDays.filter(x => x !== d);
+      btn.classList.remove("active");
+    } else {
+      currentDayPassDays = sortDays([...currentDayPassDays, d]);
+      btn.classList.add("active");
+    }
 
-  // ✅ SHOW "Select the events"
-  const hint = document.getElementById("eventHint");
-  if (hint) hint.style.display = "block";
-
-  renderDayEvents(currentDayPassDays);
-  calculateTotal();
-});
-
+    renderDayEvents(currentDayPassDays);
+    calculateTotal();
+  })
+);
 
   }
 
@@ -428,11 +331,7 @@ function renderSelectionArea() {
     </div>
 
     <!-- EVENTS FIRST -->
-<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
-  Select the events
-</div>
-<div id="visitorEventsContainer"></div>
-
+    <div id="visitorEventsContainer"></div>
     
 
     <!-- PARTICIPANTS NEXT -->
@@ -465,11 +364,8 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
           btn.classList.add("active");
         }
 
-        const hint = document.getElementById("eventHint");
-if (hint) hint.style.display = "block";
-
-renderVisitorEvents(currentVisitorDays);
-calculateTotal();
+        renderVisitorEvents(currentVisitorDays);
+        calculateTotal();
 
       })
     );
@@ -481,10 +377,7 @@ calculateTotal();
     <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
 
     <!-- EVENTS FIRST -->
-<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
-  Select the events
-</div>
-<div id="festEventsContainer"></div>
+    <div id="festEventsContainer"></div>
 
     <!-- PARTICIPANTS BELOW -->
     <div style="text-align:center;margin-top:18px;">
@@ -499,8 +392,6 @@ calculateTotal();
 
     <div id="participantsContainerPlaceholder"></div>
   `;
-const hint = document.getElementById("eventHint");
-if (hint) hint.style.display = "block";
 
     renderFestEvents();
   }
@@ -868,36 +759,10 @@ for (let p of participants) {
     regs.fest = true;
   }
 
-  // 🔥 Generate fake unique UTR for IITBBS
-const fakePaymentId =
-  "IITBBS_" +
-  Date.now() +
-  "_" +
-  Math.random().toString(36).slice(2, 8).toUpperCase();
+  saveRegistrations(regs);
 
-// 🔐 Create pass object like paid users
-const freePassSession = {
-  paymentId: fakePaymentId,
-  passType: currentPassType,
-  totalAmount: 0,
-  participants,
-  daySelected: currentDayPassDays,
-  visitorDays: currentVisitorDays,
-  starnite: currentPassType === "Starnite Pass",
-  events: collectSelectedEvents(),
-  registeredEmail: auth.currentUser.email
-};
-
-// Save so backend / profile can read it
-localStorage.setItem(
-  "pravaah_payment",
-  JSON.stringify(freePassSession)
-);
-
-saveRegistrations(regs);
-
-alert("Registration successful!");
-window.location.href = "profile.html";
+  alert("Registration successful!");
+  window.location.href = "profile.html";
 }
 
 
@@ -906,14 +771,92 @@ window.location.href = "profile.html";
 /* =======================================
       PAYMENT HANDLER
 ======================================= */
+payBtn.addEventListener("click", async () => {
+  // ✅ IITBBS USERS — NO PAYMENT, DIRECT REGISTER
+if (isIITBBSUser()) {
+  completeFreeRegistration();
+  return;
+}
 
+  if (paying) return;
+  paying = true;
 
+  const numInputLocal = document.getElementById("numParticipants");
+  if (!numInputLocal) {
+    alert("Please select a pass and number of participants.");
+    paying = false;
+    return;
+  }
 
+  participantsCount = parseInt(numInputLocal.value) || 0;
+  if (participantsCount <= 0) {
+    alert("Please add at least 1 participant.");
+    paying = false;
+    return;
+  }
 
+  const cards = [
+    ...document.querySelectorAll(
+      "#participantsContainerPlaceholder .participant-card"
+    )
+  ];
 
+  const participants = cards.map(c => ({
+    name: c.querySelector(".pname")?.value.trim(),
+    email: c.querySelector(".pemail")?.value.trim(),
+    phone: c.querySelector(".pphone")?.value.trim(),
+    college: c.querySelector(".pcollege")?.value.trim()
+  }));
 
+  for (let p of participants) {
+    if (!p.name || !p.email || !p.phone || !p.college) {
+      alert("Fill all participant fields.");
+      paying = false;
+      return;
+    }
+  }
 
+  /* 🔐 CREATE PAYMENT SESSION — FINAL CLEAN VERSION */
+  const paymentSession = {
+    sessionId: "PAY_" + Date.now() + "_" + Math.floor(Math.random() * 100000),
+    createdAt: Date.now(),
+    expiresAt: new Date().setHours(23, 59, 59, 999),
 
+    registeredEmail: auth.currentUser.email,
+    passType: currentPassType,
+    totalAmount: currentTotal,
+
+    participants,
+    daySelected: currentDayPassDays,
+    visitorDays: currentVisitorDays,
+
+    // ✅ StarNite ONLY if pass itself is StarNite
+    starnite: currentPassType === "Starnite Pass",
+
+    events: collectSelectedEvents()
+  };
+
+  /* 💾 SAVE SESSION */
+  localStorage.setItem(
+    "pravaah_payment",
+    JSON.stringify(paymentSession)
+  );
+  const regs = getRegistrations();
+if (!regs.days) regs.days = [];
+
+// save selected days
+regs.days.push(...currentDayPassDays, ...currentVisitorDays);
+
+// fest blocks everything else
+if (currentPassType === "Fest Pass") {
+  regs.fest = true;
+}
+
+saveRegistrations(regs);
+
+  /* ➡️ REDIRECT TO PAYMENT PAGE */
+  window.location.href = "upi-payment.html";
+});
 
 
 
