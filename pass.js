@@ -83,8 +83,10 @@ const PRICES = {
 const IITBBS_DOMAIN = "@iitbbs.ac.in";
 
 function isIITBBSUser() {
-  return auth.currentUser?.email?.endsWith(IITBBS_DOMAIN);
+  const email = auth.currentUser?.email || "";
+  return email.toLowerCase().endsWith(IITBBS_DOMAIN);
 }
+
 
 function getRegistrations() {
   return JSON.parse(localStorage.getItem("pravaah_user_regs") || "{}");
@@ -903,6 +905,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
