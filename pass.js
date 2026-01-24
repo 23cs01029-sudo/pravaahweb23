@@ -85,14 +85,7 @@ const IITBBS_DOMAIN = "@iitbbs.ac.in";
 function isIITBBSUser() {
   return auth.currentUser?.email?.endsWith(IITBBS_DOMAIN);
 }
-function generateIITBBSUTR() {
-  return (
-    "IITBBS_" +
-    Date.now() +
-    "_" +
-    Math.random().toString(36).slice(2, 8).toUpperCase()
-  );
-}
+
 
 function getRegistrations() {
   return JSON.parse(localStorage.getItem("pravaah_user_regs") || "{}");
@@ -750,52 +743,71 @@ function completeFreeRegistration() {
       return;
     }
   }
+
   // 🔒 IITBBS EMAIL STRICT CHECK
-const loggedInEmail = auth.currentUser.email.toLowerCase();
+  const loggedInEmail = auth.currentUser.email.toLowerCase();
+  for (let p of participants) {
+    if (p.email.toLowerCase() !== loggedInEmail) {
+      alert("IITBBS students must use their own IITBBS email.");
+      return;
+    }
+  }
 
-for (let p of participants) {
-  if (p.email.toLowerCase() !== loggedInEmail) {
-    alert(
-      "IITBBS students must register using the same IITBBS email as their profile."
+  const freePassSession = {
+    passType: currentPassType,
+    totalAmount: 0,
+    participants,
+    daySelected: currentDayPassDays,
+    visitorDays: currentVisitorDays,
+    starnite: currentPassType === "Starnite Pass",
+    events: collectSelectedEvents(),
+    registeredEmail: auth.currentUser.email
+  };
+
+  try {
+    const res = await fetch(scriptURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "free_registration",
+        data: freePassSession
+      })
+    });
+
+    const result = await res.json();
+
+    if (!result.ok) {
+      alert(result.error || "Registration failed");
+      return;
+    }
+
+    // ✅ backend-generated unique UTR
+    freePassSession.paymentId = result.paymentId;
+
+    localStorage.setItem(
+      "pravaah_payment",
+      JSON.stringify(freePassSession)
     );
-    return;
+
+    const regs = getRegistrations();
+    if (!regs.days) regs.days = [];
+    regs.days.push(...currentDayPassDays, ...currentVisitorDays);
+
+    if (currentPassType === "Fest Pass") {
+      regs.fest = true;
+    }
+
+    saveRegistrations(regs);
+
+    alert("Registration successful!");
+    window.location.href = "profile.html";
+
+  } catch (err) {
+    console.error(err);
+    alert("Network error. Try again.");
   }
 }
 
-  const regs = getRegistrations();
-  if (!regs.days) regs.days = [];
-
-  regs.days.push(...currentDayPassDays, ...currentVisitorDays);
-
-  if (currentPassType === "Fest Pass") {
-    regs.fest = true;
-  }
-
-  const fakePaymentId = generateIITBBSUTR();
-
-const freePassSession = {
-  paymentId: fakePaymentId,
-  passType: currentPassType,
-  totalAmount: 0,
-  participants,
-  daySelected: currentDayPassDays,
-  visitorDays: currentVisitorDays,
-  starnite: currentPassType === "Starnite Pass",
-  events: collectSelectedEvents(),
-  registeredEmail: auth.currentUser.email
-};
-
-localStorage.setItem(
-  "pravaah_payment",
-  JSON.stringify(freePassSession)
-);
-
-saveRegistrations(regs);
-
-alert("Registration successful!");
-window.location.href = "profile.html";
-
-}
 
 
 
@@ -889,6 +901,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
