@@ -276,7 +276,11 @@ function renderSelectionArea() {
     </div>
 
     <!-- EVENTS FIRST -->
-    <div id="dayEventsContainer"></div>
+<div id="eventHint" style="text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+  Select the events
+</div>
+<div id="dayEventsContainer"></div>
+
 
     <!-- THEN PARTICIPANTS -->
     <div style="text-align:center;margin-top:18px;">
@@ -331,7 +335,11 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
     </div>
 
     <!-- EVENTS FIRST -->
-    <div id="visitorEventsContainer"></div>
+<div id="eventHint" style="text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+  Select the events
+</div>
+<div id="visitorEventsContainer"></div>
+
     
 
     <!-- PARTICIPANTS NEXT -->
@@ -377,7 +385,11 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
     <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
 
     <!-- EVENTS FIRST -->
-    <div id="festEventsContainer"></div>
+<div id="eventHint" style="text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+  Select the events
+</div>
+<div id="festEventsContainer"></div>
+>
 
     <!-- PARTICIPANTS BELOW -->
     <div style="text-align:center;margin-top:18px;">
@@ -857,6 +869,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
