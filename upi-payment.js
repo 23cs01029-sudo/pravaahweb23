@@ -64,10 +64,12 @@ console.log("UPI LINK:", upiLink);
 // HIGH QUALITY QR
 new QRCode(qrBox, {
   text: upiLink,
-  width: 320,
-  height: 320,
+  width: 380,
+  height: 380,
+  useSVG: true,                 // ⭐ IMPORTANT (no blur)
   correctLevel: QRCode.CorrectLevel.H
 });
+
 
 
 /* ================= PAY USING APP BUTTON ================= */
