@@ -218,11 +218,10 @@ passCards.forEach((c) => {
     const regs = getRegistrations();
 
     // ❌ Block other passes if Fest already registered
-    if (regs.fest && t !== "Fest Pass") {
-      alert("You have already registered for Fest Pass.");
-      return;
-    }
-
+    if (regs.fest && t !== "Fest Pass" && isIITBBSUser()) {
+  alert("IITBBS users cannot register again after Fest Pass.");
+  return;
+}
     passCards.forEach((x) => x.classList.remove("selected"));
     c.classList.add("selected");
 
@@ -250,8 +249,12 @@ function renderSelectionArea() {
   if (isIITBBSUser()) {
   payBtn.textContent = "Register";
   payBtn.style.display = "inline-block";
-  totalAmountEl.style.display = "none"; // 🔥 hide total completely
+  totalAmountEl.style.display = "none"; // hide for IITBBS
+} else {
+  // ✅ NON-IITBBS USERS → show total area
+  totalAmountEl.style.display = "block";
 }
+
 
 
 
@@ -293,10 +296,11 @@ function renderSelectionArea() {
   btn.addEventListener("click", () => {
     const d = btn.dataset.day;
 const regs = getRegistrations();
-if (regs.days?.includes(d)) {
-  alert("You are already registered for this day.");
+if (regs.days?.includes(d) && isIITBBSUser()) {
+  alert("IITBBS users cannot register again for the same day.");
   return;
 }
+
 
     if (currentDayPassDays.includes(d)) {
       currentDayPassDays = currentDayPassDays.filter(x => x !== d);
@@ -348,8 +352,8 @@ if (regs.days?.includes(d)) {
       btn.addEventListener("click", () => {
         let d = btn.dataset.day;
 const regs = getRegistrations();
-if (regs.days?.includes(d)) {
-  alert("You are already registered for this day.");
+if (regs.days?.includes(d) && isIITBBSUser()) {
+  alert("IITBBS users cannot register again for the same day.");
   return;
 }
         if (currentVisitorDays.includes(d)) {
@@ -853,6 +857,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
