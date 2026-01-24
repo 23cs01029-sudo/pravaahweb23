@@ -715,7 +715,7 @@ function collectSelectedEvents() {
   return events;
 }
 
-function completeFreeRegistration() {
+async function completeFreeRegistration() {
   const numInputLocal = document.getElementById("numParticipants");
   const count = parseInt(numInputLocal?.value || 0);
 
@@ -901,6 +901,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
