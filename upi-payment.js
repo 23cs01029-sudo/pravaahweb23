@@ -42,19 +42,33 @@ document.getElementById("sessionInfo").innerHTML = `
 `;
 
 /* ================= DYNAMIC UPI LINK ================= */
-const upiLink =
-  `upi://pay?pa=${UPI_ID}` +
-  `&pn=${encodeURIComponent(RECEIVER_NAME)}` +
-  `&am=${amount}` +
-  `&cu=INR` +
-  `&tn=PRAVAAH_${session.sessionId}`;
+const qrBox = document.getElementById("qrBox");
+qrBox.innerHTML = "";
 
-/* ================= QR ================= */
-new QRCode(document.getElementById("qrBox"), {
+// safety check
+if (!amount || isNaN(amount)) {
+  alert("Invalid payment amount");
+}
+
+// SAFE encoded UPI link
+const upiLink =
+  "upi://pay" +
+  "?pa=" + encodeURIComponent(UPI_ID) +
+  "&pn=" + encodeURIComponent(RECEIVER_NAME) +
+  "&am=" + encodeURIComponent(amount) +
+  "&cu=INR" +
+  "&tn=" + encodeURIComponent("PRAVAAH_" + session.sessionId);
+
+console.log("UPI LINK:", upiLink);
+
+// HIGH QUALITY QR
+new QRCode(qrBox, {
   text: upiLink,
-  width: 240,
-  height: 240
+  width: 320,
+  height: 320,
+  correctLevel: QRCode.CorrectLevel.H
 });
+
 
 /* ================= PAY USING APP BUTTON ================= */
 const upiPayBtn = document.getElementById("upiPayBtn");
