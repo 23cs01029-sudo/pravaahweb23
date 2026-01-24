@@ -292,7 +292,7 @@ font-size: clamp(1.6rem, 3.5vw, 2.6rem);
 /* Section title */
 .section-title {
   font-size: clamp(1.6rem, 3vw, 2.5rem);
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
   color: var(--primary);
   text-shadow: 0 0 8px var(--primary-soft);
 }
@@ -1702,6 +1702,7 @@ video:-webkit-full-screen {
     aspect-ratio: 16 / 9;
   }
 }
+
 
 
 
