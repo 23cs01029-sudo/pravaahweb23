@@ -276,7 +276,7 @@ function renderSelectionArea() {
     </div>
 
     <!-- EVENTS FIRST -->
-<div id="eventHint" style="text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
   Select the events
 </div>
 <div id="dayEventsContainer"></div>
@@ -298,26 +298,30 @@ function renderSelectionArea() {
 
     document.querySelectorAll(".day-card").forEach((btn) =>
   btn.addEventListener("click", () => {
-    const d = btn.dataset.day;
-const regs = getRegistrations();
-if (regs.days?.includes(d) && isIITBBSUser()) {
-  alert("IITBBS users cannot register again for the same day.");
-  return;
-}
+  const d = btn.dataset.day;
 
+  const regs = getRegistrations();
+  if (regs.days?.includes(d) && isIITBBSUser()) {
+    alert("IITBBS users cannot register again for the same day.");
+    return;
+  }
 
-    if (currentDayPassDays.includes(d)) {
-      currentDayPassDays = currentDayPassDays.filter(x => x !== d);
-      btn.classList.remove("active");
-    } else {
-      currentDayPassDays = sortDays([...currentDayPassDays, d]);
-      btn.classList.add("active");
-    }
+  if (currentDayPassDays.includes(d)) {
+    currentDayPassDays = currentDayPassDays.filter(x => x !== d);
+    btn.classList.remove("active");
+  } else {
+    currentDayPassDays = sortDays([...currentDayPassDays, d]);
+    btn.classList.add("active");
+  }
 
-    renderDayEvents(currentDayPassDays);
-    calculateTotal();
-  })
-);
+  // ✅ SHOW "Select the events"
+  const hint = document.getElementById("eventHint");
+  if (hint) hint.style.display = "block";
+
+  renderDayEvents(currentDayPassDays);
+  calculateTotal();
+});
+
 
   }
 
@@ -335,7 +339,7 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
     </div>
 
     <!-- EVENTS FIRST -->
-<div id="eventHint" style="text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
   Select the events
 </div>
 <div id="visitorEventsContainer"></div>
@@ -385,7 +389,7 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
     <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
 
     <!-- EVENTS FIRST -->
-<div id="eventHint" style="text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
   Select the events
 </div>
 <div id="festEventsContainer"></div>
@@ -869,6 +873,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
