@@ -376,8 +376,11 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
           btn.classList.add("active");
         }
 
-        renderVisitorEvents(currentVisitorDays);
-        calculateTotal();
+        const hint = document.getElementById("eventHint");
+if (hint) hint.style.display = "block";
+
+renderVisitorEvents(currentVisitorDays);
+calculateTotal();
 
       })
     );
@@ -393,7 +396,6 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
   Select the events
 </div>
 <div id="festEventsContainer"></div>
->
 
     <!-- PARTICIPANTS BELOW -->
     <div style="text-align:center;margin-top:18px;">
@@ -408,6 +410,8 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
 
     <div id="participantsContainerPlaceholder"></div>
   `;
+const hint = document.getElementById("eventHint");
+if (hint) hint.style.display = "block";
 
     renderFestEvents();
   }
@@ -899,6 +903,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
