@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
   { img: "51hr flimmaking events.avif", name: "51-Hour Short Film – Start", text: "Create,Shoot,Edit.", time: "3:00 PM" },
 
   
-  { img: "abhinay event.jpeg", name: "Abhinay", text: "", time: "5:00 PM" }
+  { img: "abhinay event.jpeg", name: "Abhinay", text: "Act,Express,Perform.", time: "5:00 PM" }
   
 ],
 
@@ -458,6 +458,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
