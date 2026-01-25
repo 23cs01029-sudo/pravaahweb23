@@ -1779,6 +1779,14 @@ video:-webkit-full-screen {
     transform: translateX(-50%);
   }
 }
+nav {
+  position: fixed;   /* or sticky */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;     /* keep it above everything */
+}
+
 
 
 
