@@ -319,17 +319,18 @@ const navbar = document.querySelector("nav");
 window.addEventListener("scroll", () => {
   let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-  if (scrollTop > lastScrollTop && scrollTop > 100) {
-    // Scrolling DOWN → hide navbar
+  if (scrollTop > lastScrollTop && scrollTop > 80) {
+    // scrolling DOWN
     navbar.classList.add("nav-hidden");
   } else {
-    // Scrolling UP → show navbar
+    // scrolling UP
     navbar.classList.remove("nav-hidden");
   }
 
-  lastScrollTop = scrollTop;
-});
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // for mobile bounce
+}, { passive: true });
 </script>
+
 
 
 </body>
