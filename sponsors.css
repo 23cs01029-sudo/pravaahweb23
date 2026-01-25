@@ -74,7 +74,7 @@ body {
   border-radius: 20px;
   overflow: hidden;
 
-  background: rgba(128, 128, 128);
+  background: rgba(211, 211, 211);
   border: 1px solid rgba(36,224,236,0.6);
   box-shadow: 0 0 18px rgba(36,224,236,0.3);
 
@@ -299,6 +299,7 @@ footer {
 .become-sponsor-btn:active {
   transform: scale(0.98);
 }
+
 
 
 
