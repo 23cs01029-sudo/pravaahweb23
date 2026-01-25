@@ -58,26 +58,28 @@ day3: [
 
 };
 
+
+
 const PRICES = {
   dayPass: {
-    day0: 99,
-    day1: 199,
-    day2: 199,
-    day3: 249
+    day0: 1,
+    day1: 1,
+    day2: 1,
+    day3: 1
   },
 
   visitor: {
-    day0: 99,
-    day1: 149,
-    day2: 149,
-    day3: 199
+    day0: 1,
+    day1: 1,
+    day2: 1,
+    day3: 1
   },
 
   fest: {
-    normal: 599
+    normal: 1
   },
 
-  starnite: 99
+  starnite: 1
 };
 
 const IITBBS_DOMAIN = "@iitbbs.ac.in";
@@ -216,13 +218,7 @@ passCards.forEach((c) => {
     else if (/fest/i.test(t)) t = "Fest Pass";
     else if (/star/i.test(t)) t = "Starnite Pass";
 
-    const regs = getRegistrations();
 
-    // ❌ Block other passes if Fest already registered
-    if (regs.fest && t !== "Fest Pass" && isIITBBSUser()) {
-  alert("IITBBS users cannot register again after Fest Pass.");
-  return;
-}
     passCards.forEach((x) => x.classList.remove("selected"));
     c.classList.add("selected");
 
@@ -299,11 +295,6 @@ function renderSelectionArea() {
     document.querySelectorAll(".day-card").forEach((btn) =>
   btn.addEventListener("click", () => {
     const d = btn.dataset.day;
-const regs = getRegistrations();
-if (regs.days?.includes(d) && isIITBBSUser()) {
-  alert("IITBBS users cannot register again for the same day.");
-  return;
-}
 
 
     if (currentDayPassDays.includes(d)) {
@@ -362,11 +353,7 @@ if (hint) {
     document.querySelectorAll(".visitor-day-card").forEach((btn) =>
       btn.addEventListener("click", () => {
         let d = btn.dataset.day;
-const regs = getRegistrations();
-if (regs.days?.includes(d) && isIITBBSUser()) {
-  alert("IITBBS users cannot register again for the same day.");
-  return;
-}
+
         if (currentVisitorDays.includes(d)) {
           currentVisitorDays = currentVisitorDays.filter((x) => x !== d);
           btn.classList.remove("active");
@@ -802,15 +789,7 @@ async function completeFreeRegistration() {
       JSON.stringify(freePassSession)
     );
 
-    const regs = getRegistrations();
-    if (!regs.days) regs.days = [];
-    regs.days.push(...currentDayPassDays, ...currentVisitorDays);
 
-    if (currentPassType === "Fest Pass") {
-      regs.fest = true;
-    }
-
-    saveRegistrations(regs);
 
     alert("Registration successful!");
     window.location.href = "profile.html";
@@ -898,22 +877,12 @@ if (isIITBBSUser()) {
     "pravaah_payment",
     JSON.stringify(paymentSession)
   );
-  const regs = getRegistrations();
-if (!regs.days) regs.days = [];
 
-// save selected days
-regs.days.push(...currentDayPassDays, ...currentVisitorDays);
-
-// fest blocks everything else
-if (currentPassType === "Fest Pass") {
-  regs.fest = true;
-}
-
-saveRegistrations(regs);
 
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
