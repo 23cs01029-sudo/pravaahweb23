@@ -1715,10 +1715,6 @@ video:-webkit-full-screen {
    📱 Center logo ONLY on mobile
 ================================ */
 @media (max-width: 900px) {
-  nav {
-    position: relative;
-  }
-
   .logo {
     position: absolute;
     left: 50%;
@@ -1789,6 +1785,21 @@ nav {
 .nav-hidden {
   transform: translateY(-100%);
 }
+/* ===== SMART NAVBAR SCROLL (FINAL FIX) ===== */
+nav {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transition: transform 0.35s ease;
+  z-index: 1000;
+}
+
+/* Hide navbar on scroll down */
+.nav-hidden {
+  transform: translateY(-100%);
+}
+
 
 
 
