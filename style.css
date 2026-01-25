@@ -1730,6 +1730,23 @@ nav {
   }
 }
 
+/* ===============================
+   📱 CENTER PRAVAAH LOGO ONLY ON MOBILE
+================================ */
+@media (max-width: 900px) {
+
+  nav {
+    position: relative;
+  }
+
+  .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+}
+
 
 
 
