@@ -269,13 +269,26 @@
 
 <!-- ================= MOBILE MENU ================= -->
 <script>
-  const toggle = document.getElementById("menuToggle");
+  const menuToggle = document.getElementById("menuToggle");
   const menu = document.getElementById("menu");
 
-  toggle.addEventListener("click", () => {
+  // Toggle when clicking hamburger
+  menuToggle.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent bubbling
     menu.classList.toggle("active");
   });
+
+  // Prevent closing when clicking inside menu
+  menu.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+
+  // Close menu when clicking anywhere else
+  document.addEventListener("click", () => {
+    menu.classList.remove("active");
+  });
 </script>
+
 <script type="module">
   import { auth, initAuth } from "./auth.js";
   import { signOut } from
@@ -305,6 +318,7 @@
 
 </body>
 </html>
+
 
 
 
