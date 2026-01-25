@@ -1725,6 +1725,13 @@ video:-webkit-full-screen {
     transform: translateX(-50%);
   }
 }
+/* 🔥 FIX MOBILE TOP GAP */
+@media (max-width: 900px) {
+  body {
+    padding-top: 60px;   /* match mobile navbar height */
+  }
+}
+
 
 
 
