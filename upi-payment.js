@@ -115,7 +115,8 @@ fileInput.addEventListener("change", async () => {
     const text = data.text.toUpperCase();
 
     /* 🔢 UTR (12–16 digits) */
-    const utrMatch = text.match(/\b\d{12,16}\b/);
+    const utrMatch = text.match(/UTR[:\s]*([0-9]{12,16})/i);
+
 
     /* 💰 Amount check */
     const cleanText = text.replace(/[,₹RSINR]/g, "");
@@ -125,7 +126,7 @@ fileInput.addEventListener("change", async () => {
     const receiverOk = RECEIVER_KEYWORDS.some(k => text.includes(k));
 
     if (utrMatch && amountOk && receiverOk) {
-      extractedUTR = utrMatch[0];
+      extractedUTR = utrMatch[1];
       confirmBtn.disabled = false;
       uploadStatusEl.textContent = "✅ Screenshot verified";
       uploadStatusEl.style.color = "#4cff88";
