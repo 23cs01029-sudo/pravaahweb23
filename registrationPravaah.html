@@ -202,21 +202,33 @@
 
 
   <!-- MENU TOGGLE -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const menuToggle = document.getElementById("menuToggle");
-      const menu = document.getElementById("menu");
-      menuToggle?.addEventListener("click", () => menu.classList.toggle("active"));
-      document.querySelectorAll("#menu a").forEach(link =>
-        link.addEventListener("click", () => menu.classList.remove("active"))
-      );
-    });
-  </script>
+ <script>
+  const menuToggle = document.getElementById("menuToggle");
+  const menu = document.getElementById("menu");
+
+  // Toggle when clicking hamburger
+  menuToggle.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent bubbling
+    menu.classList.toggle("active");
+  });
+
+  // Prevent closing when clicking inside menu
+  menu.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+
+  // Close menu when clicking anywhere else
+  document.addEventListener("click", () => {
+    menu.classList.remove("active");
+  });
+</script>
+
 
   <!-- MAIN PASS JS (your pass.js should populate events, participant forms and payment) -->
   <script type="module" src="pass.js" defer></script>
 </body>
 </html>
+
 
 
 
