@@ -24,11 +24,6 @@
 
 <body>
 
-<!-- Loading text -->
-<div id="loadingText" style="color:white;font-family:Orbitron;">
-  Checking session...
-</div>
-
 <!-- Login UI (hidden first) -->
 <div id="authWrapper" style="display:none;">
   <div class="login-container">
@@ -87,7 +82,7 @@
 
     // 🔗 Google Sheets endpoint
 
-      const scriptURL = "https://script.google.com/macros/s/AKfycbwPItdXLlsTKoy5CAHH98TYjlfNy3w1MY9J1vztQ2jie11Y-aze6cyb_jMyh-5ajJdHlQ/exec";
+      const scriptURL = "/api/pravaah";
 
 
     // 🧩 DOM Elements
@@ -216,8 +211,6 @@
     ------------------------- */
    onAuthStateChanged(auth, (user) => {
   const authWrapper = document.getElementById("authWrapper");
-  const loadingText = document.getElementById("loadingText");
-
   if (user) {
     window.location.href = "home.html";
   } else {
@@ -230,6 +223,7 @@
   </script>
 </body>
 </html>
+
 
 
 
