@@ -1702,6 +1702,34 @@ video:-webkit-full-screen {
     aspect-ratio: 16 / 9;
   }
 }
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.pravaah-logo {
+  height: 42px;
+}
+
+/* FORCE PRAVAAH LOGO TO CENTER */
+nav {
+  position: relative;
+}
+
+/* Mobile + Desktop */
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Mobile fine tuning */
+@media (max-width: 768px) {
+  .pravaah-logo {
+    height: 36px;
+  }
+}
+
 
 
 
