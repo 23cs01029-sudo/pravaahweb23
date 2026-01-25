@@ -258,3 +258,53 @@ body {
     font-size: 0.95rem;
   }
 }
+
+
+/* 🚧 COMING SOON SECTION */
+.coming-soon {
+  min-height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 10%;
+  text-align: center;
+}
+
+.coming-box {
+  background: var(--surface-darker);
+  border: 1px solid var(--primary-border);
+  border-radius: 24px;
+  padding: 60px 50px;
+  max-width: 700px;
+  box-shadow: 0 0 35px rgba(36,224,236,0.35);
+  animation: floatGlow 3s ease-in-out infinite;
+}
+
+.coming-box h1 {
+  font-size: 2.5rem;
+  color: var(--primary);
+  text-shadow: 0 0 15px var(--primary-soft);
+  margin-bottom: 20px;
+}
+
+.coming-box p {
+  font-size: 1.1rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
+
+.glow-text {
+  font-size: 1.2rem;
+  color: var(--primary);
+  text-shadow: 0 0 12px var(--primary-soft);
+  font-weight: 600;
+}
+
+/* subtle floating animation */
+@keyframes floatGlow {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
