@@ -334,25 +334,26 @@ themeBtn?.addEventListener("click", () => {
   /* ---------- Inject Lightbox HTML ---------- */
   const lightbox = document.getElementById("lightbox");
 
-  lightbox.innerHTML = `
-    <div class="lightbox-top">
-      <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
-      <a id="downloadIcon" class="download-icon" download>
-        <i class="fa-solid fa-download"></i>
-      </a>
-    </div>
+lightbox.innerHTML = `
+  <div class="lightbox-top">
+    <a id="downloadIcon" class="download-icon" download>
+      <i class="fa-solid fa-download"></i>
+    </a>
+    <span class="close-lightbox"><i class="fa-solid fa-xmark"></i></span>
+  </div>
 
-    <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
+  <div class="lb-arrow left"><i class="fa-solid fa-chevron-left"></i></div>
 
-    <img id="lightboxImg">
+  <img id="lightboxImg">
 
-    <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
+  <div class="lb-arrow right"><i class="fa-solid fa-chevron-right"></i></div>
 
-    <div class="lightbox-info">
-      <h3 id="lightboxTitle"></h3>
-      <p id="lightboxDesc"></p>
-    </div>
-  `;
+  <div class="lightbox-info">
+    <h3 id="lightboxTitle"></h3>
+    <p id="lightboxDesc"></p>
+  </div>
+`;
+
 
   const lbImg = document.getElementById("lightboxImg");
   const lbTitle = document.getElementById("lightboxTitle");
@@ -462,6 +463,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
