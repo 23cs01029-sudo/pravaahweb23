@@ -62,24 +62,24 @@ day3: [
 
 const PRICES = {
   dayPass: {
-    day0: 1,
-    day1: 1,
-    day2: 1,
-    day3: 1
+    day0: 99,
+    day1: 199,
+    day2: 199,
+    day3: 249
   },
 
   visitor: {
-    day0: 1,
-    day1: 1,
-    day2: 1,
-    day3: 1
+    day0: 99,
+    day1: 149,
+    day2: 149,
+    day3: 199
   },
 
   fest: {
-    normal: 1
+    normal: 599
   },
 
-  starnite: 1
+  starnite: 99
 };
 
 const IITBBS_DOMAIN = "@iitbbs.ac.in";
@@ -894,6 +894,7 @@ if (isIITBBSUser()) {
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
