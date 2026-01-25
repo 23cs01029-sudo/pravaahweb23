@@ -23,11 +23,18 @@
 </head>
 
 <body>
+
+<!-- Loading text -->
+<div id="loadingText" style="color:white;font-family:Orbitron;">
+  Checking session...
+</div>
+
+<!-- Login UI (hidden first) -->
+<div id="authWrapper" style="display:none;">
   <div class="login-container">
     <div class="login-box">
       <h1 id="formTitle">LOGIN TO PRAVAAH</h1>
 
-      <!-- 👇 These 3 show ONLY during signup -->
       <input type="text" id="name" placeholder="Full Name" class="hidden">
       <input type="text" id="phone" placeholder="Phone Number" class="hidden">
       <input type="text" id="college" placeholder="College Name" class="hidden">
@@ -48,6 +55,8 @@
       </p>
     </div>
   </div>
+</div>
+
 
   <!-- 🔹 Firebase SDK and Logic -->
   <script type="module">
@@ -205,13 +214,23 @@
     /* -------------------------
        Auto redirect if logged in
     ------------------------- */
-    onAuthStateChanged(auth, (user) => {
-      if (user) window.location.href = "home.html";
-    });
+   onAuthStateChanged(auth, (user) => {
+  const authWrapper = document.getElementById("authWrapper");
+  const loadingText = document.getElementById("loadingText");
+
+  if (user) {
+    window.location.href = "home.html";
+  } else {
+    loadingText.style.display = "none";
+    authWrapper.style.display = "block";
+  }
+});
+
 
   </script>
 </body>
 </html>
+
 
 
 
