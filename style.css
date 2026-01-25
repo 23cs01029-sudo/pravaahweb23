@@ -1711,30 +1711,10 @@ video:-webkit-full-screen {
   height: 42px;
 }
 
-/* FORCE PRAVAAH LOGO TO CENTER */
-nav {
-  position: relative;
-}
-
-/* Mobile + Desktop */
-.logo {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Mobile fine tuning */
-@media (max-width: 768px) {
-  .pravaah-logo {
-    height: 36px;
-  }
-}
-
 /* ===============================
-   📱 CENTER PRAVAAH LOGO ONLY ON MOBILE
+   📱 Center logo ONLY on mobile
 ================================ */
 @media (max-width: 900px) {
-
   nav {
     position: relative;
   }
@@ -1744,8 +1724,8 @@ nav {
     left: 50%;
     transform: translateX(-50%);
   }
-
 }
+
 
 
 
