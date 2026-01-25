@@ -308,3 +308,54 @@ body {
   100% { transform: translateY(0); }
 }
 
+
+/* 📱 COMING SOON - RESPONSIVE */
+@media (max-width: 900px) {
+  .coming-soon {
+    min-height: 50vh;
+    padding: 40px 6%;
+  }
+
+  .coming-box {
+    padding: 40px 25px;
+    border-radius: 18px;
+  }
+
+  .coming-box h1 {
+    font-size: 1.8rem;
+  }
+
+  .coming-box p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .glow-text {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .coming-soon {
+    min-height: 45vh;
+    padding: 30px 5%;
+  }
+
+  .coming-box {
+    padding: 30px 18px;
+  }
+
+  .coming-box h1 {
+    font-size: 1.5rem;
+  }
+
+  .coming-box p {
+    font-size: 0.95rem;
+  }
+
+  .glow-text {
+    font-size: 1rem;
+  }
+}
+
+
