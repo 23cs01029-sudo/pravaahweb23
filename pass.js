@@ -261,7 +261,7 @@ function renderSelectionArea() {
 
   /* ---------- DAY PASS ---------- */
   if (currentPassType === "Day Pass") {
-      participantForm.innerHTML = `
+  participantForm.innerHTML = `
     <div class="participant-card">
       <h4>Choose Day</h4>
       <div class="day-selector-row">
@@ -271,57 +271,59 @@ function renderSelectionArea() {
         <button type="button" class="day-card" data-day="day3">DAY 3</button>
       </div>
     </div>
-<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
-  Select the events
-</div>
 
-    <!-- EVENTS FIRST -->
+    <div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+      Select the events
+    </div>
+
     <div id="dayEventsContainer"></div>
 
-    <!-- THEN PARTICIPANTS -->
-    <div style="text-align:center;margin-top:18px;">
+    <!-- PARTICIPANTS (HIDDEN INITIALLY) -->
+    <div id="participantBox" style="display:none;text-align:center;margin-top:18px;">
       <h3>Number of Participants</h3>
       <div class="custom-number-box">
         <button type="button" class="num-btn" id="decPart">−</button>
-<input type="number" id="numParticipants" value="0" min="0" max="10">
-<button type="button" class="num-btn" id="incPart">+</button>
-
+        <input type="number" id="numParticipants" value="0" min="0" max="10">
+        <button type="button" class="num-btn" id="incPart">+</button>
       </div>
     </div>
 
     <div id="participantsContainerPlaceholder"></div>
   `;
 
-    document.querySelectorAll(".day-card").forEach((btn) =>
-  btn.addEventListener("click", () => {
-    const d = btn.dataset.day;
+  document.querySelectorAll(".day-card").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      const d = btn.dataset.day;
 
+      if (currentDayPassDays.includes(d)) {
+        currentDayPassDays = currentDayPassDays.filter(x => x !== d);
+        btn.classList.remove("active");
+      } else {
+        currentDayPassDays = sortDays([...currentDayPassDays, d]);
+        btn.classList.add("active");
+      }
 
-    if (currentDayPassDays.includes(d)) {
-      currentDayPassDays = currentDayPassDays.filter(x => x !== d);
-      btn.classList.remove("active");
-    } else {
-      currentDayPassDays = sortDays([...currentDayPassDays, d]);
-      btn.classList.add("active");
-    }
+      renderDayEvents(currentDayPassDays);
+      calculateTotal();
 
-    renderDayEvents(currentDayPassDays);
-calculateTotal();
+      const hint = document.getElementById("eventHint");
+      if (hint) {
+        hint.style.display = currentDayPassDays.length > 0 ? "block" : "none";
+      }
 
-const hint = document.getElementById("eventHint");
-if (hint) {
-  hint.style.display = currentDayPassDays.length > 0 ? "block" : "none";
+      // ✅ SHOW COUNTER ONLY IF DAY SELECTED
+      const pBox = document.getElementById("participantBox");
+      if (pBox) {
+        pBox.style.display = currentDayPassDays.length > 0 ? "block" : "none";
+      }
+    })
+  );
 }
 
 
-  })
-);
-
-  }
-
   /* ---------- VISITOR PASS ---------- */
   if (currentPassType === "Visitor Pass") {
-    participantForm.innerHTML = `
+  participantForm.innerHTML = `
     <div class="participant-card">
       <h4>Select Days</h4>
       <div class="visitor-days-col">
@@ -332,42 +334,44 @@ if (hint) {
       </div>
     </div>
 
-    <!-- EVENTS FIRST -->
     <div id="visitorEventsContainer"></div>
-    
 
-    <!-- PARTICIPANTS NEXT -->
-    <div style="text-align:center;margin-top:18px;">
+    <!-- PARTICIPANTS (HIDDEN INITIALLY) -->
+    <div id="participantBox" style="display:none;text-align:center;margin-top:18px;">
       <h3>Number of Participants</h3>
       <div class="custom-number-box">
         <button type="button" class="num-btn" id="decPart">−</button>
-<input type="number" id="numParticipants" value="0" min="0" max="10">
-<button type="button" class="num-btn" id="incPart">+</button>
-
+        <input type="number" id="numParticipants" value="0" min="0" max="10">
+        <button type="button" class="num-btn" id="incPart">+</button>
       </div>
     </div>
 
     <div id="participantsContainerPlaceholder"></div>
   `;
 
-    document.querySelectorAll(".visitor-day-card").forEach((btn) =>
-      btn.addEventListener("click", () => {
-        let d = btn.dataset.day;
+  document.querySelectorAll(".visitor-day-card").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      let d = btn.dataset.day;
 
-        if (currentVisitorDays.includes(d)) {
-          currentVisitorDays = currentVisitorDays.filter((x) => x !== d);
-          btn.classList.remove("active");
-        } else {
-          currentVisitorDays = sortDays([...currentVisitorDays, d]);
-          btn.classList.add("active");
-        }
+      if (currentVisitorDays.includes(d)) {
+        currentVisitorDays = currentVisitorDays.filter((x) => x !== d);
+        btn.classList.remove("active");
+      } else {
+        currentVisitorDays = sortDays([...currentVisitorDays, d]);
+        btn.classList.add("active");
+      }
 
-        renderVisitorEvents(currentVisitorDays);
-        calculateTotal();
+      renderVisitorEvents(currentVisitorDays);
+      calculateTotal();
 
-      })
-    );
-  }
+      // ✅ SHOW COUNTER ONLY IF DAY SELECTED
+      const pBox = document.getElementById("participantBox");
+      if (pBox) {
+        pBox.style.display = currentVisitorDays.length > 0 ? "block" : "none";
+      }
+    })
+  );
+}
 
   /* ---------- FEST PASS ---------- */
   if (currentPassType === "Fest Pass") {
@@ -714,6 +718,14 @@ function collectSelectedEvents() {
 
   return events;
 }
+function isStarNiteSelected() {
+  return (
+    currentPassType === "Starnite Pass" ||
+    currentPassType === "Fest Pass" ||
+    currentDayPassDays.includes("day3") ||
+    currentVisitorDays.includes("day3")
+  );
+}
 
 async function completeFreeRegistration() {
   const numInputLocal = document.getElementById("numParticipants");
@@ -759,7 +771,7 @@ async function completeFreeRegistration() {
     participants,
     daySelected: currentDayPassDays,
     visitorDays: currentVisitorDays,
-    starnite: currentPassType === "Starnite Pass",
+    starnite: isStarNiteSelected(),
     events: collectSelectedEvents(),
     registeredEmail: auth.currentUser.email
   };
@@ -867,7 +879,7 @@ if (isIITBBSUser()) {
     visitorDays: currentVisitorDays,
 
     // ✅ StarNite ONLY if pass itself is StarNite
-    starnite: currentPassType === "Starnite Pass",
+    starnite: isStarNiteSelected(),
 
     events: collectSelectedEvents()
   };
@@ -882,6 +894,7 @@ if (isIITBBSUser()) {
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
