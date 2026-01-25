@@ -2,9 +2,9 @@ const SESSION_KEY = "pravaah_payment";
 const SCRIPT_URL = "/api/pravaah";
 
 /* 🔐 UPI DETAILS */
-const UPI_ID = "8074412679@ybl";
-const RECEIVER_NAME = "KANDULA JOJI KUMAR";
-const RECEIVER_KEYWORDS = ["KANDULA", "JOJI", "KUMAR"];
+const UPI_ID = "228278079012987@cnrb";
+const RECEIVER_NAME = "ALMA FIESTA IIT BHUBANESWAR";
+const RECEIVER_KEYWORDS = ["ALMA", "FIESTA", "IIT","BHUBANESWAR"];
 
 /* ================= SESSION ================= */
 const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
