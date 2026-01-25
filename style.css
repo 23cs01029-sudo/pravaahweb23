@@ -1801,6 +1801,17 @@ nav {
 }
 
 
+/* ===== FINAL MOBILE NAVBAR GAP FIX ===== */
+body {
+  padding-top: 80px;   /* desktop navbar height */
+}
+
+@media (max-width: 900px) {
+  body {
+    padding-top: 64px; /* mobile navbar height */
+  }
+}
+
 
 
 
