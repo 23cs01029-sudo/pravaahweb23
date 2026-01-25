@@ -57,11 +57,31 @@
     }
   </style>
 
-  <script>
-    setTimeout(() => {
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbXKleOw4F46gFDXz2Wynl3YzPuHsVwh8",
+    authDomain: "pravaah-55b1d.firebaseapp.com",
+    projectId: "pravaah-55b1d",
+    storageBucket: "pravaah-55b1d.appspot.com",
+    messagingSenderId: "287687647267",
+    appId: "1:287687647267:web:7aecd603ee202779b89196"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = "home.html";
+    } else {
       window.location.href = "login.html";
-    }, 2000);
-  </script>
+    }
+  });
+</script>
+
 </head>
 
 
@@ -69,5 +89,6 @@
   <img src="Pravaah logo.png" class="logo" alt="PRAVAAH Logo">
 </body>
 </html>
+
 
 
