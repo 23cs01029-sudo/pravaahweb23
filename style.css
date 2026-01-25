@@ -1780,6 +1780,16 @@ video:-webkit-full-screen {
   }
 }
 
+/* ===== SMART NAVBAR SCROLL ===== */
+nav {
+  transition: transform 0.35s ease;
+}
+
+/* Hide navbar */
+.nav-hidden {
+  transform: translateY(-100%);
+}
+
 
 
 
