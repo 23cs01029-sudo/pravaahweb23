@@ -188,10 +188,26 @@
 </footer>
   <!-- 📱 NAVBAR TOGGLE -->
   <script>
-    document.getElementById("menuToggle").addEventListener("click", () => {
-      document.getElementById("menu").classList.toggle("active");
-    });
-  </script>
+  const menuToggle = document.getElementById("menuToggle");
+  const menu = document.getElementById("menu");
+
+  // Toggle when clicking hamburger
+  menuToggle.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent bubbling
+    menu.classList.toggle("active");
+  });
+
+  // Prevent closing when clicking inside menu
+  menu.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+
+  // Close menu when clicking anywhere else
+  document.addEventListener("click", () => {
+    menu.classList.remove("active");
+  });
+</script>
+
 <!-- 🖼️ PHOTO EDITOR MODAL -->
 <div id="photoEditor" class="editor hidden">
   <div class="editor-box">
