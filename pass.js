@@ -275,9 +275,10 @@ function renderSelectionArea() {
         <button type="button" class="day-card" data-day="day3">DAY 3</button>
       </div>
     </div>
-<div id="eventHint" style="display:block;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
-      Select the events
-    </div>
+<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+  Select the events
+</div>
+
     <!-- EVENTS FIRST -->
     <div id="dayEventsContainer"></div>
 
@@ -314,7 +315,13 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
     }
 
     renderDayEvents(currentDayPassDays);
-    calculateTotal();
+calculateTotal();
+
+const hint = document.getElementById("eventHint");
+if (hint && currentDayPassDays.length > 0) {
+  hint.style.display = "block";
+}
+
   })
 );
 
@@ -378,9 +385,10 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
   if (currentPassType === "Fest Pass") {
     participantForm.innerHTML = `
     <div class="participant-card"><h4>Fest Pass (All Days)</h4></div>
-<div id="eventHint" style="display:block;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
-      Select the events
-    </div>
+<div id="eventHint" style="display:none;text-align:center;margin-top:10px;font-weight:600;color:#4cff88;">
+  Select the events
+</div>
+
     <!-- EVENTS FIRST -->
     <div id="festEventsContainer"></div>
 
@@ -397,7 +405,10 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
 
     <div id="participantsContainerPlaceholder"></div>
   `;
-
+const hint = document.getElementById("eventHint");
+if (hint && currentDayPassDays.length > 0) {
+  hint.style.display = "block";
+}
     renderFestEvents();
   }
 
@@ -901,6 +912,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
