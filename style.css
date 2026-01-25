@@ -1748,37 +1748,8 @@ video:-webkit-full-screen {
     transform: translateX(-50%);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@media (max-width: 900px) {
+  .intro-section {
+    padding-top: 0 !important;
+  }
+}
