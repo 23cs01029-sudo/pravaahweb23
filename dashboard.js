@@ -463,7 +463,6 @@ document.addEventListener("DOMContentLoaded", () => {
       location.href = "login.html";
       return;
     }
-
     const scannerUrl =
   `scan.html?scanner=` +
   encodeURIComponent(user.email);
