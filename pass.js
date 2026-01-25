@@ -317,7 +317,7 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
     renderDayEvents(currentDayPassDays);
 calculateTotal();
 
-constconst hint = document.getElementById("eventHint");
+const hint = document.getElementById("eventHint");
 if (hint) {
   hint.style.display = currentDayPassDays.length > 0 ? "block" : "none";
 }
@@ -914,6 +914,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
