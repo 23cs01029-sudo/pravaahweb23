@@ -3,7 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PRAVAAH — Loading</title>
+
+  <!-- ✅ TITLE (Blue text in Google) -->
+  <title>PRAVAAH 2026 – IIT Bhubaneswar Cultural Fest</title>
+
+  <!-- ✅ DESCRIPTION (small text in Google) -->
+  <meta name="description" content="PRAVAAH is the annual cultural and technopreneurship fest of IIT Bhubaneswar. Register for events, competitions, Star Night and more.">
+
+  <!-- ✅ FAVICON (small logo in Google result tab) -->
+  <link rel="icon" href="favicon.png">
+
+  <!-- ✅ SOCIAL / GOOGLE PREVIEW LOGO -->
+  <meta property="og:title" content="PRAVAAH 2026 – IIT Bhubaneswar">
+  <meta property="og:description" content="Official website of PRAVAAH, the annual fest of IIT Bhubaneswar.">
+  <meta property="og:image" content="https://iitbbspravaah.in/Pravaah logo.png">
+  <meta property="og:url" content="https://iitbbspravaah.in">
+  <meta name="twitter:card" content="summary_large_image">
 
   <style>
     body {
@@ -13,43 +28,32 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #0A0F1F; /* Deep space */
+      background: #0A0F1F;
       overflow: hidden;
     }
 
-    /* ⭐ LOGO SIZE FOR LARGE SCREENS */
     .logo {
-      width: 350px;     /* 🔥 MUCH BIGGER NOW */
+      width: 350px;
       opacity: 0;
       animation: fadeIn 5s ease forwards;
     }
 
-    /* Fade animation */
     @keyframes fadeIn {
       0% { opacity: 0; transform: scale(0.7); }
       80% { opacity: 1; transform: scale(1.08); }
       100% { opacity: 1; transform: scale(1); }
     }
 
-    /* 📟 Tablets */
     @media (max-width: 900px) {
-      .logo {
-        width: 300px;
-      }
+      .logo { width: 300px; }
     }
 
-    /* 📱 Mobiles */
     @media (max-width: 600px) {
-      .logo {
-        width: 200px;
-      }
+      .logo { width: 200px; }
     }
 
-    /* 📱 Extra small phones */
     @media (max-width: 400px) {
-      .logo {
-        width: 160px;
-      }
+      .logo { width: 160px; }
     }
   </style>
 
@@ -60,8 +64,10 @@
   </script>
 </head>
 
+
 <body>
   <img src="Pravaah logo.png" class="logo" alt="PRAVAAH Logo">
 </body>
 </html>
+
 
