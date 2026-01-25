@@ -1,5 +1,6 @@
 const SESSION_KEY = "pravaah_payment";
 const SCRIPT_URL = "/api/pravaah";
+let uploadedImageFile = null;
 
 /* 🔐 UPI DETAILS */
 const UPI_ID = "228278079012987@cnrb";
@@ -93,7 +94,9 @@ let extractedUTR = null;
 
 fileInput.addEventListener("change", async () => {
   const file = fileInput.files[0];
-  if (!file) return;
+if (!file) return;
+uploadedImageFile = file;
+
 
   // 🔒 Allow ONLY one image
   if (fileInput.files.length > 1) {
@@ -163,15 +166,17 @@ confirmBtn.onclick = async () => {
   confirmBtn.textContent = "Confirming…";
 
   try {
-    const res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "UPI_PAYMENT_CONFIRM",
-        utr: extractedUTR,
-        session
-      })
-    });
+    const formData = new FormData();
+formData.append("type", "UPI_PAYMENT_CONFIRM");
+formData.append("utr", extractedUTR);
+formData.append("session", JSON.stringify(session));
+formData.append("screenshot", uploadedImageFile);
+
+const res = await fetch(SCRIPT_URL, {
+  method: "POST",
+  body: formData
+});
+
 
     const out = await res.json();
 
