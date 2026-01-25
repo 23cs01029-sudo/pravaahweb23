@@ -1787,6 +1787,12 @@ nav {
   z-index: 1000;     /* keep it above everything */
 }
 
+@media (max-width: 900px) {
+  body {
+    padding-top: 80px;
+  }
+}
+
 
 
 
