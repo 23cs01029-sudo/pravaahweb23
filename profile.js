@@ -9,7 +9,7 @@ import { onAuthStateChanged, signOut, updateProfile } from
 const FRONTEND_BASE = "iitbbspravaah.in";
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbx0ZT_WARv0lQOWDJhi5SV8OuZDIU4Nt2MOOnoo-1Uyp88vtroYA_nc2EjRMJ5kqQEspw/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxX6o5iNLnvedFQFsBQPYONH1YSdoWXtkFiu-hp5Bzcss3VKJDq8FxXIQdk6WMuaa345g/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -1073,6 +1073,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
