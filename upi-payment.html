@@ -17,6 +17,23 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <!-- QR -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+  #qrBox {
+    width: 220px;
+    max-width: 80vw;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #qrBox canvas,
+  #qrBox img {
+    width: 100% !important;
+    height: 100% !important;
+  }
+</style>
+
 </head>
 
 <body>
