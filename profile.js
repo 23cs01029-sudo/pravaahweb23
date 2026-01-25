@@ -6,7 +6,7 @@ import { auth } from "./auth.js";
 import { onAuthStateChanged, signOut, updateProfile } from
   "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-const FRONTEND_BASE = "https://pravaahweb.vercel.app";
+const FRONTEND_BASE = "iitbbspravaah.in";
 
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "https://script.google.com/macros/s/AKfycbyQpGQOJOonuLW_RoGOoPX36gkL0gBgigtz1wT2W8KotWjHb1DHD4q7bNXAy8eiZH2YpA/exec";
@@ -160,7 +160,7 @@ function renderPasses(passes, container, userEmail) {
 
     const qrBox = document.getElementById(qrId);
 const qrUrl =
-  `${FRONTEND_BASE}/public.html?paymentId=${encodeURIComponent(paymentId)}`;
+  `$public.html?paymentId=${encodeURIComponent(paymentId)}`;
 
 
 new QRCode(qrBox, {
@@ -1073,6 +1073,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
