@@ -47,23 +47,7 @@ body {
   font-size: 2.3rem;
 }
 
-.note {
-  background: rgba(0, 0, 0, 0.72);
-  border: 1.5px solid rgba(0, 255, 255, 0.35);
-  border-radius: 18px;
-  box-shadow: 0 0 12px rgba(0, 255, 255, 0.18);
 
-  padding: 28px 32px;
-  width: 90%;
-  max-width: 1100px;
-
-  margin: 60px auto 80px auto; /* 🔥 top + EXTRA bottom gap from footer */
-
-  text-align: center;
-  line-height: 1.6;
-
-  position: relative; /* prevents collapse issues */
-}
 /* -------- PASS CARDS -------- */
 .passes-grid {
   display: flex;
@@ -770,6 +754,133 @@ body {
 .event-label {
   line-height: 1.3;
   word-break: break-word;
+}
+
+
+/* =====================================
+   📝 NOTE SECTION (FULLY RESPONSIVE)
+===================================== */
+
+.note-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 1rem 4rem;
+}
+
+.note-box {
+  background: rgba(0, 0, 0, 0.65);
+  border: 1.5px solid rgba(0,255,255,0.35);
+  border-radius: 18px;
+  padding: 35px 40px;
+  width: 90%;
+  max-width: 900px;
+  box-shadow: 0 0 15px rgba(0,255,255,0.25);
+  text-align: left;
+  animation: noteGlow 3s ease-in-out infinite;
+}
+
+/* Title */
+.note-box h2 {
+  color: cyan;
+  text-align: center;
+  margin-bottom: 22px;
+  font-size: 1.9rem;
+  text-shadow: 0 0 8px rgba(0,255,255,0.5);
+}
+
+/* List */
+.note-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.note-box li {
+  margin-bottom: 14px;
+  padding-left: 22px;
+  position: relative;
+  line-height: 1.6;
+  font-size: 1.05rem;
+  color: #e6fefe;
+}
+
+.note-box li::before {
+  content: "➤";
+  position: absolute;
+  left: 0;
+  color: cyan;
+  text-shadow: 0 0 6px rgba(0,255,255,0.6);
+}
+
+/* Footer text */
+.note-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--muted);
+  text-shadow: 0 0 4px rgba(0,255,255,0.3);
+}
+
+/* Glow animation */
+@keyframes noteGlow {
+  0%   { box-shadow: 0 0 12px rgba(0,255,255,0.25); }
+  50%  { box-shadow: 0 0 22px rgba(0,255,255,0.45); }
+  100% { box-shadow: 0 0 12px rgba(0,255,255,0.25); }
+}
+
+/* ===============================
+   TABLET
+================================ */
+@media (max-width: 900px) {
+  .note-section {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .note-box {
+    padding: 30px 26px;
+  }
+
+  .note-box h2 {
+    font-size: 1.6rem;
+  }
+
+  .note-box li {
+    font-size: 1rem;
+  }
+}
+
+/* ===============================
+   MOBILE
+================================ */
+@media (max-width: 500px) {
+  .note-section {
+    padding: 1.5rem 0.8rem 2.5rem;
+  }
+
+  .note-box {
+    width: 95%;
+    padding: 22px 18px;
+    border-radius: 14px;
+  }
+
+  .note-box h2 {
+    font-size: 1.3rem;
+  }
+
+  .note-box li {
+    font-size: 0.95rem;
+    padding-left: 18px;
+  }
+
+  .note-box li::before {
+    left: 0;
+    font-size: 0.8rem;
+  }
+
+  .note-footer {
+    font-size: 0.85rem;
+  }
 }
 
 
