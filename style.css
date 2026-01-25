@@ -1763,5 +1763,22 @@ video:-webkit-full-screen {
     margin-top: 52px;            /* push content below navbar */
   }
 }
+@media (max-width: 900px) {
+  body {
+    padding-top: 0;
+  }
+
+  nav {
+    height: 64px;        /* ⬅️ increase height */
+    padding: 0 18px;    /* ⬅️ slightly more breathing space */
+  }
+
+  .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
 
 
