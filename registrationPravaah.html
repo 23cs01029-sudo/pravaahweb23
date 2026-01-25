@@ -239,8 +239,26 @@
   });
 </script>
 
+<script>
+let lastScrollTop = 0;
+const navbar = document.querySelector("nav");
 
+window.addEventListener("scroll", () => {
+  let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  if (scrollTop > lastScrollTop && scrollTop > 80) {
+    // scrolling DOWN
+    navbar.classList.add("nav-hidden");
+  } else {
+    // scrolling UP
+    navbar.classList.remove("nav-hidden");
+  }
+
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // for mobile bounce
+}, { passive: true });
+</script>
   <!-- MAIN PASS JS (your pass.js should populate events, participant forms and payment) -->
   <script type="module" src="pass.js" defer></script>
 </body>
 </html>
+
