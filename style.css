@@ -1731,6 +1731,24 @@ video:-webkit-full-screen {
     padding-top: 60px;   /* match mobile navbar height */
   }
 }
+/* 🔥 FINAL MOBILE GAP FIX */
+@media (max-width: 900px) {
+  body {
+    padding-top: 52px;
+  }
+
+  nav {
+    height: 52px;
+    padding: 0 16px;
+  }
+
+  .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
 
 
 
