@@ -317,10 +317,11 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
     renderDayEvents(currentDayPassDays);
 calculateTotal();
 
-const hint = document.getElementById("eventHint");
-if (hint && currentDayPassDays.length > 0) {
-  hint.style.display = "block";
+constconst hint = document.getElementById("eventHint");
+if (hint) {
+  hint.style.display = currentDayPassDays.length > 0 ? "block" : "none";
 }
+
 
   })
 );
@@ -406,9 +407,10 @@ if (regs.days?.includes(d) && isIITBBSUser()) {
     <div id="participantsContainerPlaceholder"></div>
   `;
 const hint = document.getElementById("eventHint");
-if (hint && currentDayPassDays.length > 0) {
-  hint.style.display = "block";
+if (hint) {
+  hint.style.display = currentDayPassDays.length > 0 ? "block" : "none";
 }
+
     renderFestEvents();
   }
 
@@ -912,6 +914,7 @@ saveRegistrations(regs);
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
