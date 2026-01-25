@@ -1753,3 +1753,15 @@ video:-webkit-full-screen {
     padding-top: 0 !important;
   }
 }
+/* 🔥 FIX MOBILE TOP GAP PROPERLY */
+@media (max-width: 900px) {
+  body {
+    padding-top: 0 !important;   /* remove fake gap */
+  }
+
+  .intro-section {
+    margin-top: 52px;            /* push content below navbar */
+  }
+}
+
+
