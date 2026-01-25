@@ -62,13 +62,17 @@ const upiLink =
 console.log("UPI LINK:", upiLink);
 
 // HIGH QUALITY QR
+// RESPONSIVE QR SIZE
+const qrSize = Math.min(window.innerWidth * 0.6, 220);
+
 new QRCode(qrBox, {
   text: upiLink,
-  width: 420,
-  height: 420,
+  width: qrSize,
+  height: qrSize,
   useSVG: true,
-  correctLevel: QRCode.CorrectLevel.M   // faster scan
+  correctLevel: QRCode.CorrectLevel.M
 });
+;
 
 
 
