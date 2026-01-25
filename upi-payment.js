@@ -157,7 +157,7 @@ uploadedImageFile = file;
 
 /* ================= CONFIRM PAYMENT ================= */
 confirmBtn.onclick = async () => {
-  if (!extractedUTR) {
+  if (!extractedUTR || !uploadedImageFile) {
     alert("Please upload a valid payment screenshot.");
     return;
   }
@@ -165,37 +165,44 @@ confirmBtn.onclick = async () => {
   confirmBtn.disabled = true;
   confirmBtn.textContent = "Confirming…";
 
-  try {
-   const reader = new FileReader();
-reader.onload = async () => {
-  const base64Image = reader.result.split(",")[1];
+  const reader = new FileReader();
 
-  const res = await fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      type: "UPI_PAYMENT_CONFIRM",
-      utr: extractedUTR,
-      session: session,
-      screenshotBase64: base64Image,
-      mimetype: uploadedImageFile.type
-    })
-  });
+  reader.onload = async () => {
+    try {
+      const base64Image = reader.result.split(",")[1];
 
-  const out = await res.json();
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "UPI_PAYMENT_CONFIRM",
+          utr: extractedUTR,
+          session: session,
+          screenshotBase64: base64Image,
+          mimetype: uploadedImageFile.type
+        })
+      });
 
-  if (out.ok) {
-    allowExit = true;
-    localStorage.removeItem(SESSION_KEY);
-    window.location.replace("payment_success.html");
-  } else {
-    alert(out.error || "Payment failed");
-    confirmBtn.disabled = false;
-    confirmBtn.textContent = "Confirm Payment";
-  }
+      const out = await res.json();
+
+      if (out.ok) {
+        allowExit = true;
+        localStorage.removeItem(SESSION_KEY);
+        window.location.replace("payment_success.html");
+      } else {
+        throw new Error(out.error || "Payment failed");
+      }
+
+    } catch (err) {
+      alert(err.message);
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Confirm Payment";
+    }
+  };
+
+  reader.readAsDataURL(uploadedImageFile);
 };
-reader.readAsDataURL(uploadedImageFile);
-};
+
 
 /* ================= CANCEL PAYMENT ================= */
 document.getElementById("cancelBtn").onclick = () => {
