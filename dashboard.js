@@ -465,7 +465,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const scannerUrl =
-  `${FRONTEND_BASE}/scan.html?scanner=` +
+  `scan.html?scanner=` +
   encodeURIComponent(user.email);
 
 window.location.href = scannerUrl;
