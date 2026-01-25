@@ -310,25 +310,6 @@ PRAVAAH, The Annual Culturaland Technopreneurship Fest of IIT Bhubaneswar, celeb
 
     logoutDesktop?.addEventListener("click", logout);
     logoutMobile?.addEventListener("click", logout);
-    function updateDashboardVisibility(user) {
-  if (user) {
-    dashboardNav?.classList.remove("hidden");
-  } else {
-    dashboardNav?.classList.add("hidden");
-  }
-}
-
-onAuthStateChanged(auth, (user) => {
-  updateDashboardVisibility(user);
-});
-
-// Fix back/forward cache issue
-window.addEventListener("pageshow", () => {
-  onAuthStateChanged(auth, (user) => {
-    updateDashboardVisibility(user);
-  });
-});
-
   });
 </script>
 
