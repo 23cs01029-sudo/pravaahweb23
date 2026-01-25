@@ -405,8 +405,8 @@ html += `<tr>
     <div
       class="qr-box"
       id="qr-${i}"
-      data-qr="$/public.html?paymentId=${encodeURIComponent(x["Payment ID"])}"
-      data-scan="$/scan.html?paymentId=${encodeURIComponent(x["Payment ID"])}&scanner=${encodeURIComponent(adminEmail)}"
+      data-qr="public.html?paymentId=${encodeURIComponent(x["Payment ID"])}"
+      data-scan="scan.html?paymentId=${encodeURIComponent(x["Payment ID"])}&scanner=${encodeURIComponent(adminEmail)}"
     ></div>
   </td>
 </tr>`;
