@@ -117,7 +117,7 @@ uploadedImageFile = file;
     const text = data.text.toUpperCase();
 
     /* 🔢 UTR (12–16 digits) */
-    const utrMatch = text.match(/(UTR|UPI TRANSACTION ID|TRANSACTION ID)[:\s]*([0-9]{12,16})/i);
+    const utrMatch = text.match(/\b[0-9]{12}\b/);
 
 
     /* 💰 Amount check */
@@ -125,7 +125,7 @@ uploadedImageFile = file;
     const amountOk = new RegExp(`\\b${amount}(\\.00)?\\b`).test(cleanText);
 
     if (utrMatch && amountOk ) {
-  extractedUTR = utrMatch[1];
+  extractedUTR = utrMatch[0];
 
       confirmBtn.disabled = false;
       uploadStatusEl.textContent = "✅ Screenshot verified";
