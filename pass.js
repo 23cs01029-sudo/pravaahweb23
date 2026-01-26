@@ -60,21 +60,21 @@ day3: [
 
 const PRICES = {
   dayPass: {
-    day0: 99,
-    day1: 199,
-    day2: 199,
-    day3: 249
-  },
-
-  visitor: {
-    day0: 99,
+    day0: 75,
     day1: 149,
     day2: 149,
     day3: 199
   },
 
+  visitor: {
+    day0: 75,
+    day1: 99,
+    day2: 99,
+    day3: 149
+  },
+
   fest: {
-    normal: 599
+    normal: 449
   },
 
   starnite: 99
@@ -892,6 +892,7 @@ if (isIITBBSUser()) {
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
