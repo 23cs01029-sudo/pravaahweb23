@@ -47,8 +47,6 @@ const EVENTS = {
 ],
 
 day3: [
-  "StarNite",
-  "DJ Night",
   "IPL Auction",
   "Solo Dance",
   "Group Dance",
@@ -894,6 +892,7 @@ if (isIITBBSUser()) {
   /* ➡️ REDIRECT TO PAYMENT PAGE */
   window.location.href = "upi-payment.html";
 });
+
 
 
 
