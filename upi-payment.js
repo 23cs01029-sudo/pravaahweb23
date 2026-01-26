@@ -4,7 +4,8 @@ let uploadedImageFile = null;
 
 /* 🔐 UPI DETAILS */
 const UPI_ID = "228278079012987@cnrb";
-
+const RECEIVER_NAME = "ALMA FIESTA IIT BHUBANESWAR";
+const RECEIVER_KEYWORDS = ["ALMA", "FIESTA", "IIT","BHUBANESWAR"];
 /* ================= SESSION ================= */
 const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
 
