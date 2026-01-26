@@ -6,7 +6,8 @@ import { auth } from "./auth.js";
 import { onAuthStateChanged, signOut, updateProfile } from
   "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-const FRONTEND_BASE = "iitbbspravaah.in";
+const FRONTEND_BASE = "https://iitbbspravaah.in";
+
 
 /* ---------- Backend Script URL ---------- */
 const scriptURL = "https://script.google.com/macros/s/AKfycbylw6yh_30yZyoSqL5PFukDRpzwckpGLZGhJ8GOdijcayzBgH9kBZRhyuqqNZTyMozzhg/exec";
@@ -1073,6 +1074,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
