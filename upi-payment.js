@@ -116,8 +116,17 @@ uploadedImageFile = file;
     const { data } = await Tesseract.recognize(file, "eng");
     const text = data.text.toUpperCase();
 
-    /* 🔢 UTR (12–16 digits) */
-    const utrMatch = text.match(/\b[0-9]{12}\b/);
+// remove spaces only (keep digits separate from words)
+const textNoSpaces = text.replace(/\s+/g, "");
+
+// match EXACT 12 digits only (not part of longer number)
+const utrMatch = textNoSpaces.match(/(^|[^0-9])([0-9]{12})([^0-9]|$)/);
+
+let finalUTR = null;
+if (utrMatch) {
+  finalUTR = utrMatch[2];
+}
+
 
 
     /* 💰 Amount check */
@@ -125,7 +134,7 @@ uploadedImageFile = file;
     const amountOk = new RegExp(`\\b${amount}(\\.00)?\\b`).test(cleanText);
 
     if (utrMatch && amountOk ) {
-  extractedUTR = utrMatch[0];
+  extractedUTR = finalUTR;
 
       confirmBtn.disabled = false;
       uploadStatusEl.textContent = "✅ Screenshot verified";
