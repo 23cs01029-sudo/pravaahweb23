@@ -4,8 +4,6 @@ let uploadedImageFile = null;
 
 /* 🔐 UPI DETAILS */
 const UPI_ID = "228278079012987@cnrb";
-const RECEIVER_NAME = "ALMA FIESTA IIT BHUBANESWAR";
-const RECEIVER_KEYWORDS = ["ALMA", "FIESTA", "IIT","BHUBANESWAR"];
 
 /* ================= SESSION ================= */
 const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
@@ -125,10 +123,9 @@ uploadedImageFile = file;
     const cleanText = text.replace(/[,₹RSINR]/g, "");
     const amountOk = new RegExp(`\\b${amount}(\\.00)?\\b`).test(cleanText);
 
-    /* 👤 Receiver name */
-    const receiverOk = RECEIVER_KEYWORDS.some(k => text.includes(k));
+  
 
-    if (utrMatch && amountOk && receiverOk) {
+    if (utrMatch && amountOk ) {
       extractedUTR = utrMatch[1];
       confirmBtn.disabled = false;
       uploadStatusEl.textContent = "✅ Screenshot verified";
