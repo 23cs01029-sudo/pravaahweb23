@@ -479,12 +479,16 @@ document.getElementById("logoutDesktop").onclick = logout;
 document.getElementById("logoutMobile").onclick = logout;
 
 async function logout() {
-  clearDashboardCache();  
-   clearRoleCache(email); // 🧹 clear stats
+  const email = auth.currentUser?.email;
+  if(email){
+    clearRoleCache(email);
+  }
+  clearDashboardCache();
   localStorage.removeItem("pravaah_dashboard"); 
   await signOut(auth);
   location.href = "login.html";
 }
+
 
 /* ============================================================
    📌 LOCAL CACHE SYSTEM for DASHBOARD (Stats + Pass Counts)
