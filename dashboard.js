@@ -9,7 +9,8 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-const FRONTEND_BASE = "iitbbspravaah.in";
+const FRONTEND_BASE = "https://iitbbspravaah.in";
+
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
@@ -405,8 +406,9 @@ html += `<tr>
     <div
       class="qr-box"
       id="qr-${i}"
-      data-qr="public.html?paymentId=${encodeURIComponent(x["Payment ID"])}"
-      data-scan="scan.html?paymentId=${encodeURIComponent(x["Payment ID"])}&scanner=${encodeURIComponent(adminEmail)}"
+      data-qr="${FRONTEND_BASE}/public.html?paymentId=${encodeURIComponent(x["Payment ID"])}"
+data-scan="${FRONTEND_BASE}/scan.html?paymentId=${encodeURIComponent(x["Payment ID"])}&scanner=${encodeURIComponent(adminEmail)}"
+
     ></div>
   </td>
 </tr>`;
