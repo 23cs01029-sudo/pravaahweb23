@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   { img: "WEB HACKTHON.jpg", name: "Data Science Hackathon", text: "Code,Analyze,Innovate.", time: "9:00 AM" ,locationLink:"https://maps.app.goo.gl/n6YXxLQmicNHihqi7"},
   { img: "Film Quiz_events.JPG", name: "General Quiz", text: "Test your knowledge", time: "9:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
  
-  { img: "Marcatus.JPG", name: "Marcatus – Round 1", text: "Business minds battle", time: "10:00 aM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
+  { img: "Marcatus.JPG", name: "Marcatus – Round 1", text: "Business minds battle", time: "10:00 AM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
      { img: "Guest Talk.JPG", name: "Guest Talk – 1", text: "Inspiring expert insights", time: "12:00 PM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
      { img: "fashionshow_gallery.jpg", name: "Fashion Show", text: "Style meets confidence", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/BDz4WQp2ZXHVktaR9" },
     { img: "startup expo event.jpg", name: "Startup Expo", text: "Ideas meet investors", time: "2:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
    
   { img: "SoloDance_events.jpg", name: "Solo Dance", text: "Express through movement", time: "9:30 AM" ,locationLink:"https://maps.app.goo.gl/nxKumvFAEe4KybS26"},
   { img: "edusphere.png", name: "Edusphere", text: "Learn,Explore,Grow.", time: "10:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
-    { img: "trekkon event.jpg", name: "Trekkon", text: "Robots on track", time: "10:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
+    { img: "trekkon event.jpg", name: "Trekkon", text: "Robots on track", time: "10:00 AM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
 
   { img: "ipl quiz_events (1).png", name: "IPL Auction – Round 1", text: "Bid,Strategize,Win.", time: "10:00 AM" ,locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28"},
     { img: "Guest Talk.JPG", name: "Guest Talk – 3", text: "Inspiring expert insights", time: "12:00 PM",locationLink:"https://maps.app.goo.gl/6xiczMEfwDUEBZQ28" },
@@ -463,6 +463,7 @@ window.addEventListener("blur", () => {
 window.addEventListener("beforeunload", () => {
   stopYouTubeVideo();
 });
+
 
 
 
