@@ -160,7 +160,7 @@ function renderPasses(passes, container, userEmail) {
 
     const qrBox = document.getElementById(qrId);
 const qrUrl =
-  `public.html?paymentId=${encodeURIComponent(paymentId)}`;
+  `${FRONTEND_BASE}/public.html?paymentId=${encodeURIComponent(paymentId)}`;
 
 
 new QRCode(qrBox, {
@@ -1073,6 +1073,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
