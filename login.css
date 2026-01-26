@@ -216,4 +216,18 @@ input:focus {
     padding: 9px;
   }
 }
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.login-container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
 
