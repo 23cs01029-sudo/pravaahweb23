@@ -113,49 +113,62 @@ uploadedImageFile = file;
   uploadStatusEl.style.color = "#ffd36a";
 
   try {
-    const { data } = await Tesseract.recognize(file, "eng");
-    const text = data.text.toUpperCase();
+  const { data } = await Tesseract.recognize(file, "eng");
+  const text = data.text.toUpperCase();
 
-// remove spaces only (keep digits separate from words)
-const textNoSpaces = text.replace(/\s+/g, "");
+  console.clear();
+  console.log("========== OCR RAW TEXT ==========");
+  console.log(text);
+  console.log("==================================");
 
-// match EXACT 12 digits only (not part of longer number)
-const utrMatch = text.match(/\b\d{12}\b/);
-const finalUTR = utrMatch ? utrMatch[0] : null;
+  // 🔎 UTR extraction
+  const utrMatch = text.match(/\b\d{12}\b/);
+  const finalUTR = utrMatch ? utrMatch[0] : null;
 
+  console.log("UTR FOUND:", finalUTR);
 
+  // 💰 Amount check
+  const cleanedText = text.replace(/[₹,]/g, "");
+  const amountRegex = new RegExp(`\\b${amount}\\b`);
+  const amountOk = amountRegex.test(cleanedText);
 
+  console.log("EXPECTED AMOUNT:", amount);
+  console.log("CLEANED TEXT:", cleanedText);
+  console.log("AMOUNT MATCH:", amountOk);
 
-    /* 💰 Amount check */
-    const amountOk = new RegExp(`\\b${amount}\\b`).test(
-  text.replace(/[₹,]/g, "")
-);
+  // 🏷 Receiver name check (optional but useful)
+  const receiverOk = RECEIVER_KEYWORDS.every(word =>
+    text.includes(word)
+  );
 
+  console.log("RECEIVER KEYWORDS:", RECEIVER_KEYWORDS);
+  console.log("RECEIVER MATCH:", receiverOk);
 
-    if (utrMatch && amountOk ) {
-  extractedUTR = finalUTR;
-
-      confirmBtn.disabled = false;
-      uploadStatusEl.textContent = "✅ Screenshot verified";
-      uploadStatusEl.style.color = "#4cff88";
-    } else {
-      uploadStatusEl.textContent = "❌ Verification failed";
-      uploadStatusEl.style.color = "#ff5c5c";
-      alert(
-        "Could not verify payment.\n\n" +
-        "Make sure screenshot shows:\n" +
-        "• UTR\n" +
-        "• Amount ₹" + amount + "\n" +
-        "• Receiver name"
-      );
-    }
-
-  } catch (err) {
-    console.error(err);
-    uploadStatusEl.textContent = "❌ Processing failed";
+  if (finalUTR && amountOk) {
+    extractedUTR = finalUTR;
+    confirmBtn.disabled = false;
+    uploadStatusEl.textContent = "✅ Screenshot verified";
+    uploadStatusEl.style.color = "#4cff88";
+  } else {
+    uploadStatusEl.textContent = "❌ Verification failed";
     uploadStatusEl.style.color = "#ff5c5c";
-    alert("Screenshot processing failed. Please try again.");
+
+    alert(
+      "Verification failed.\n\n" +
+      "UTR: " + finalUTR + "\n" +
+      "Amount OK: " + amountOk + "\n" +
+      "Receiver OK: " + receiverOk + "\n\n" +
+      "Open console (F12) to see why."
+    );
   }
+
+} catch (err) {
+  console.error("OCR ERROR:", err);
+  uploadStatusEl.textContent = "❌ Processing failed";
+  uploadStatusEl.style.color = "#ff5c5c";
+  alert("Screenshot processing failed. Please try again.");
+}
+
 
   confirmBtn.textContent = "Confirm Payment";
 });
