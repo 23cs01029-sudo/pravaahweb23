@@ -344,18 +344,32 @@ function startAutoRefresh() {
 
 /* ================= PASSES SHEET ================= */
 function setupPassesSheet() {
-  openPassesSheet.onclick = async () => {
-    const r = await fetch(`${API}?type=openPassesSheet`);
-    const d = await r.json();
-    if (d.url) window.open(d.url, "_blank");
-  };
+ openPassesSheet.onclick = async () => {
+  const r = await fetch(`${API}?type=openPassesSheet`);
+  const d = await r.json();
+
+  console.log("Passes sheet response:", d);
+
+  if (d.url) {
+    window.open(d.url, "_blank");
+  } else {
+    alert("No URL returned for passes sheet");
+  }
+};
+
 }
 openEventRegSheet.onclick = async () => {
-  if (!CURRENT_EVENT) return;
+  if (!CURRENT_EVENT) return alert("Select event first");
+
   const r = await fetch(`${API}?type=openEventRegSheet&event=${CURRENT_EVENT}`);
   const d = await r.json();
+
+  console.log("Event reg sheet response:", d);
+
   if (d.url) window.open(d.url, "_blank");
+  else alert("No URL for event reg sheet");
 };
+
 
 openEventEntrySheet.onclick = async () => {
   if (!CURRENT_EVENT) return;
@@ -364,15 +378,15 @@ openEventEntrySheet.onclick = async () => {
   if (d.url) window.open(d.url, "_blank");
 };
  openGateLogsSheet.onclick = async () => {
-    const r = await fetch(`${API}?type=openGateLogsSheet`);
-    const d = await r.json();
+  const r = await fetch(`${API}?type=openGateLogsSheet`);
+  const d = await r.json();
 
-    if (d.url) {
-      window.open(d.url, "_blank");
-    } else {
-      alert("Unable to open Gate Logs sheet");
-    }
-  };
+  console.log("Gate logs response:", d);
+
+  if (d.url) window.open(d.url, "_blank");
+  else alert("No URL for gate logs sheet");
+};
+
 
 /* ================= SEARCH ================= */
 searchBtn.onclick = async () => {
