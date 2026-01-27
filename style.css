@@ -83,7 +83,7 @@ nav {
   background: linear-gradient(to right, #0b141a, #15232e);   /* Slightly brighter */
   border-bottom: 1px solid rgba(255,255,255,0.08);
   backdrop-filter: blur(6px);
-  position: fixed;
+ 
   top: 0;
   left: 0;
   z-index: 1000;
@@ -1832,6 +1832,7 @@ body {
     padding-top: 64px !important;
   }
 }
+
 
 
 
