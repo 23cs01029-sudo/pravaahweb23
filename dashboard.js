@@ -345,47 +345,46 @@ function startAutoRefresh() {
 /* ================= PASSES SHEET ================= */
 function setupPassesSheet() {
  openPassesSheet.onclick = async () => {
-  const r = await fetch(`${API}?type=openPassesSheet`);
+  const email = auth.currentUser.email;
+  const r = await fetch(`${API}?type=openPassesSheet&email=${encodeURIComponent(email)}`);
   const d = await r.json();
 
-  console.log("Passes sheet response:", d);
-
-  if (d.url) {
-    window.open(d.url, "_blank");
-  } else {
-    alert("No URL returned for passes sheet");
-  }
+  if (d.url) window.open(d.url, "_blank");
+  else alert(d.error || "Not allowed");
 };
+
 
 }
 openEventRegSheet.onclick = async () => {
-  if (!CURRENT_EVENT) return alert("Select event first");
+  if (!CURRENT_EVENT) return;
 
-  const r = await fetch(`${API}?type=openEventRegSheet&event=${CURRENT_EVENT}`);
+  const email = auth.currentUser.email;
+  const r = await fetch(`${API}?type=openEventRegSheet&event=${CURRENT_EVENT}&email=${encodeURIComponent(email)}`);
   const d = await r.json();
 
-  console.log("Event reg sheet response:", d);
-
   if (d.url) window.open(d.url, "_blank");
-  else alert("No URL for event reg sheet");
+  else alert(d.error || "Not allowed");
 };
-
 
 openEventEntrySheet.onclick = async () => {
   if (!CURRENT_EVENT) return;
-  const r = await fetch(`${API}?type=openEventEntrySheet&event=${CURRENT_EVENT}`);
-  const d = await r.json();
-  if (d.url) window.open(d.url, "_blank");
-};
- openGateLogsSheet.onclick = async () => {
-  const r = await fetch(`${API}?type=openGateLogsSheet`);
+
+  const email = auth.currentUser.email;
+  const r = await fetch(`${API}?type=openEventEntrySheet&event=${CURRENT_EVENT}&email=${encodeURIComponent(email)}`);
   const d = await r.json();
 
-  console.log("Gate logs response:", d);
+  if (d.url) window.open(d.url, "_blank");
+  else alert(d.error || "Not allowed");
+};
+openGateLogsSheet.onclick = async () => {
+  const email = auth.currentUser.email;
+  const r = await fetch(`${API}?type=openGateLogsSheet&email=${encodeURIComponent(email)}`);
+  const d = await r.json();
 
   if (d.url) window.open(d.url, "_blank");
-  else alert("No URL for gate logs sheet");
+  else alert(d.error || "Not allowed");
 };
+
 
 
 /* ================= SEARCH ================= */
