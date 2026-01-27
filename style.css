@@ -77,6 +77,7 @@ nav {
   width: 100%;
   display: flex;
   justify-content: space-between;
+   position:sticky;
   align-items: center;
   padding: 15px 60px;
   background: linear-gradient(to right, #0b141a, #15232e);   /* Slightly brighter */
@@ -1831,6 +1832,7 @@ body {
     padding-top: 64px !important;
   }
 }
+
 
 
 
