@@ -120,18 +120,17 @@ uploadedImageFile = file;
 const textNoSpaces = text.replace(/\s+/g, "");
 
 // match EXACT 12 digits only (not part of longer number)
-const utrMatch = textNoSpaces.match(/(^|[^0-9])([0-9]{12})([^0-9]|$)/);
+const utrMatch = text.match(/\b\d{12}\b/);
+const finalUTR = utrMatch ? utrMatch[0] : null;
 
-let finalUTR = null;
-if (utrMatch) {
-  finalUTR = utrMatch[2];
-}
 
 
 
     /* 💰 Amount check */
-    const cleanText = text.replace(/[,₹RSINR]/g, "");
-    const amountOk = new RegExp(`\\b${amount}(\\.00)?\\b`).test(cleanText);
+    const amountOk = new RegExp(`\\b${amount}\\b`).test(
+  text.replace(/[₹,]/g, "")
+);
+
 
     if (utrMatch && amountOk ) {
   extractedUTR = finalUTR;
