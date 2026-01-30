@@ -10,7 +10,7 @@ const FRONTEND_BASE = "https://iitbbspravaah.in";
 
 
 /* ---------- Backend Script URL ---------- */
-const scriptURL = "https://script.google.com/macros/s/AKfycbylw6yh_30yZyoSqL5PFukDRpzwckpGLZGhJ8GOdijcayzBgH9kBZRhyuqqNZTyMozzhg/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxsmHJpysyiKBANKJkCxv-D4mzhLYyFs8f7U5dmwjl5ZE5Y8xLjzhWWsSyLeg-_Do9ZLg/exec";
 /* ---------- DEBUG ---------- */
 const DEBUG_PROFILE = true;
 const log = (...args) => {
@@ -1074,6 +1074,7 @@ function getCachedPasses(email){
 function clearPassCache(email){
   localStorage.removeItem("pravaah_passes_" + email);
 }
+
 
 
 
