@@ -199,6 +199,28 @@ function buildSingleParticipantForm() {
     </div>
   `;
 }
+// ✅ Autofill like pass.js
+onAuthStateChanged(auth, (user) => {
+  if (!user) return;
+
+  const card = document.querySelector(".participant-card");
+  if (!card) return;
+
+  const nameInput = card.querySelector(".pname");
+  const emailInput = card.querySelector(".pemail");
+  const phoneInput = card.querySelector(".pphone");
+  const collegeInput = card.querySelector(".pcollege");
+
+  // Autofill email from Firebase
+  if (emailInput) emailInput.value = user.email || "";
+
+  // Autofill from localStorage (if saved earlier like pass.js)
+  const profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
+
+  if (nameInput && profile.name) nameInput.value = profile.name;
+  if (phoneInput && profile.phone) phoneInput.value = profile.phone;
+  if (collegeInput && profile.college) collegeInput.value = profile.college;
+});
 
 buildSingleParticipantForm();
 
@@ -249,6 +271,7 @@ const participants = [{ name, email, phone, college }];
   localStorage.setItem("accommodation_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
