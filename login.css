@@ -6,6 +6,8 @@ html, body {
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -14,15 +16,16 @@ body {
   background-size: 400% 400%;
   animation: gradientMove 15s ease infinite;
   color: white;
+
   display: flex;
-  flex-direction: column;
-  justify-content: center;  /* ✅ Centers vertically */
-  align-items: center;      /* ✅ Centers horizontally */
+  justify-content: center;
+  align-items: center;
+
   min-height: 100vh;
-  overflow-y: auto;         /* ✅ Enables pull-to-refresh on mobile */
-  -webkit-overflow-scrolling: touch; /* ✅ smooth scroll */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
-  padding: 5vh 0;           /* small top-bottom space for scroll */
+  padding: 5vh 0;
 }
 
 @keyframes gradientMove {
@@ -31,62 +34,36 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* 🔹 LOGIN BOX CONTAINER */
+/* 🔹 LOGIN CONTAINER */
 .login-container {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: 0;
 }
 
 /* 🔹 LOGIN BOX */
-
-
-
-
 .login-box {
   background: rgba(0, 0, 0, 0.75);
   border: 2px solid cyan;
   box-shadow: 0 0 40px rgba(0, 255, 255, 0.7);
   border-radius: 26px;
 
-  width: 520px;        /* 🔥 wider */
+  width: 520px;
   max-width: 95%;
-  min-height: 600px;  /* 🔥 taller */
+  min-height: 600px;
 
-  padding: 80px 60px; /* 🔥 more space inside */
+  padding: 80px 60px;
   position: relative;
-  overflow: visible;
   text-align: center;
-   transition: transform 0.4s ease, box-shadow 0.4s ease;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
   animation: fadeIn 0.6s ease forwards;
-}
-
-/* ==== HARD FIX FOR LOGO + BOX ==== */
-
-
-/* ==== FORCE RESET LOGO ==== */
-.login-logo {
-  width: 140px;
-  max-width: 70%;
-  height: auto;
-  /* display: block; */
-  margin-top: 10px;
-  /* padding: 70px 45px 50px; */
-  filter: drop-shadow(0 0 10px cyan);
-  position: relative;
-  top: 0;
-  overflow: visible;
-}
-
-
-
-
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .login-box:hover {
@@ -94,11 +71,27 @@ body {
   box-shadow: 0 0 35px cyan;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🔥 BIGGER CENTERED LOGO */
+.login-logo {
+  width: 200px;
+  max-width: 85%;
+  height: auto;
+  display: block;
+  margin: 0 auto 25px auto;
+  filter: drop-shadow(0 0 15px cyan);
+}
+
 /* 🔸 TITLE */
 h1 {
   color: cyan;
   text-shadow: 0 0 15px cyan;
   margin-bottom: 25px;
+  margin-top: 5px;
   font-size: 1.7rem;
   letter-spacing: 1px;
 }
@@ -123,7 +116,7 @@ input:focus {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* 🔹 MAIN LOGIN BUTTON */
+/* 🔹 MAIN BUTTON */
 .main-btn {
   width: 100%;
   padding: 12px;
@@ -165,7 +158,7 @@ input:focus {
   box-shadow: 0 0 20px cyan;
 }
 
-/* 🔹 DIVIDER + TOGGLE TEXT */
+/* 🔹 DIVIDER & TOGGLE */
 .divider {
   margin: 18px 0;
   color: #bbb;
@@ -189,13 +182,12 @@ input:focus {
   text-shadow: 0 0 10px cyan;
 }
 
-/* 🧩 RESPONSIVE DESIGN */
-
-/* Tablets */
+/* 📱 TABLETS */
 @media (max-width: 900px) {
   .login-box {
     width: 320px;
     padding: 35px 25px;
+    min-height: auto;
   }
 
   h1 {
@@ -203,24 +195,21 @@ input:focus {
   }
 }
 
-/* 📱 Mobiles */
+/* 📱 MOBILES */
 @media (max-width: 600px) {
   body {
-    padding: 8vh 0; /* ✅ adds breathing space */
+    padding: 8vh 0;
   }
 
-  @media (max-width: 600px) {
   .login-box {
     width: 95%;
     min-height: 520px;
     padding: 60px 30px;
   }
-}
 
   .login-logo {
-  width: 110px;
-  margin-bottom: 15px;
-}
+    width: 160px;
+  }
 
   h1 {
     font-size: 1.4rem;
@@ -236,7 +225,7 @@ input:focus {
   }
 }
 
-/* 📱 Small Phones */
+/* 📱 SMALL PHONES */
 @media (max-width: 400px) {
   .login-box {
     padding: 25px 16px;
@@ -252,28 +241,8 @@ input:focus {
     padding: 9px;
   }
 }
+
+/* UNIVERSAL */
 * {
   box-sizing: border-box;
 }
-
-html, body {
-  width: 100%;
-  overflow-x: hidden;
-}
-
-.login-container {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-
-
-
-
-
-
-
-
-
-
-
