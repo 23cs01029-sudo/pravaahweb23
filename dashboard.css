@@ -461,5 +461,74 @@
   color: var(--gold);
   text-shadow: 0 0 8px rgba(255,215,0,0.6);
 }
+/* ============================================================
+   🏨 ACCOMMODATION CAPACITY CONTROL (ONE BOX SYSTEM)
+============================================================ */
+
+.acc-control-box {
+  background: rgba(0,0,0,0.55);
+  border: 1px solid var(--primary-soft);
+  border-radius: 20px;
+  padding: 24px 22px;
+  margin: 2rem auto;
+  max-width: 620px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.45);
+  backdrop-filter: blur(8px);
+  text-align: center;
+}
+
+.acc-control-box h3 {
+  color: var(--primary);
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+}
+
+.acc-control-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+/* Dropdowns (boys/girls, single/common, day) */
+.acc-control-row select {
+  min-width: 180px;
+  padding: 12px 42px 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--primary-soft);
+  background-color: rgba(0,0,0,0.65);
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(36,224,236,0.18);
+
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='cyan' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 14px;
+}
+
+/* Capacity input */
+.acc-control-row input {
+  min-width: 160px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--primary-soft);
+  background: rgba(0,0,0,0.65);
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 700;
+  outline: none;
+  text-align: center;
+}
+
+/* Save button */
+.acc-control-box .action-btn {
+  margin-top: 10px;
+}
 
 
