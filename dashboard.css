@@ -411,5 +411,55 @@
     padding: 8px;
   }
 }
+/* ============================================================
+   🔵 CIRCULAR PROGRESS (ACCOMMODATION)
+============================================================ */
+
+.circle-card {
+  position: relative;
+  text-align: center;
+  padding-top: 18px;
+}
+
+.circle-card svg {
+  display: block;
+  margin: 10px auto 0;
+}
+
+/* Background ring */
+.circle-card circle.bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.15);
+  stroke-width: 8;
+}
+
+/* Progress ring */
+.circle-card circle.progress {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 8;
+  stroke-linecap: round;
+
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+
+  stroke-dasharray: 314;   /* 2πr where r=50 */
+  stroke-dashoffset: 314;
+
+  transition: stroke-dashoffset 0.7s ease;
+  filter: drop-shadow(0 0 6px var(--primary));
+}
+
+/* Text inside circle */
+.circle-text {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--gold);
+  text-shadow: 0 0 8px rgba(255,215,0,0.6);
+}
 
 
