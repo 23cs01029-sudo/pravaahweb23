@@ -216,6 +216,7 @@ input:focus {
   .login-logo {
   width: 110px;
   margin-bottom: 15px;
+  padding:0px;
 }
 
   h1 {
@@ -261,6 +262,7 @@ html, body {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
 
 
 
