@@ -58,8 +58,8 @@ body {
   padding: 80px 60px; /* 🔥 more space inside */
 
   text-align: center;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-   animation: fadeIn 0.6s ease forwards;
+   transition: transform 0.4s ease, box-shadow 0.4s ease;
+  animation: fadeIn 0.6s ease forwards;
 }
 
 .login-logo {
@@ -258,6 +258,7 @@ html, body {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
 
 
 
