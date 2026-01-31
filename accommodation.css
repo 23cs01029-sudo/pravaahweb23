@@ -416,6 +416,22 @@ body {
     font-size: 0.9rem;
   }
 }
+/* DAYS GRID RESPONSIVE LAYOUT */
+
+/* Default (PC / Tablet): 2 per row */
+#dayGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* Mobile: 1 per row */
+@media (max-width: 600px) {
+  #dayGrid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
 
 
 
