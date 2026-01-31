@@ -332,21 +332,6 @@ function setupDayFilter() {
   }
 }
 
-async function loadAccommodationStats() {
-  if (!CURRENT_ACC_DAY) return;
-
-  try {
-    const res = await fetch(`${API}?type=accommodationStats&day=${CURRENT_ACC_DAY}`);
-    const d = await res.json();
-
-    accBoysSingle.textContent = `${d.boys.single.used} / ${d.boys.single.total}`;
-    accBoysCommon.textContent = `${d.boys.common.used} / ${d.boys.common.total}`;
-    accGirlsSingle.textContent = `${d.girls.single.used} / ${d.girls.single.total}`;
-    accGirlsCommon.textContent = `${d.girls.common.used} / ${d.girls.common.total}`;
-  } catch (e) {
-    console.error("Accommodation stats error", e);
-  }
-}
 
 async function setupEventFilter() {
   const res = await fetch(`${API}?type=eventList`);
