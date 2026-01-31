@@ -79,10 +79,10 @@ const accGirlsCommon = document.getElementById("accGirlsCommon");
 // Capacity control (SuperAccount)
 const accControlSection = document.getElementById("accControlSection");
 const accControlDay = document.getElementById("accControlDay");
-const setBoysSingle = document.getElementById("setBoysSingle");
-const setBoysCommon = document.getElementById("setBoysCommon");
-const setGirlsSingle = document.getElementById("setGirlsSingle");
-const setGirlsCommon = document.getElementById("setGirlsCommon");
+const accGenderFilter = document.getElementById("accGenderFilter"); // boys/girls
+const accRoomFilter = document.getElementById("accRoomFilter");     // single/common
+const accCapacityInput = document.getElementById("accCapacityInput");
+
 const saveAccCapacity = document.getElementById("saveAccCapacity");
 
 let CURRENT_ACC_DAY = "";
@@ -345,20 +345,23 @@ function setupDayFilter() {
   }
 
   // Capacity control day dropdown
-  if (accControlDay) {
-    accControlDay.addEventListener("change", async () => {
-      const day = accControlDay.value;
-      if (!day) return;
+  async function loadCapacityForFilter() {
+  const day = accControlDay.value;
+  if (!day) return;
 
-      const res = await fetch(`${API}?type=accommodationStats&day=${day}`);
-      const d = await res.json();
+  const gender = accGenderFilter.value; // boys / girls
+  const room = accRoomFilter.value;     // single / common
 
-      setBoysSingle.value = d.boys.single.total || 0;
-      setBoysCommon.value = d.boys.common.total || 0;
-      setGirlsSingle.value = d.girls.single.total || 0;
-      setGirlsCommon.value = d.girls.common.total || 0;
-    });
-  }
+  const res = await fetch(`${API}?type=accommodationStats&day=${day}`);
+  const d = await res.json();
+
+  accCapacityInput.value = d[gender][room].total || 0;
+}
+
+accControlDay.addEventListener("change", loadCapacityForFilter);
+accGenderFilter.addEventListener("change", loadCapacityForFilter);
+accRoomFilter.addEventListener("change", loadCapacityForFilter);
+
 }
 
 
@@ -426,15 +429,19 @@ if (saveAccCapacity) {
       return alert("Select day first");
     }
 
-    const payload = {
-      type: "setAccommodationCapacity",
-      day: accControlDay.value,
-      boysSingle: Number(setBoysSingle.value || 0),
-      boysCommon: Number(setBoysCommon.value || 0),
-      girlsSingle: Number(setGirlsSingle.value || 0),
-      girlsCommon: Number(setGirlsCommon.value || 0),
-      email: auth.currentUser.email
-    };
+    const gender = accGenderFilter.value; // boys/girls
+const room = accRoomFilter.value;     // single/common
+const total = Number(accCapacityInput.value || 0);
+
+const payload = {
+  type: "setAccommodationCapacity",
+  day: accControlDay.value,
+  gender,
+  room,
+  total,
+  email: auth.currentUser.email
+};
+
 
     const res = await fetch(API, {
       method: "POST",
