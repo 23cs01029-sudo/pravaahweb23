@@ -199,28 +199,41 @@ function buildSingleParticipantForm() {
     </div>
   `;
 }
-// ✅ Autofill like pass.js
+// 🔁 LIVE AUTOFILL like pass.js (Name → other fields)
+const profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
+
+const card = document.querySelector(".participant-card");
+const nameInput = card.querySelector(".pname");
+const emailInput = card.querySelector(".pemail");
+const phoneInput = card.querySelector(".pphone");
+const collegeInput = card.querySelector(".pcollege");
+
+// Always autofill email from auth
 onAuthStateChanged(auth, (user) => {
-  if (!user) return;
-
-  const card = document.querySelector(".participant-card");
-  if (!card) return;
-
-  const nameInput = card.querySelector(".pname");
-  const emailInput = card.querySelector(".pemail");
-  const phoneInput = card.querySelector(".pphone");
-  const collegeInput = card.querySelector(".pcollege");
-
-  // Autofill email from Firebase
-  if (emailInput) emailInput.value = user.email || "";
-
-  // Autofill from localStorage (if saved earlier like pass.js)
-  const profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
-
-  if (nameInput && profile.name) nameInput.value = profile.name;
-  if (phoneInput && profile.phone) phoneInput.value = profile.phone;
-  if (collegeInput && profile.college) collegeInput.value = profile.college;
+  if (user && emailInput) {
+    emailInput.value = user.email || "";
+  }
 });
+
+// When user types NAME → fill other fields
+nameInput.addEventListener("input", () => {
+  if (profile.name && nameInput.value === profile.name) {
+    phoneInput.value = profile.phone || "";
+    collegeInput.value = profile.college || "";
+  }
+});
+
+// Save profile when fields change (so next page can autofill)
+[nameInput, phoneInput, collegeInput].forEach(input => {
+  input.addEventListener("input", () => {
+    localStorage.setItem("user_profile", JSON.stringify({
+      name: nameInput.value,
+      phone: phoneInput.value,
+      college: collegeInput.value
+    }));
+  });
+});
+
 
 buildSingleParticipantForm();
 
@@ -271,6 +284,7 @@ const participants = [{ name, email, phone, college }];
   localStorage.setItem("accommodation_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
