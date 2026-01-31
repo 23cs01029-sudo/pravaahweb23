@@ -99,12 +99,10 @@
       <h3>Inside Campus</h3>
       <p id="statInCampus">Live: —<br>Max: —</p>
     </div>
-
-    <div class="dash-card">
+<div class="dash-card">
       <h3>Accommodation</h3>
       <p id="statAccommodation">Live: —<br>Max: —</p>
     </div>
-
     <div class="dash-card">
   <h3>Scans Today</h3>
   <p id="statScan">—</p>
@@ -141,6 +139,91 @@
       <h3>Visitor Pass</h3>
       <p id="passVisitor">—</p>
     </div>
+  </div>
+</section>
+<!-- ================= ACCOMMODATION STATS ================= -->
+<section class="dashboard-section">
+  <h2>Accommodation Statistics</h2>
+
+  <!-- Separate Day Filter -->
+  <div class="dashboard-filter">
+    <select id="accDayDropdown">
+      <option value="">Select Accommodation Day</option>
+      <option value="day0">Day 0</option>
+      <option value="day1">Day 1</option>
+      <option value="day2">Day 2</option>
+      <option value="day3">Day 3</option>
+    </select>
+  </div>
+
+  <!-- Circles -->
+  <div class="dashboard-cards">
+
+    <div class="dash-card">
+      <h3>Boys – Single Rooms</h3>
+      <p id="accBoysSingle">0 / 0</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Boys – Common Rooms</h3>
+      <p id="accBoysCommon">0 / 0</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Girls – Single Rooms</h3>
+      <p id="accGirlsSingle">0 / 0</p>
+    </div>
+
+    <div class="dash-card">
+      <h3>Girls – Common Rooms</h3>
+      <p id="accGirlsCommon">0 / 0</p>
+    </div>
+
+  </div>
+</section>
+<!-- ================= ACCOMMODATION CAPACITY CONTROL (SUPER ACCOUNTS) ================= -->
+<section class="dashboard-section hidden" id="accControlSection">
+  <h2>Accommodation Capacity Control</h2>
+
+  <!-- Day selector -->
+  <div class="dashboard-filter">
+    <select id="accControlDay">
+      <option value="">Select Day</option>
+      <option value="day0">Day 0</option>
+      <option value="day1">Day 1</option>
+      <option value="day2">Day 2</option>
+      <option value="day3">Day 3</option>
+    </select>
+  </div>
+
+  <div class="dashboard-cards">
+
+    <div class="dash-card">
+      <h3>Boys – Single Rooms</h3>
+      <input type="number" id="setBoysSingle" placeholder="Total Rooms">
+    </div>
+
+    <div class="dash-card">
+      <h3>Boys – Common Rooms</h3>
+      <input type="number" id="setBoysCommon" placeholder="Total Rooms">
+    </div>
+
+    <div class="dash-card">
+      <h3>Girls – Single Rooms</h3>
+      <input type="number" id="setGirlsSingle" placeholder="Total Rooms">
+    </div>
+
+    <div class="dash-card">
+      <h3>Girls – Common Rooms</h3>
+      <input type="number" id="setGirlsCommon" placeholder="Total Rooms">
+    </div>
+
+  </div>
+
+  <div class="dashboard-actions">
+    <button class="action-btn" id="saveAccCapacity">
+      <i class="fa-solid fa-floppy-disk"></i> Save Capacity
+    </button>
   </div>
 </section>
 
