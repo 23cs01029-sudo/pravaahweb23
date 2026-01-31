@@ -93,6 +93,35 @@ let IS_PRIMARY = false;
 let CURRENT_DAY = "";
 let CURRENT_EVENT = "";
 let REFRESH_TIMER = null;
+async function loadDashboardStats() {
+  // 1️⃣ Load cached data instantly (if exists)
+  const cached = getCachedDashboard();
+  if (cached) {
+    applyStatsToUI(cached);
+  }
+
+  // 2️⃣ Fetch fresh data from backend
+  try {
+    const qs = new URLSearchParams({
+      type: "dashboardStats",
+      day: CURRENT_DAY || "",
+      event: CURRENT_EVENT || "",
+      role: CURRENT_ROLE || ""
+    });
+
+    const res = await fetch(`${API}?${qs.toString()}`);
+    const data = await res.json();
+
+    // Save to cache
+    cacheDashboard(data);
+
+    // Update UI
+    applyStatsToUI(data);
+
+  } catch (err) {
+    console.error("Dashboard stats fetch failed, using cache", err);
+  }
+}
 
 /* ================= AUTH ================= */
 onAuthStateChanged(auth, async (user) => {
