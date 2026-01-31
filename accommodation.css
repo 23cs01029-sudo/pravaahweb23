@@ -418,19 +418,6 @@ body {
 }
 /* DAYS GRID RESPONSIVE LAYOUT */
 
-/* Default (PC / Tablet): 2 per row */
-#dayGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-/* Mobile: 1 per row */
-@media (max-width: 600px) {
-  #dayGrid {
-    grid-template-columns: repeat(1, 1fr);
-  }
-}
 
 /* ==============================
    FINAL GRID ALIGNMENT (ADD LAST)
@@ -454,6 +441,26 @@ body {
   max-width: 600px;
 }
 
+
+
+/* ==============================
+   FINAL GRID ALIGNMENT (ADD LAST)
+============================== */
+
+/* Center all grids */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin: 0 auto 30px auto;
+}
+
+/* PC layout → 2 per row */
+#genderGrid,
+#roomGrid,
 #dayGrid {
   grid-template-columns: repeat(2, minmax(260px, 1fr));
   max-width: 700px;
@@ -464,7 +471,7 @@ body {
   text-align: center;
 }
 
-/* 📱 Mobile: stack one per row */
+/* 📱 Mobile → 1 per row */
 @media (max-width: 600px) {
   #genderGrid,
   #roomGrid,
@@ -473,6 +480,5 @@ body {
     max-width: 95%;
   }
 }
-
 
 
