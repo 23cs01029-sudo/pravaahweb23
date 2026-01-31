@@ -582,5 +582,21 @@ body {
   text-align: center;
 }
 
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  gap: 24px;
+  margin: 10px auto 30px auto;
+
+  /* IMPORTANT FIX */
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  max-width: 700px;
+}
+
+
+
 
 
