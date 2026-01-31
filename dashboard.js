@@ -458,21 +458,6 @@ const payload = {
   };
 }
 
-// ================= LOAD CAPACITY INTO INPUTS =================
-if (accControlDay) {
-  accControlDay.addEventListener("change", async () => {
-    const day = accControlDay.value;
-    if (!day) return;
-
-    const res = await fetch(`${API}?type=accommodationStats&day=${day}`);
-    const d = await res.json();
-
-    setBoysSingle.value = d.boys.single.total || 0;
-    setBoysCommon.value = d.boys.common.total || 0;
-    setGirlsSingle.value = d.girls.single.total || 0;
-    setGirlsCommon.value = d.girls.common.total || 0;
-  });
-}
 
 
 function applyStatsToUI(d){
