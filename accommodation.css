@@ -432,6 +432,47 @@ body {
   }
 }
 
+/* ==============================
+   FINAL GRID ALIGNMENT (ADD LAST)
+============================== */
+
+/* Center all grids */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin: 0 auto 30px auto;
+}
+
+/* PC layout */
+#genderGrid,
+#roomGrid {
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  max-width: 600px;
+}
+
+#dayGrid {
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  max-width: 700px;
+}
+
+/* Center text inside cards */
+.pass-card {
+  text-align: center;
+}
+
+/* 📱 Mobile: stack one per row */
+@media (max-width: 600px) {
+  #genderGrid,
+  #roomGrid,
+  #dayGrid {
+    grid-template-columns: 1fr;
+    max-width: 95%;
+  }
+}
 
 
 
