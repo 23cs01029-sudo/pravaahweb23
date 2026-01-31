@@ -126,7 +126,6 @@ async function loadDashboardStats() {
 /* ================= AUTH ================= */
 onAuthStateChanged(auth, async (user) => {
   if (!user) return location.href = "login.html";
-await loadDashboardStats();
 
 if (accDayDropdown && accDayDropdown.value) {
   CURRENT_ACC_DAY = accDayDropdown.value;
@@ -184,7 +183,8 @@ applyRoleVisibility();
   setupEventFilter();
   setupPassesSheet();
 
-  await loadDashboardStats();
+  
+loadDashboardStats();
   updateOfflineCount();
   startAutoRefresh();
 });
