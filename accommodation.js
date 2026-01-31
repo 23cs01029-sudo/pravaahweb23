@@ -10,9 +10,14 @@ initAuth({
 
 const roomGrid = document.getElementById("roomGrid");
 const dayGrid = document.getElementById("dayGrid");
+const roomTitle = document.getElementById("roomTitle");
+const dayTitle = document.getElementById("dayTitle");
 
 roomGrid.style.display = "none";
 dayGrid.style.display = "none";
+roomTitle.style.display = "none";
+dayTitle.style.display = "none";
+
 
 /* ---------- LOGOUT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
@@ -144,12 +149,23 @@ function setupSingleSelect(attr, setter) {
 
 setupSingleSelect("data-gender", (val) => {
   selectedGender = val;
+
   roomGrid.style.display = "grid";
+  roomTitle.style.display = "block";
+
+  dayGrid.style.display = "none";
+  dayTitle.style.display = "none";
+
+  selectedRoom = null;
+  selectedDays = [];
 });
+
 
 setupSingleSelect("data-room", (val) => {
   selectedRoom = val;
+
   dayGrid.style.display = "grid";
+  dayTitle.style.display = "block";
 });
 
 
@@ -233,6 +249,7 @@ const participants = [{ name, email, phone, college }];
   localStorage.setItem("accommodation_payment", JSON.stringify(session));
   window.location.href = "accommodation_payment.html";
 });
+
 
 
 
