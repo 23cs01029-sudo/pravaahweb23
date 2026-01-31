@@ -78,4 +78,166 @@ document.querySelectorAll(".card").forEach(card => {
   });
 });
 
+/* =====================================
+   ACCOMMODATION LOGIC (NEW)
+===================================== */
+
+const PRICES = {
+  single: 900,   // per day
+  common: 500
+};
+
+const IITBBS_DOMAIN = "@iitbbs.ac.in";
+
+function isIITBBSUser() {
+  return auth.currentUser?.email?.endsWith(IITBBS_DOMAIN);
+}
+
+let selectedGender = null;
+let selectedRoom = null;
+let selectedDays = [];
+let participantsCount = 0;
+
+const totalAmountEl = document.getElementById("totalAmount");
+const payBtn = document.getElementById("payBtn");
+
+/* ---------- IITBBS RULE ---------- */
+onAuthStateChanged(auth, (user) => {
+  if (user && isIITBBSUser()) {
+    document.querySelector(".passes-box").innerHTML = `
+      <div class="participant-card">
+        <h3 style="color:#4cff88;text-align:center;">
+          IIT Bhubaneswar students do not need accommodation.
+        </h3>
+      </div>
+    `;
+  }
+});
+
+/* ---------- SINGLE SELECT (Gender & Room) ---------- */
+function setupSingleSelect(attr, setter) {
+  document.querySelectorAll(`[${attr}]`).forEach(card => {
+    card.addEventListener("click", () => {
+      document.querySelectorAll(`[${attr}]`).forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      setter(card.dataset[attr.replace("data-","")]);
+      calculateTotal();
+    });
+  });
+}
+
+setupSingleSelect("data-gender", (val) => selectedGender = val);
+setupSingleSelect("data-room", (val) => selectedRoom = val);
+
+/* ---------- MULTI SELECT (Days) ---------- */
+document.querySelectorAll("[data-day]").forEach(card => {
+  card.addEventListener("click", () => {
+    const d = card.dataset.day;
+
+    if (selectedDays.includes(d)) {
+      selectedDays = selectedDays.filter(x => x !== d);
+      card.classList.remove("selected");
+    } else {
+      selectedDays.push(d);
+      card.classList.add("selected");
+    }
+
+    calculateTotal();
+  });
+});
+
+/* ---------- PARTICIPANTS ---------- */
+const numInput = document.getElementById("numParticipants");
+const incBtn = document.getElementById("incPart");
+const decBtn = document.getElementById("decPart");
+const participantsContainer = document.getElementById("participantsContainer");
+
+incBtn.addEventListener("click", () => {
+  let v = +numInput.value || 0;
+  if (v < 10) v++;
+  numInput.value = v;
+  buildParticipantForms(v);
+});
+
+decBtn.addEventListener("click", () => {
+  let v = +numInput.value || 0;
+  if (v > 0) v--;
+  numInput.value = v;
+  buildParticipantForms(v);
+});
+
+function buildParticipantForms(count) {
+  participantsCount = count;
+  participantsContainer.innerHTML = "";
+
+  for (let i = 1; i <= count; i++) {
+    const div = document.createElement("div");
+    div.className = "participant-card";
+    div.innerHTML = `
+      <h4>Participant ${i}</h4>
+      <input class="pname" placeholder="Full Name">
+      <input class="pemail" placeholder="Email">
+      <input class="pphone" placeholder="Phone">
+      <input class="pcollege" placeholder="College">
+    `;
+    participantsContainer.appendChild(div);
+  }
+
+  calculateTotal();
+}
+
+/* ---------- TOTAL CALCULATION ---------- */
+function calculateTotal() {
+  if (!selectedRoom || selectedDays.length === 0) {
+    totalAmountEl.textContent = "Total: ₹0";
+    return;
+  }
+
+  const base = PRICES[selectedRoom] * selectedDays.length;
+  const total = base * participantsCount;
+  totalAmountEl.textContent = `Total: ₹${total}`;
+}
+
+/* ---------- PAY BUTTON ---------- */
+payBtn.addEventListener("click", () => {
+  if (!selectedGender || !selectedRoom || selectedDays.length === 0) {
+    alert("Please select gender, room type and days.");
+    return;
+  }
+
+  if (participantsCount <= 0) {
+    alert("Please add at least 1 participant.");
+    return;
+  }
+
+  const cards = document.querySelectorAll(".participant-card");
+  const participants = [];
+
+  cards.forEach(c => {
+    const name = c.querySelector(".pname")?.value.trim();
+    const email = c.querySelector(".pemail")?.value.trim();
+    const phone = c.querySelector(".pphone")?.value.trim();
+    const college = c.querySelector(".pcollege")?.value.trim();
+
+    if (!name || !email || !phone || !college) {
+      alert("Fill all participant fields.");
+      throw new Error("Missing fields");
+    }
+
+    participants.push({ name, email, phone, college });
+  });
+
+  const session = {
+    gender: selectedGender,
+    roomType: selectedRoom,
+    days: selectedDays,
+    participants,
+    total: totalAmountEl.textContent,
+    registeredEmail: auth.currentUser.email
+  };
+
+  localStorage.setItem("accommodation_payment", JSON.stringify(session));
+  window.location.href = "accommodation_payment.html";
+});
+
 
