@@ -247,8 +247,9 @@ const participants = [{ name, email, phone, college }];
   };
 
   localStorage.setItem("accommodation_payment", JSON.stringify(session));
-  window.location.href = "upi_payment.html";
+  window.location.href = "upi-payment.html";
 });
+
 
 
 
