@@ -357,5 +357,65 @@ body {
     font-size: 1rem;
   }
 }
+/* ==============================
+   ACCOMMODATION FORM LAYOUT
+============================== */
+
+/* Room & Day grids */
+#roomGrid,
+#dayGrid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Mobile: 2 per row */
+#dayGrid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Desktop: 4 per row */
+@media (min-width: 900px) {
+  #dayGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Smooth hide/show */
+#roomGrid,
+#dayGrid {
+  transition: all 0.3s ease;
+}
+
+/* Student form */
+.participant-card {
+  background: var(--surface-darker);
+  border: 1px solid var(--primary-border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 16px;
+  box-shadow: 0 0 15px rgba(36,224,236,0.25);
+}
+
+.participant-card input {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--primary-border);
+  background: transparent;
+  color: var(--text);
+}
+
+/* Make buttons & grids stack nicely on mobile */
+@media (max-width: 600px) {
+  .passes-box {
+    padding: 20px 12px;
+  }
+
+  .pass-card {
+    font-size: 0.9rem;
+  }
+}
+
 
 
