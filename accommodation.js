@@ -200,30 +200,38 @@ function buildSingleParticipantForm() {
   `;
 }
 // 🔁 LIVE AUTOFILL like pass.js (Name → other fields)
+// 🔁 LIVE AUTOFILL like pass.js
 const profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
 
 const card = document.querySelector(".participant-card");
+if (!card) return;
+
 const nameInput = card.querySelector(".pname");
 const emailInput = card.querySelector(".pemail");
 const phoneInput = card.querySelector(".pphone");
 const collegeInput = card.querySelector(".pcollege");
 
-// Always autofill email from auth
+// Autofill email from Firebase
 onAuthStateChanged(auth, (user) => {
   if (user && emailInput) {
     emailInput.value = user.email || "";
   }
 });
 
-// When user types NAME → fill other fields
+// Autofill from saved profile (on load)
+if (profile.name) nameInput.value = profile.name;
+if (profile.phone) phoneInput.value = profile.phone;
+if (profile.college) collegeInput.value = profile.college;
+
+// When user types NAME → try to fill others
 nameInput.addEventListener("input", () => {
-  if (profile.name && nameInput.value === profile.name) {
+  if (profile.name && nameInput.value.toLowerCase() === profile.name.toLowerCase()) {
     phoneInput.value = profile.phone || "";
     collegeInput.value = profile.college || "";
   }
 });
 
-// Save profile when fields change (so next page can autofill)
+// Save profile live
 [nameInput, phoneInput, collegeInput].forEach(input => {
   input.addEventListener("input", () => {
     localStorage.setItem("user_profile", JSON.stringify({
@@ -233,6 +241,7 @@ nameInput.addEventListener("input", () => {
     }));
   });
 });
+;
 
 
 buildSingleParticipantForm();
@@ -284,6 +293,7 @@ const participants = [{ name, email, phone, college }];
   localStorage.setItem("accommodation_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
