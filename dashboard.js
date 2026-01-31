@@ -68,6 +68,24 @@ const searchResults = document.getElementById("searchResults");
 
 const offlineCountEl = document.getElementById("offlineCount");
 const openGateLogsSheet = document.getElementById("openGateLogsSheet");
+// ================= ACCOMMODATION DOM =================
+const accDayDropdown = document.getElementById("accDayDropdown");
+
+const accBoysSingle = document.getElementById("accBoysSingle");
+const accBoysCommon = document.getElementById("accBoysCommon");
+const accGirlsSingle = document.getElementById("accGirlsSingle");
+const accGirlsCommon = document.getElementById("accGirlsCommon");
+
+// Capacity control (SuperAccount)
+const accControlSection = document.getElementById("accControlSection");
+const accControlDay = document.getElementById("accControlDay");
+const setBoysSingle = document.getElementById("setBoysSingle");
+const setBoysCommon = document.getElementById("setBoysCommon");
+const setGirlsSingle = document.getElementById("setGirlsSingle");
+const setGirlsCommon = document.getElementById("setGirlsCommon");
+const saveAccCapacity = document.getElementById("saveAccCapacity");
+
+let CURRENT_ACC_DAY = "";
 
 /* ================= STATE ================= */
 let CURRENT_ROLE = "USER";
@@ -79,6 +97,12 @@ let REFRESH_TIMER = null;
 /* ================= AUTH ================= */
 onAuthStateChanged(auth, async (user) => {
   if (!user) return location.href = "login.html";
+await loadDashboardStats();
+
+if (accDayDropdown && accDayDropdown.value) {
+  CURRENT_ACC_DAY = accDayDropdown.value;
+  loadAccommodationStats();
+}
 
   // 1️⃣ Load cached role instantly (no lag)
 const cachedRole = getCachedRole(user.email);
@@ -164,6 +188,12 @@ function applyRoleVisibility() {
   cardMoney.classList.add("hidden");
   passStatsSection.classList.add("hidden");
   roleSection.classList.add("hidden");
+// Accommodation control only for SuperAccount / SuperAdmin
+accControlSection.classList.add("hidden");
+
+if (CURRENT_ROLE === "SuperAccount") {
+  accControlSection.classList.remove("hidden");
+}
 
   if (CURRENT_ROLE === "Admin") return;
 
@@ -260,10 +290,62 @@ saveRoleBtn.onclick = async () => {
 
 /* ================= FILTERS ================= */
 function setupDayFilter() {
-  dayDropdown.addEventListener("change", () => {
-    CURRENT_DAY = dayDropdown.value || "";
-    loadDashboardStats();
-  });
+  // Main dashboard day filter
+  if (dayDropdown) {
+    dayDropdown.addEventListener("change", () => {
+      CURRENT_DAY = dayDropdown.value || "";
+      loadDashboardStats();
+    });
+  }
+
+  // Accommodation stats day filter
+  if (accDayDropdown) {
+    accDayDropdown.addEventListener("change", () => {
+      CURRENT_ACC_DAY = accDayDropdown.value || "";
+
+      if (!CURRENT_ACC_DAY) {
+        accBoysSingle.textContent = "0 / 0";
+        accBoysCommon.textContent = "0 / 0";
+        accGirlsSingle.textContent = "0 / 0";
+        accGirlsCommon.textContent = "0 / 0";
+        return;
+      }
+
+      loadAccommodationStats();
+    });
+  }
+
+  // Capacity control day dropdown
+  if (accControlDay) {
+    accControlDay.addEventListener("change", async () => {
+      const day = accControlDay.value;
+      if (!day) return;
+
+      const res = await fetch(`${API}?type=accommodationStats&day=${day}`);
+      const d = await res.json();
+
+      setBoysSingle.value = d.boys.single.total || 0;
+      setBoysCommon.value = d.boys.common.total || 0;
+      setGirlsSingle.value = d.girls.single.total || 0;
+      setGirlsCommon.value = d.girls.common.total || 0;
+    });
+  }
+}
+
+async function loadAccommodationStats() {
+  if (!CURRENT_ACC_DAY) return;
+
+  try {
+    const res = await fetch(`${API}?type=accommodationStats&day=${CURRENT_ACC_DAY}`);
+    const d = await res.json();
+
+    accBoysSingle.textContent = `${d.boys.single.used} / ${d.boys.single.total}`;
+    accBoysCommon.textContent = `${d.boys.common.used} / ${d.boys.common.total}`;
+    accGirlsSingle.textContent = `${d.girls.single.used} / ${d.girls.single.total}`;
+    accGirlsCommon.textContent = `${d.girls.common.used} / ${d.girls.common.total}`;
+  } catch (e) {
+    console.error("Accommodation stats error", e);
+  }
 }
 
 async function setupEventFilter() {
@@ -280,35 +362,98 @@ async function setupEventFilter() {
     loadDashboardStats();
   });
 }
+function updateCircle(circleId, used, total) {
+  const circle = document.getElementById(circleId);
+  const text = circle.querySelector(".circle-text");
+
+  const percent = total === 0 ? 0 : Math.round((used / total) * 100);
+
+  // Circle math
+  const radius = 45;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percent / 100) * circumference;
+
+  const progressCircle = circle.querySelector(".progress");
+  progressCircle.style.strokeDasharray = circumference;
+  progressCircle.style.strokeDashoffset = offset;
+
+  text.textContent = `${used}/${total}`;
+}
 
 /* ================= STATS ================= */
-async function loadDashboardStats() {
-  const cached = getCachedDashboard();
+async function loadAccommodationStats() {
+  if (!CURRENT_ACC_DAY) return;
 
-  /* 🚀 1. FAST LOAD using CACHE FIRST */
-  if(cached){
-    applyStatsToUI(cached);
-  }
-
-  /* 🔄 2. Fetch fresh data live & update cache */
   try {
-    const qs = new URLSearchParams({
-      type: "dashboardStats",
-      day: CURRENT_DAY,
-      event: CURRENT_EVENT,
-      role: CURRENT_ROLE
-    });
-
-    const res = await fetch(`${API}?${qs}`);
+    const res = await fetch(`${API}?type=accommodationStats&day=${CURRENT_ACC_DAY}`);
     const d = await res.json();
 
-    cacheDashboard(d);          // store for 1 min load
-    applyStatsToUI(d);          // live update UI
-  }
-  catch(e){
-    console.log("⚠ Using cached data (offline)",e);
+    // TEXT (optional if you still want)
+    accBoysSingle.textContent = `${d.boys.single.used} / ${d.boys.single.total}`;
+    accBoysCommon.textContent = `${d.boys.common.used} / ${d.boys.common.total}`;
+    accGirlsSingle.textContent = `${d.girls.single.used} / ${d.girls.single.total}`;
+    accGirlsCommon.textContent = `${d.girls.common.used} / ${d.girls.common.total}`;
+
+    // 🔵 UPDATE CIRCLES
+    updateCircle("boysSingleCircle", d.boys.single.used, d.boys.single.total);
+    updateCircle("boysCommonCircle", d.boys.common.used, d.boys.common.total);
+    updateCircle("girlsSingleCircle", d.girls.single.used, d.girls.single.total);
+    updateCircle("girlsCommonCircle", d.girls.common.used, d.girls.common.total);
+
+  } catch (e) {
+    console.error("Accommodation stats error", e);
   }
 }
+
+// ================= SAVE ACCOMMODATION CAPACITY =================
+if (saveAccCapacity) {
+  saveAccCapacity.onclick = async () => {
+    if (!accControlDay.value) {
+      return alert("Select day first");
+    }
+
+    const payload = {
+      type: "setAccommodationCapacity",
+      day: accControlDay.value,
+      boysSingle: Number(setBoysSingle.value || 0),
+      boysCommon: Number(setBoysCommon.value || 0),
+      girlsSingle: Number(setGirlsSingle.value || 0),
+      girlsCommon: Number(setGirlsCommon.value || 0),
+      email: auth.currentUser.email
+    };
+
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const r = await res.json();
+    alert(r.message || "Capacity saved");
+
+    if (CURRENT_ACC_DAY === accControlDay.value) {
+      loadAccommodationStats();
+    }
+  };
+}
+
+// ================= LOAD CAPACITY INTO INPUTS =================
+if (accControlDay) {
+  accControlDay.addEventListener("change", async () => {
+    const day = accControlDay.value;
+    if (!day) return;
+
+    const res = await fetch(`${API}?type=accommodationStats&day=${day}`);
+    const d = await res.json();
+
+    setBoysSingle.value = d.boys.single.total || 0;
+    setBoysCommon.value = d.boys.common.total || 0;
+    setGirlsSingle.value = d.girls.single.total || 0;
+    setGirlsCommon.value = d.girls.common.total || 0;
+  });
+}
+
+
 function applyStatsToUI(d){
   statTotalReg.textContent = d.totalRegistrations ?? "—";
   statScan.textContent     = d.scansToday ?? "—";
