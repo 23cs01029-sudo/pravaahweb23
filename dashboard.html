@@ -203,33 +203,42 @@
 
 </section>
 <!-- ================= ACCOMMODATION CAPACITY CONTROL (SUPER ACCOUNTS) ================= -->
-<div id="accControlSection" class="card">
+<section id="accControlSection" class="dashboard-section role-section hidden">
+  <h2>Accommodation Capacity Control</h2>
 
-  <h3>Accommodation Capacity Control</h3>
+  <div class="role-form">
 
-  <select id="accControlDay">
-    <option value="">Select Day</option>
-    <option value="day0">Day 0</option>
-    <option value="day1">Day 1</option>
-    <option value="day2">Day 2</option>
-    <option value="day3">Day 3</option>
-  </select>
+    <select id="accControlDay" class="dashboard-filter-select">
+      <option value="">Select Day</option>
+      <option value="day0">Day 0</option>
+      <option value="day1">Day 1</option>
+      <option value="day2">Day 2</option>
+      <option value="day3">Day 3</option>
+    </select>
 
-  <select id="accGenderFilter">
-    <option value="boys">Boys</option>
-    <option value="girls">Girls</option>
-  </select>
+    <select id="accGenderFilter" class="dashboard-filter-select">
+      <option value="boys">Boys</option>
+      <option value="girls">Girls</option>
+    </select>
 
-  <select id="accRoomFilter">
-    <option value="single">Single Room</option>
-    <option value="common">Common Room</option>
-  </select>
+    <select id="accRoomFilter" class="dashboard-filter-select">
+      <option value="single">Single Room</option>
+      <option value="common">Common Room</option>
+    </select>
 
-  <input type="number" id="accCapacityInput" placeholder="Enter total rooms">
+    <input
+      type="number"
+      id="accCapacityInput"
+      placeholder="Enter total rooms"
+    />
 
-  <button id="saveAccCapacity">Save Capacity</button>
+    <button id="saveAccCapacity" class="action-btn">
+      Save Capacity
+    </button>
 
-</div>
+  </div>
+</section>
+
 
 
 <!-- ================= EVENT REGISTRATIONS ================= -->
