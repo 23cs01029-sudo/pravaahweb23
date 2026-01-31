@@ -84,10 +84,10 @@ document.querySelectorAll(".card").forEach(card => {
 
 const PRICES = {
   single: {
-    1: 10000,
-    2: 20000,
-    3: 3000,
-    4: 4000
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4
   },
   common: {
     1: 1,
@@ -253,6 +253,7 @@ payBtn.addEventListener("click", () => {
   localStorage.setItem("accommodation_payment", JSON.stringify(session));
   window.location.href = "accommodation_payment.html";
 });
+
 
 
 
