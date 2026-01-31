@@ -539,5 +539,48 @@ body {
   margin-bottom: 18px;
   text-align: center;
 }
+/* ==============================
+   ACCOMMODATION SELECTION GRIDS
+============================== */
+
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  gap: 24px;
+  margin: 10px auto 30px auto;
+}
+
+/* Desktop → 2 per row */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  grid-template-columns: repeat(2, 260px);
+}
+
+/* Mobile → 1 per row */
+@media (max-width: 600px) {
+  #genderGrid,
+  #roomGrid,
+  #dayGrid {
+    grid-template-columns: 1fr;
+    max-width: 95%;
+  }
+}
+
+/* Card text center */
+.pass-card {
+  text-align: center;
+}
+
+/* Spacing between heading and grid */
+.passes-box h3 {
+  margin-top: 30px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
 
 
