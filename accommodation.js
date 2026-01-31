@@ -8,6 +8,11 @@ initAuth({
   showDashboard: true
 });
 
+const roomGrid = document.getElementById("roomGrid");
+const dayGrid = document.getElementById("dayGrid");
+
+roomGrid.style.display = "none";
+dayGrid.style.display = "none";
 
 /* ---------- LOGOUT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
@@ -107,7 +112,6 @@ function isIITBBSUser() {
 let selectedGender = null;
 let selectedRoom = null;
 let selectedDays = [];
-let participantsCount = 0;
 
 const totalAmountEl = document.getElementById("totalAmount");
 const payBtn = document.getElementById("payBtn");
@@ -137,8 +141,17 @@ function setupSingleSelect(attr, setter) {
   });
 }
 
-setupSingleSelect("data-gender", (val) => selectedGender = val);
-setupSingleSelect("data-room", (val) => selectedRoom = val);
+
+setupSingleSelect("data-gender", (val) => {
+  selectedGender = val;
+  roomGrid.style.display = "grid";
+});
+
+setupSingleSelect("data-room", (val) => {
+  selectedRoom = val;
+  dayGrid.style.display = "grid";
+});
+
 
 /* ---------- MULTI SELECT (Days) ---------- */
 document.querySelectorAll("[data-day]").forEach(card => {
@@ -157,45 +170,22 @@ document.querySelectorAll("[data-day]").forEach(card => {
   });
 });
 
-/* ---------- PARTICIPANTS ---------- */
-const numInput = document.getElementById("numParticipants");
-const incBtn = document.getElementById("incPart");
-const decBtn = document.getElementById("decPart");
 const participantsContainer = document.getElementById("participantsContainer");
 
-incBtn.addEventListener("click", () => {
-  let v = +numInput.value || 0;
-  if (v < 10) v++;
-  numInput.value = v;
-  buildParticipantForms(v);
-});
-
-decBtn.addEventListener("click", () => {
-  let v = +numInput.value || 0;
-  if (v > 0) v--;
-  numInput.value = v;
-  buildParticipantForms(v);
-});
-
-function buildParticipantForms(count) {
-  participantsCount = count;
-  participantsContainer.innerHTML = "";
-
-  for (let i = 1; i <= count; i++) {
-    const div = document.createElement("div");
-    div.className = "participant-card";
-    div.innerHTML = `
-      <h4>Participant ${i}</h4>
+function buildSingleParticipantForm() {
+  participantsContainer.innerHTML = `
+    <div class="participant-card">
+      <h4>Student Details</h4>
       <input class="pname" placeholder="Full Name">
       <input class="pemail" placeholder="Email">
       <input class="pphone" placeholder="Phone">
       <input class="pcollege" placeholder="College">
-    `;
-    participantsContainer.appendChild(div);
-  }
-
-  calculateTotal();
+    </div>
+  `;
 }
+
+buildSingleParticipantForm();
+
 
 /* ---------- TOTAL CALCULATION ---------- */
 function calculateTotal() {
@@ -206,9 +196,7 @@ function calculateTotal() {
 
   const dayCount = selectedDays.length;
   const priceForRoom = PRICES[selectedRoom][dayCount] || 0;
-  const total = priceForRoom * participantsCount;
-
-  totalAmountEl.textContent = `Total: ₹${total}`;
+  totalAmountEl.textContent = `Total: ₹${priceForRoom}`;
 }
 
 
@@ -219,27 +207,19 @@ payBtn.addEventListener("click", () => {
     return;
   }
 
-  if (participantsCount <= 0) {
-    alert("Please add at least 1 participant.");
-    return;
-  }
+  const card = document.querySelector(".participant-card");
 
-  const cards = document.querySelectorAll(".participant-card");
-  const participants = [];
+const name = card.querySelector(".pname").value.trim();
+const email = card.querySelector(".pemail").value.trim();
+const phone = card.querySelector(".pphone").value.trim();
+const college = card.querySelector(".pcollege").value.trim();
 
-  cards.forEach(c => {
-    const name = c.querySelector(".pname")?.value.trim();
-    const email = c.querySelector(".pemail")?.value.trim();
-    const phone = c.querySelector(".pphone")?.value.trim();
-    const college = c.querySelector(".pcollege")?.value.trim();
+if (!name || !email || !phone || !college) {
+  alert("Fill all fields.");
+  return;
+}
 
-    if (!name || !email || !phone || !college) {
-      alert("Fill all participant fields.");
-      throw new Error("Missing fields");
-    }
-
-    participants.push({ name, email, phone, college });
-  });
+const participants = [{ name, email, phone, college }];
 
   const session = {
     gender: selectedGender,
@@ -253,6 +233,7 @@ payBtn.addEventListener("click", () => {
   localStorage.setItem("accommodation_payment", JSON.stringify(session));
   window.location.href = "accommodation_payment.html";
 });
+
 
 
 
