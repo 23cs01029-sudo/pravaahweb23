@@ -259,30 +259,39 @@ payBtn.addEventListener("click", () => {
 
   const card = document.querySelector(".participant-card");
 
-const name = card.querySelector(".pname").value.trim();
-const email = card.querySelector(".pemail").value.trim();
-const phone = card.querySelector(".pphone").value.trim();
-const college = card.querySelector(".pcollege").value.trim();
+  const name = card.querySelector(".pname").value.trim();
+  const email = card.querySelector(".pemail").value.trim();
+  const phone = card.querySelector(".pphone").value.trim();
+  const college = card.querySelector(".pcollege").value.trim();
 
-if (!name || !email || !phone || !college) {
-  alert("Fill all fields.");
-  return;
-}
+  if (!name || !email || !phone || !college) {
+    alert("Fill all fields.");
+    return;
+  }
 
-const participants = [{ name, email, phone, college }];
+  const participants = [{ name, email, phone, college }];
+
+  const dayCount = selectedDays.length;
+  const priceForRoom = PRICES[selectedRoom][dayCount] || 0;
 
   const session = {
+    sessionId: "ACC_" + Date.now(),
+    passType: "Accommodation",
+    totalAmount: priceForRoom,   // ✅ NUMBER ONLY
     gender: selectedGender,
     roomType: selectedRoom,
     days: selectedDays,
     participants,
-    total: totalAmountEl.textContent,
     registeredEmail: auth.currentUser.email
   };
 
-  localStorage.setItem("accommodation_payment", JSON.stringify(session));
+  // ✅ MUST match UPI page
+  localStorage.setItem("pravaah_payment", JSON.stringify(session));
+
   window.location.href = "upi-payment.html";
 });
+;
+
 
 
 
