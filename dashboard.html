@@ -159,27 +159,48 @@
   <!-- Circles -->
   <div class="dashboard-cards">
 
-    <div class="dash-card">
-      <h3>Boys – Single Rooms</h3>
-      <p id="accBoysSingle">0 / 0</p>
-    </div>
-
-    <div class="dash-card">
-      <h3>Boys – Common Rooms</h3>
-      <p id="accBoysCommon">0 / 0</p>
-    </div>
-
-    <div class="dash-card">
-      <h3>Girls – Single Rooms</h3>
-      <p id="accGirlsSingle">0 / 0</p>
-    </div>
-
-    <div class="dash-card">
-      <h3>Girls – Common Rooms</h3>
-      <p id="accGirlsCommon">0 / 0</p>
-    </div>
-
+  <!-- Boys Single -->
+  <div class="dash-card circle-card" id="boysSingleCircle">
+    <h3>Boys – Single Rooms</h3>
+    <svg width="120" height="120">
+      <circle cx="60" cy="60" r="50" class="bg"></circle>
+      <circle cx="60" cy="60" r="50" class="progress"></circle>
+    </svg>
+    <div class="circle-text">0/0</div>
   </div>
+
+  <!-- Boys Common -->
+  <div class="dash-card circle-card" id="boysCommonCircle">
+    <h3>Boys – Common Rooms</h3>
+    <svg width="120" height="120">
+      <circle cx="60" cy="60" r="50" class="bg"></circle>
+      <circle cx="60" cy="60" r="50" class="progress"></circle>
+    </svg>
+    <div class="circle-text">0/0</div>
+  </div>
+
+  <!-- Girls Single -->
+  <div class="dash-card circle-card" id="girlsSingleCircle">
+    <h3>Girls – Single Rooms</h3>
+    <svg width="120" height="120">
+      <circle cx="60" cy="60" r="50" class="bg"></circle>
+      <circle cx="60" cy="60" r="50" class="progress"></circle>
+    </svg>
+    <div class="circle-text">0/0</div>
+  </div>
+
+  <!-- Girls Common -->
+  <div class="dash-card circle-card" id="girlsCommonCircle">
+    <h3>Girls – Common Rooms</h3>
+    <svg width="120" height="120">
+      <circle cx="60" cy="60" r="50" class="bg"></circle>
+      <circle cx="60" cy="60" r="50" class="progress"></circle>
+    </svg>
+    <div class="circle-text">0/0</div>
+  </div>
+
+</div>
+
 </section>
 <!-- ================= ACCOMMODATION CAPACITY CONTROL (SUPER ACCOUNTS) ================= -->
 <section class="dashboard-section hidden" id="accControlSection">
