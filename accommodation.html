@@ -95,16 +95,105 @@
   </section>
  -->
 
-  <section class="coming-soon">
-  <div class="coming-box">
-    <h1>🚧 Accommodation Details Coming Soon</h1>
-    <p>
-      We are currently finalizing the accommodation facilities for PRAVAAH'26.  
-      Stay tuned — exciting updates will be released shortly!
-    </p>
-    <span class="glow-text">Thank you for your patience 💜</span>
+<!-- 📝 IMPORTANT RULES (LIKE REGISTRATION PAGE) -->
+<section class="note-section">
+  <div class="note-box">
+    <h2>⚠️ Important Accommodation Rules</h2>
+    <ul>
+      <li>IIT Bhubaneswar students do not need accommodation.</li>
+      <li>Accommodation will be provided based on gender selection.</li>
+      <li>Carry your college ID and accommodation confirmation.</li>
+      <li>Any damage to property will be chargeable.</li>
+    </ul>
   </div>
 </section>
+
+<!-- 🏨 ACCOMMODATION FORM -->
+<section class="passes-section">
+  <div class="passes-box">
+
+    <h1>🏨 Accommodation Registration</h1>
+
+    <!-- GENDER -->
+    <h3>Select Gender</h3>
+    <div class="passes-grid" id="genderGrid">
+      <div class="pass-card" data-gender="male">
+        <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Male</h2>
+        <p class="desc">Boys Hostel</p>
+      </div>
+
+      <div class="pass-card" data-gender="female">
+        <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Female</h2>
+        <p class="desc">Girls Hostel</p>
+      </div>
+    </div>
+
+    <!-- ROOM TYPE -->
+    <h3>Select Room Type</h3>
+    <div class="passes-grid" id="roomGrid">
+      <div class="pass-card" data-room="single">
+        <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Single Room</h2>
+        <p class="desc">Double Occupancy</p>
+      </div>
+
+      <div class="pass-card" data-room="common">
+        <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Common Room</h2>
+        <p class="desc">Shared</p>
+      </div>
+    </div>
+
+    <!-- DAYS -->
+    <h3>Select Days</h3>
+    <div class="passes-grid" id="dayGrid">
+      <div class="pass-card" data-day="day0">
+        <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Day 0</h2>
+        <p class="desc">Feb 5, 9:00 AM → Feb 6, 9:00 AM</p>
+      </div>
+
+      <div class="pass-card" data-day="day1">
+        <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Day 1</h2>
+        <p class="desc">Feb 6, 9:00 AM → Feb 7, 9:00 AM</p>
+      </div>
+
+      <div class="pass-card" data-day="day2">
+        <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Day 2</h2>
+        <p class="desc">Feb 7, 9:00 AM → Feb 8, 9:00 AM</p>
+      </div>
+
+      <div class="pass-card" data-day="day3">
+        <div class="select-indicator"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Day 3</h2>
+        <p class="desc">Feb 8, 9:00 AM → Feb 9, 9:00 AM</p>
+      </div>
+    </div>
+
+    <!-- PARTICIPANTS -->
+    <div style="text-align:center;margin-top:18px;">
+      <h3>Number of Participants</h3>
+      <div class="custom-number-box">
+        <button type="button" class="num-btn" id="decPart">−</button>
+        <input type="number" id="numParticipants" value="0" min="0" max="10">
+        <button type="button" class="num-btn" id="incPart">+</button>
+      </div>
+    </div>
+
+    <div id="participantsContainer"></div>
+
+    <div class="total-section">
+      <h3 id="totalAmount">Total: ₹0</h3>
+      <button id="payBtn" class="main-btn">Proceed</button>
+    </div>
+
+  </div>
+</section>
+
   <!-- 📋 GUIDELINES -->
   <section class="accommodation-guidelines">
     <h2>Accommodation Guidelines</h2>
@@ -197,6 +286,7 @@ window.addEventListener("scroll", () => {
 
 </body>
 </html>
+
 
 
 
