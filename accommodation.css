@@ -481,4 +481,18 @@ body {
   }
 }
 
+/* Add spacing between section titles and grids */
+.passes-box h3 {
+  margin-top: 30px;
+  margin-bottom: 18px;   /* space between text and boxes */
+  text-align: center;
+}
+
+/* Extra top spacing for grids */
+#genderGrid,
+#roomGrid,
+#dayGrid {
+  margin-top: 10px;
+}
+
 
