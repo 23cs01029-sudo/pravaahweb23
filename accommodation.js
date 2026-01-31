@@ -199,12 +199,12 @@ function buildSingleParticipantForm() {
     </div>
   `;
 }
-// 🔁 LIVE AUTOFILL like pass.js (Name → other fields)
+buildSingleParticipantForm();
+
 // 🔁 LIVE AUTOFILL like pass.js
 const profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
 
 const card = document.querySelector(".participant-card");
-if (!card) return;
 
 const nameInput = card.querySelector(".pname");
 const emailInput = card.querySelector(".pemail");
@@ -218,12 +218,12 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// Autofill from saved profile (on load)
+// Autofill from saved profile
 if (profile.name) nameInput.value = profile.name;
 if (profile.phone) phoneInput.value = profile.phone;
 if (profile.college) collegeInput.value = profile.college;
 
-// When user types NAME → try to fill others
+// Name → auto-fill others
 nameInput.addEventListener("input", () => {
   if (profile.name && nameInput.value.toLowerCase() === profile.name.toLowerCase()) {
     phoneInput.value = profile.phone || "";
@@ -241,10 +241,6 @@ nameInput.addEventListener("input", () => {
     }));
   });
 });
-;
-
-
-buildSingleParticipantForm();
 
 
 /* ---------- TOTAL CALCULATION ---------- */
@@ -293,6 +289,7 @@ const participants = [{ name, email, phone, college }];
   localStorage.setItem("accommodation_payment", JSON.stringify(session));
   window.location.href = "upi-payment.html";
 });
+
 
 
 
