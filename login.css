@@ -56,23 +56,26 @@ body {
   min-height: 600px;  /* 🔥 taller */
 
   padding: 80px 60px; /* 🔥 more space inside */
-
+  position: relative;
+  overflow: visible;
   text-align: center;
    transition: transform 0.4s ease, box-shadow 0.4s ease;
   animation: fadeIn 0.6s ease forwards;
 }
 
+/* ==== HARD FIX FOR LOGO + BOX ==== */
+
+
+
 .login-logo {
-  width: 140px;
-  max-width: 70%;
+  display: block !important;
+  width: 120px;
   height: auto;
-  display: block;
-    margin-top: 10px;
-  padding: 70px 45px 50px;
-  filter: drop-shadow(0 0 10px cyan);
-  position: relative;
-  top: 0;
-  overflow: visible; 
+  margin: 0 auto 30px auto !important;
+  position: static !important;
+  transform: none !important;
+  float: none !important;
+  text-align: center;
 }
 
 
@@ -258,6 +261,7 @@ html, body {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
 
 
 
