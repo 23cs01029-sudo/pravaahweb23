@@ -203,50 +203,34 @@
 
 </section>
 <!-- ================= ACCOMMODATION CAPACITY CONTROL (SUPER ACCOUNTS) ================= -->
-<section class="dashboard-section hidden" id="accControlSection">
-  <h2>Accommodation Capacity Control</h2>
+<div id="accControlSection" class="card">
 
-  <!-- Day selector -->
-  <div class="dashboard-filter">
-    <select id="accControlDay">
-      <option value="">Select Day</option>
-      <option value="day0">Day 0</option>
-      <option value="day1">Day 1</option>
-      <option value="day2">Day 2</option>
-      <option value="day3">Day 3</option>
-    </select>
-  </div>
+  <h3>Accommodation Capacity Control</h3>
 
-  <div class="dashboard-cards">
+  <select id="accControlDay">
+    <option value="">Select Day</option>
+    <option value="day0">Day 0</option>
+    <option value="day1">Day 1</option>
+    <option value="day2">Day 2</option>
+    <option value="day3">Day 3</option>
+  </select>
 
-    <div class="dash-card">
-      <h3>Boys – Single Rooms</h3>
-      <input type="number" id="setBoysSingle" placeholder="Total Rooms">
-    </div>
+  <select id="accGenderFilter">
+    <option value="boys">Boys</option>
+    <option value="girls">Girls</option>
+  </select>
 
-    <div class="dash-card">
-      <h3>Boys – Common Rooms</h3>
-      <input type="number" id="setBoysCommon" placeholder="Total Rooms">
-    </div>
+  <select id="accRoomFilter">
+    <option value="single">Single Room</option>
+    <option value="common">Common Room</option>
+  </select>
 
-    <div class="dash-card">
-      <h3>Girls – Single Rooms</h3>
-      <input type="number" id="setGirlsSingle" placeholder="Total Rooms">
-    </div>
+  <input type="number" id="accCapacityInput" placeholder="Enter total rooms">
 
-    <div class="dash-card">
-      <h3>Girls – Common Rooms</h3>
-      <input type="number" id="setGirlsCommon" placeholder="Total Rooms">
-    </div>
+  <button id="saveAccCapacity">Save Capacity</button>
 
-  </div>
+</div>
 
-  <div class="dashboard-actions">
-    <button class="action-btn" id="saveAccCapacity">
-      <i class="fa-solid fa-floppy-disk"></i> Save Capacity
-    </button>
-  </div>
-</section>
 
 <!-- ================= EVENT REGISTRATIONS ================= -->
 <section class="dashboard-section">
