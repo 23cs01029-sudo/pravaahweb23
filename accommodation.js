@@ -83,9 +83,20 @@ document.querySelectorAll(".card").forEach(card => {
 ===================================== */
 
 const PRICES = {
-  single: 900,   // per day
-  common: 500
+  single: {
+    1: 10000,
+    2: 20000,
+    3: 3000,
+    4: 4000
+  },
+  common: {
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4
+  }
 };
+
 
 const IITBBS_DOMAIN = "@iitbbs.ac.in";
 
@@ -193,10 +204,13 @@ function calculateTotal() {
     return;
   }
 
-  const base = PRICES[selectedRoom] * selectedDays.length;
-  const total = base * participantsCount;
+  const dayCount = selectedDays.length;
+  const priceForRoom = PRICES[selectedRoom][dayCount] || 0;
+  const total = priceForRoom * participantsCount;
+
   totalAmountEl.textContent = `Total: ₹${total}`;
 }
+
 
 /* ---------- PAY BUTTON ---------- */
 payBtn.addEventListener("click", () => {
@@ -239,5 +253,6 @@ payBtn.addEventListener("click", () => {
   localStorage.setItem("accommodation_payment", JSON.stringify(session));
   window.location.href = "accommodation_payment.html";
 });
+
 
 
