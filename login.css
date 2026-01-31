@@ -66,17 +66,17 @@ body {
 /* ==== HARD FIX FOR LOGO + BOX ==== */
 
 
-
-.login-logo {
-  display: block !important;
-  width: 120px;
+/* ==== FORCE RESET LOGO ==== */
+.login-box img {
+  all: unset;
+  display: block;
+  width: 140px;
   height: auto;
-  margin: 0 auto 30px auto !important;
-  position: static !important;
-  transform: none !important;
-  float: none !important;
-  text-align: center;
+  margin: 0 auto 30px auto;
+  filter: drop-shadow(0 0 12px cyan);
 }
+
+
 
 
 
@@ -261,6 +261,7 @@ html, body {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
 
 
 
