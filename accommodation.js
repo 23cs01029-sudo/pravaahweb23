@@ -94,7 +94,7 @@ document.querySelectorAll(".card").forEach(card => {
 
 const PRICES = {
   single: {
-    1: 1199,
+    1: 1,
     2: 1999,
     3: 2799,
     4: 3599
@@ -291,6 +291,7 @@ payBtn.addEventListener("click", () => {
   window.location.href = "upi-payment.html";
 });
 ;
+
 
 
 
