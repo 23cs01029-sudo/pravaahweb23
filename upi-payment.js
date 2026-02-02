@@ -3,7 +3,7 @@ const SCRIPT_URL = "/api/pravaah";
 let uploadedImageFile = null;
 
 /* 🔐 UPI DETAILS */
-const UPI_ID = "228278079012987@cnrb";
+const UPI_ID = "8074412679-2@ybl";
 const RECEIVER_NAME = "ALMA FIESTA IIT BHUBANESWAR";
 const RECEIVER_KEYWORDS = ["ALMA", "FIESTA", "IIT","BHUBANESWAR"];
 /* ================= SESSION ================= */
